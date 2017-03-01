@@ -1,0 +1,15 @@
+---
+
+- name: apt | self-signed certificate packages dependencies
+  apt: name={{item}} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - ssl-cert
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- stat: path={{ ssl_dir }}/{{ ansible_fqdn }}.crt
+  register: localsslcert
+- name: Generate SSL self-signed certificate
+  command: openssl req -x509 -nodes -sha256 -days {{ hardenwebserver_certduration }} -newkey rsa:2048 -subj "{{ hardenwebserver_certinfo }}/CN={{ certificate_cn }}" -keyout {{ ssl_privatedir }}/{{ ansible_fqdn }}.key -out {{ ssl_dir }}/{{ ansible_fqdn }}.crt
+  when: not localsslcert.stat.exists
+- file: "path={{ ssl_privatedir }}/{{ ansible_fqdn }}.key owner=root group={{ ssl_user }} mode=0440"
+

@@ -1,0 +1,6 @@
+---
+## (default ubuntu 7200)
+- name: lower tcp keepalive time against slow attacks
+  sysctl: name="net.ipv4.tcp_keepalive_time" value=90 sysctl_set=yes state=present reload=yes
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm"))
+

@@ -1,0 +1,30 @@
+---
+
+## https://httpd.apache.org/docs/2.4/en/bind.html
+
+- name: Restrict listening interface - ports.conf
+  template: src=ports.conf.j2 dest=/etc/apache2/ports.conf mode=0644 backup=yes
+  notify:
+    - restart apache
+
+#- name: Keep localhost as listening interface - ports.conf
+#   lineinfile: dest=/etc/apache2/ports.conf regexp="{{ item.r }}" line="{{ item.l }}" follow=yes
+#  with_items:
+#    - { r: '^(\s*)Listen 127.0.0.1:443$', l: '    Listen 127.0.0.1:443' }
+#  notify:
+#    - restart apache
+
+- stat: path=/etc/apache2/sites-enabled/apache2-graphite.conf
+  register: apachegraphite
+- block:
+    - name: Restrict listening interface (graphite)
+      replace: dest=/etc/apache2/sites-enabled/apache2-graphite.conf regexp="^\s*{{ item.re }}" replace="{{ item.rep }}" follow=yes
+      with_items:
+        - { re: '^(\s*)<VirtualHost _default_:(\d+)>', rep: '\1<VirtualHost {{ hardenwebserver_bind }}:\2>' }
+        - { re: '^(\s*)<VirtualHost \*:(\d+)>', rep: '\1<VirtualHost {{ hardenwebserver_bind }}:\2>' }
+        - { re: '^(\s*)Listen \w+:(\d+)$', rep: '\1Listen {{ hardenwebserver_bind }}:\2' }
+        - { re: '^(\s*)Listen (\d+)$', rep: '\1Listen {{ hardenwebserver_bind }}:\2' }
+      notify:
+        - restart apache
+  when: apachegraphite.stat.exists and hardenwebserver_bind is defined and hardenwebserver_bind != ''
+

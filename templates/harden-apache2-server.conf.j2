@@ -1,0 +1,27 @@
+
+ServerTokens Prod
+ServerSignature Off
+
+<IfModule mod_headers.c>
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "sameorigin"
+#Header set X-Frame-Options "deny"
+Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"
+#Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains; preload"
+Header set X-XSS-Protection "1; mode=block"
+Header set Content-Security-Policy "{{ hardenwebserver_header_csp }}"
+Header set Referrer-Policy {{ harden_webserver_header_refpolicy }}
+## Note: might break some app... need Apache 2.2.4+
+## https://scotthelme.co.uk/csrf-is-dead/
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure;SameSite
+</IfModule>
+
+{# if not trusty, inside harden-apache-https/virtualhost section #}
+{% if ansible_distribution_release == 'trusty' %}
+<IfModule mod_ssl.c>
+SSLUseStapling on 
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+## needs to be created, not possible to test with self-signed certificate
+#SSLCACertificateFile /etc/ssl/ca-certs.pem
+</IfModule>
+{% endif %}

@@ -1,0 +1,19 @@
+---
+
+## https://httpd.apache.org/docs/2.4/en/bind.html
+
+- name: Restrict listening interface
+  replace: dest=/etc/httpd/conf/httpd.conf regexp="{{ item.re }}" replace="{{ item.rep }}" follow=yes validate='/usr/sbin/apache2ctl -f %s -t'
+  with_items:
+    - { re: '^(\s.*)Listen [0-9\.]+:(\d+)$', rep: '\\1Listen {{ hardenwebserver_bind }}:\\2' }
+    - { re: '^(\s.*)Listen (\d+)$', rep: '\\1Listen {{ hardenwebserver_bind }}:\\2' }
+  notify:
+    - restart apache
+
+- name: Keep localhost as listening interface
+  lineinfile: dest=/etc/httpd/conf/httpd.conf regexp="{{ item.r }}" line="{{ item.l }}" follow=yes
+  with_items:
+    - { r: '^(\s*)Listen 127.0.0.1:443$', l: '\\1Listen 127.0.0.1:443' }
+  notify:
+    - restart apache
+

@@ -1,0 +1,24 @@
+---
+
+#hardenwebserver_nginx_stapling: false
+
+ssl_user: ssl-cert
+ssl_dir: /etc/ssl
+ssl_privatedir: /etc/ssl/private
+
+www_user: www-data
+apache_svc: apache2
+apacheetc: /etc/apache2
+apache_confdir: /etc/apache2/conf-available
+apache_sitedir: /etc/apache2/sites-available
+apacheconf: /etc/apache2/sites-available/000-default.conf
+apachesslconf: /etc/apache2/sites-available/default-ssl.conf
+modsecurity_conf: /etc/modsecurity/modsecurity.conf
+modsecurity_active: /usr/share/modsecurity-crs/activated_rules
+hardenwebserver_apachesecurityconf: /etc/apache2/conf-available/security.conf
+hardenwebserver_rootdir: /var/www/html
+
+hardenwebserver_packages:
+    - python-passlib
+    - apache2
+

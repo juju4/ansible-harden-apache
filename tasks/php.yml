@@ -1,0 +1,24 @@
+---
+
+- name: PHP | Review web conf
+  replace:
+    dest="/etc/php5/{{ item }}/php.ini" regexp='^expose_php = On' replace='expose_php = Off' create=no
+  with_items:
+    - apache2
+    - cli
+    - fpm
+
+- replace:
+    dest="/etc/php5/{{ item }}/php.ini" regexp='^allow_url_fopen = On' replace='allow_url_fopen = Off'
+  with_items:
+    - apache2
+    - cli
+    - fpm
+
+- replace:
+    dest="/etc/php5/{{ item }}/php.ini" regexp='^disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,$' replace='disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,chown,diskfreespace,disk_free_space,disk_total_space,dl,exec,escapeshellarg,escapeshellcmd,fileinode,highlight_file,max_execution_time,passthru,pclose,phpinfo,popen,proc_close,proc_open,proc_get_status,proc_nice,proc_open,proc_terminate,set_time_limit,shell_exec,show_source,system,serialize,unserialize,__construct, __destruct, __call,__wakeup'
+  with_items:
+    - apache2
+    - cli
+    - fpm
+

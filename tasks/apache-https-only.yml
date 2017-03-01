@@ -1,0 +1,28 @@
+---
+
+- name: disable default apache site
+  file: dest=/etc/apache2/sites-enabled/000-default.conf state=absent
+  notify:
+    - restart apache
+  register: disdefault
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+- debug: var=disdefault
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: disable apache port 80
+  replace: dest=/etc/apache2/ports.conf regexp='{{ item.regexp }}' replace='{{ item.replace }}'
+  with_items:
+    - { regexp: '^Listen 80', replace: '#Listen 80' }
+    - { regexp: '^Listen (.*):80', replace: '#Listen \1:80' }
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Restrict listening interface
+  replace: dest=/etc/httpd/conf/httpd.conf regexp="{{ item.regexp }}" replace="{{ item.replace }}"
+  with_items:
+    - { regexp: '^Listen 80', replace: '#Listen 80' }
+    - { regexp: '^Listen (.*):80', replace: '#Listen \1:80' }
+  notify:
+    - restart apache
+  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'

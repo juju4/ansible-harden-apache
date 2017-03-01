@@ -1,0 +1,29 @@
+---
+
+- name: apt | apache-security packages install
+  apt: name={{item}} state=present
+  with_items: "{{ hardenwebserver_packages }}"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: yum | apache-security packages install
+  yum: name={{item}} state=present
+  with_items: "{{ hardenwebserver_packages }}"
+  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- include: apache-ssl.yml
+
+- include: apache-security.yml
+
+- include: apache-modsecurity.yml
+
+- include: apache-https-only.yml
+  when: hardenwebserver_disable_http is defined and hardenwebserver_disable_http
+
+- include: apache-bind-debian.yml
+  when: hardenwebserver_bind is defined and hardenwebserver_bind != "" and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+- include: apache-bind-redhat.yml
+  when: hardenwebserver_bind is defined and hardenwebserver_bind != "" and (ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+
+- name: ensure apache is enabled and started
+  service: name={{ apache_svc }} state=started enabled=yes
+

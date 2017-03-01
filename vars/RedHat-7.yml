@@ -1,0 +1,24 @@
+---
+
+hardenwebserver_nginx_stapling: true
+
+ssl_user: root
+ssl_dir: /etc/pki/tls
+ssl_privatedir: /etc/pki/tls/private
+
+www_user: apache
+apache_svc: httpd
+apacheetc: /etc/httpd
+apache_confdir: /etc/httpd/conf.d
+apache_sitedir: /etc/httpd/conf.d
+apacheconf: /etc/httpd/conf/httpd.conf
+apachesslconf: /etc/httpd/conf.d/ssl.conf
+modsecurity_conf: /etc/httpd/conf.d/mod_security.conf
+modsecurity_active: /etc/httpd/modsecurity.d/activated_rules
+hardenwebserver_apachesecurityconf: /etc/httpd/conf.d/security.conf
+hardenwebserver_rootdir: /var/www/html
+
+hardenwebserver_packages:
+    - python-passlib
+    - httpd
+

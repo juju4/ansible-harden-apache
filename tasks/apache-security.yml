@@ -1,0 +1,133 @@
+---
+
+## headers for security.conf, reqtimeout for modsecurity slow attacks
+# https://www.acunetix.com/blog/articles/slow-http-dos-attacks-mitigate-apache-http-server/
+- name: Enabled extra modules
+  apache2_module: state=present name="{{ item }}"
+  with_items:
+    - headers
+    - rewrite
+    - reqtimeout
+## ubuntu: ssl stapling
+    - socache_shmcb
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: restrict permissions on apache configuration dir
+  file: dest={{ apacheetc }} mode=0750 state=directory owner=root group={{ www_user }}
+- name: restrict permissions on few apache configuration files
+  file: dest={{ item }} mode=0640 state=file owner=root group={{ www_user }} follow=yes
+  with_items:
+    - "{{ apache_confdir }}/security.conf"
+    - "{{ apachesslconf }}"
+    - "{{ apacheetc }}/apache2.conf"
+    - "{{ apacheetc }}/ports.conf"
+  ignore_errors: true
+
+- name: push harden configuration templates - apacheetc
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ apacheetc }}/{{ item }}"
+    mode: 0644
+  with_items:
+    - harden-apache2-http.conf
+    - harden-apache2-https.conf
+
+- name: push harden configuration templates - apache conf dir
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ apache_confdir }}/{{ item }}"
+    mode: 0644
+  with_items:
+    - harden-apache2-common.conf
+    - harden-apache2-php.conf
+    - harden-apache2-server.conf
+    - harden-apache2-gzip.conf
+  notify:
+    - restart apache
+- name: enable harden configuration templates - apache conf dir
+  file:
+    src: "{{ apache_confdir }}/{{ item }}"
+    dest: "/etc/apache2/conf-enabled/{{ item }}"
+    state: link
+  with_items:
+    - harden-apache2-common.conf
+    - harden-apache2-php.conf
+    - harden-apache2-server.conf
+    - harden-apache2-gzip.conf
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: include security config in default http virtualhost
+  blockinfile:
+    dest: "{{ apacheconf }}"
+    block: |
+            Include {{ apacheetc }}/harden-apache2-http.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: apache http hardening"
+    insertbefore: '^(\s*)</VirtualHost>'
+  notify:
+    - restart apache
+- name: include security config in default https virtualhost
+  blockinfile:
+    dest: "{{ apachesslconf }}"
+    block: |
+            Include {{ apacheetc }}/harden-apache2-https.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: apache https hardening"
+    insertbefore: '^(\s*)</VirtualHost>'
+  notify:
+    - restart apache
+
+- block:
+    - name: Enabled extra security - apache2.conf
+      replace: dest="{{ apacheetc }}/apache2.conf" regexp="{{ item.re }}" replace="{{ item.n }}" backup=yes validate='apachectl -t -f %s'
+      with_items:
+        - { re: '^\tOptions FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
+        - { re: '^\tOptions Indexes FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
+      notify:
+        - restart apache
+
+    ## Note: commented headers can break some apps like nagios
+## Note: definition in security.conf are prime vs extra config. so this change is needed.
+    - name: Enabled extra security headers - security.conf
+      replace: dest="{{ hardenwebserver_apachesecurityconf }}" regexp="{{ item.re }}" replace="{{ item.n }}" backup=yes
+      with_items:
+        - { re: '^#ServerTokens Minimal', n: 'ServerTokens Prod' }
+        - { re: '^ServerTokens OS', n: '#ServerTokens OS' }
+        - { re: '^#ServerSignature Off', n: 'ServerSignature Off' }
+#        - { re: '^ServerSignature On', n: '#ServerSignature On' }
+#        - { re: '^#Header set X-Content-Type-Options: "nosniff"', n: 'Header set X-Content-Type-Options: "nosniff"' }
+#        - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "sameorigin"' }
+#    #    - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "deny"' }
+#      notify:
+#        - restart apache
+
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+#- fail: msg=test
+
+- block:
+    - name: Enabled extra security headers
+      lineinfile: >
+        dest="{{ hardenwebserver_apachesecurityconf }}"
+        line="{{ item }}"
+        create=yes
+      with_items:
+        - 'ServerTokens Prod'
+        - 'ServerSignature Off'
+        - 'Header set X-Content-Type-Options: "nosniff"'
+        - 'Header set X-Frame-Options: "sameorigin"'
+## HTTPoxy, 201607
+#        - 'RequestHeader unset Proxy early'
+    #    - 'Header set X-Frame-Options: "deny"'
+    ## FIXME! problem w escaping ;
+    #    - 'Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"'
+    #    - 'Header set X-XSS-Protection "1; mode=block"'
+  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: remove default index file - information disclosure
+  file: dest=/var/www/html/index.html state=absent
+  when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
+
+

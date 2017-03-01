@@ -1,0 +1,112 @@
+
+## Remember to edit CustomLog line
+##  CustomLog /var/log/apache2/access.log combined env=!dontlog
+SetEnvIf Request_URI "^/favicon.ico$" dontlog
+
+## Deny potentially sensitive files
+<FilesMatch "^\.ht">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</FilesMatch>
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</FilesMatch>
+<FilesMatch "\.(inc|old|svn|git|pub|sec|gpg)$">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</FilesMatch>
+<FilesMatch "/(?:upload|files|pub)/.*\.php$">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</FilesMatch>
+
+{% if hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt' %}
+<FilesMatch "^/\.well-known/acme-challenge">
+    Order allow,deny
+    Satisfy all
+</FilesMatch>
+
+{% endif %}
+{% if hardenwebserver_cachecontrol is defined and hardenwebserver_cachecontrol %}
+# Set cache control (7d)
+<FilesMatch "\.(js|css|png|jpeg|jpg|gif|ico|woff|ttf|otf|svg|woff2|eot|flv|swf)$">
+    Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+{% endif %}
+
+# deny scripts inside writable directories
+<FilesMatch "/(images|cache|media|logs|tmp)/.*.(php|pl|py|jsp|asp|sh|cgi)$">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</FilesMatch>
+
+## VA Scan
+## way better between SetEnvIf and mod_rewrite?
+#SetEnvIf User-Agent sqlmap ua_vascan=1
+#SetEnvIf User-Agent nikto ua_vascan=1
+#SetEnvIf User-Agent nmap ua_vascan=1
+#SetEnvIf User-Agent nessus ua_vascan=1
+#SetEnvIf User-Agent mysqloit ua_vascan=1
+#SetEnvIf User-Agent acunetix ua_vascan=1
+#SetEnvIf User-Agent w3af ua_vascan=1
+#<Directory />
+#    Order allow,deny
+#    Deny from env=ua_vascan
+#</Directory>
+<Directory />
+<IfModule mod_rewrite.c>
+    RewriteBase /
+    RewriteCond %{HTTP_USER_AGENT} sqlmap [OR]
+    RewriteCond %{HTTP_USER_AGENT} nikto [OR]
+    RewriteCond %{HTTP_USER_AGENT} nmap [OR]
+    RewriteCond %{HTTP_USER_AGENT} nessus [OR]
+    RewriteCond %{HTTP_USER_AGENT} mysqloit [OR]
+    RewriteCond %{HTTP_USER_AGENT} acunetix [OR]
+    RewriteCond %{HTTP_USER_AGENT} w3af [OR]
+    RewriteRule ^.* - [F,L]
+</ifModule>
+</Directory>
+
+## https://perishablepress.com/stupid-htaccess-tricks/
+## deny access to evil robots site rippers offline browsers and other nasty scum
+<Directory />
+<IfModule mod_rewrite.c>
+    RewriteBase /
+    RewriteCond %{HTTP_USER_AGENT} ^Anarchie [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^ASPSeek [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^attach [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^autoemailspider [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^Xaldon\ WebSpider [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^Xenu [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^Zeus.*Webster [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^Zeus
+    RewriteRule ^.* - [F,L]
+</ifModule>
+</Directory>
+
+
+## stop hotlinking and serve alternate content
+#<IfModule mod_rewrite.c>
+#    RewriteEngine on
+#    RewriteCond %{HTTP_REFERER} !^$
+#    RewriteCond %{HTTP_REFERER} !^http://(www\.)?domain\.com/.*$ [NC]
+##    RewriteRule .*\.(gif|jpg)$ http://www.domain.com/eatme.jpe [R,NC,L]
+#    RewriteRule .*\.(gif|jpg)$ - [F,L]
+#</ifModule>
+
+## Rate-Limiti, v2.4+ (see also modsecurity_crs_11_brute_force.conf)
+## https://httpd.apache.org/docs/2.4/mod/mod_ratelimit.html
+## in KB, applied to each HTTP response while it is transferred to the client, and not aggregated at IP/client level.
+<IfModule mod_ratelimit.c>
+    <Location />
+        SetOutputFilter RATE_LIMIT
+        SetEnv rate-limit 400
+        SetEnv rate-initial-burst 512
+    </Location>
+</IfModule>

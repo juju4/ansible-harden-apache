@@ -1,0 +1,52 @@
+---
+
+- name: yum | apache-ssl packages install
+  yum: name={{item}} state=present
+  with_items:
+    - mod_ssl
+    - openssl
+  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+## size should be >= certificate key size
+- name: generate ssl dhparam key
+#  command: "openssl dhparam -out {{ ssl_privatedir }}/dhparam4.pem 4096 creates=/etc/nginx/ssl/dhparam4.pem"
+  command: "openssl dhparam -dsaparam -out {{ ssl_privatedir }}/dhparam.pem 4096 creates={{ ssl_privatedir }}/dhparam.pem"
+- name: ensure good permissions for ssl dhparam key
+  file: "dest={{ ssl_privatedir }}/dhparam.pem mode=0440 owner=root group={{ www_user }}"
+
+- include: certificate-selfsigned.yml
+  when: hardenwebserver_cert is defined and hardenwebserver_cert == 'selfsigned'
+
+- include: certificate-letsencrypt.yml
+  when: hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt'
+
+- name: update certificate info in Apache configuration
+  replace: dest={{ apachesslconf }} regexp='{{ item.regexp }}' replace='{{ item.replace }}'
+  with_items:
+## ubuntu
+    - { regexp: '/etc/ssl/certs/ssl-cert-snakeoil.pem', replace: '{{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
+    - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: '{{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
+## redhat
+    - { regexp: '^SSLCertificateFile .*', replace: 'SSLCertificateFile {{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
+    - { regexp: '^SSLCertificateKeyFile .*', replace: 'SSLCertificateKeyFile {{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
+  notify:
+    - restart apache
+
+- name: Debian | enable ssl module
+  apache2_module: name=ssl state=present
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Debian | enable ssl apache site
+  file: src={{ apachesslconf }} dest=/etc/apache2/sites-enabled/default-ssl.conf state=link
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: HTTP Public Key Pinning (HPKP) hash extraction
+  shell: >
+    openssl req -in {{ ssl_dir }}/{{ ansible_fqdn }}.csr -pubkey -noout | openssl rsa -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
+  register: hardenwebserver_cert_pinning_value
+  changed_when: false
+

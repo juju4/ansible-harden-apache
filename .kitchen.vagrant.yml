@@ -1,0 +1,42 @@
+---
+driver:
+  name: vagrant
+  provider: <%= ENV['KITCHEN_PROVIDER'] || 'virtualbox' %>
+
+transport:
+  name: sftp
+
+provisioner:
+  name: ansible_playbook
+  roles_path: ../../roles
+  hosts: test-kitchen
+#  ansible_verbose: true
+  ansible_verbose: false
+  ansible_verbosity: 3
+  ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
+  enable_yum_epel: true
+#  name: chef_solo
+
+platforms:
+  - name: ubuntu-16.04
+  - name: ubuntu-14.04
+  - name: centos/7
+  - name: centos/6
+
+suites:
+  - name: default
+    run_list:
+    attributes:
+  - name: bind-restriction
+    run_list:
+    attributes:
+        hardenwebserver_bind: 127.0.0.1
+    includes:
+      - ubuntu-16.04
+      - ubuntu-14.04
+      - centos/7
+      - centos/6
+    provisioner:
+      name: ansible_playbook
+      playbook: test/integration/default/default.yml
+
