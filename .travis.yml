@@ -7,8 +7,8 @@ rvm:
 env:
 #  - distribution: centos
 #    version: 6
-  - distribution: centos
-    version: 7
+#  - distribution: centos
+#    version: 7
   - distribution: ubuntu
     version: 16.04
   - distribution: ubuntu
@@ -36,6 +36,9 @@ before_install:
   - KITCHEN_YAML=.kitchen.docker.yml kitchen diagnose --all
 
 script:
+## avoid locale issue under xenial docker, https://github.com/pypa/pip/issues/3575
+  - export LC_ALL=C.UTF-8
+  - export LANG=C.UTF-8
   - KITCHEN_YAML=.kitchen.docker.yml kitchen verify ${distribution}-${version//./}
 
 notifications:

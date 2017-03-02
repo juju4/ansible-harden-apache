@@ -30,7 +30,7 @@ platforms:
   - name: ubuntu-16.04
   - name: ubuntu-14.04
   - name: ubuntu-12.04
-  - name: centos-7
+#  - name: centos-7
 ### epel mirror issue. see readme
 #  - name: centos-6
 ### Ansible 2.2+/cryptography: https://github.com/ansible/ansible/issues/276
