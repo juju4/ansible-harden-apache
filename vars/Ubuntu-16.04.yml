@@ -21,4 +21,6 @@ hardenwebserver_rootdir: /var/www/html
 hardenwebserver_packages:
     - python-passlib
     - apache2
+## for Docker & netstat call in serverspec
+    - net-tools
 
