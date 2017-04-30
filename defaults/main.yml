@@ -36,9 +36,10 @@ hardenwebserver_cert_pinning: false
 
 ## https://content-security-policy.com/
 ## https://githubengineering.com/githubs-post-csp-journey/
+## https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 #hardenwebserver_header_csp: "default-src self"
 ## this settings is necessary for default ubuntu or centos page
-hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self';"
+hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'; upgrade-insecure-requests;"
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self';"
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri https://xxxx.report-uri.io/r/default/csp/enforce"
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri-report-only https://xxxx.report-uri.io/r/default/csp/reportOnly"
@@ -53,6 +54,7 @@ harden_webserver_header_refpolicy: strict-origin-when-cross-origin
 ## https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html
 ## https://openweb.eu.org/articles/https-de-ssl-a-tls-1-3
 ## https://www.ssi.gouv.fr/uploads/2017/02/security-recommendations-for-tls_v1.1.pdf
+## https://bettercrypto.org/static/applied-crypto-hardening.pdf
 harden_apache_sslciphersuite: 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
 harden_apache_sslprotocol: 'All -SSLv2 -SSLv3 -TLSv1'
 

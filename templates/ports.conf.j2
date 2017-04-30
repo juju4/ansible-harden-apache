@@ -2,7 +2,7 @@
 # have to change the VirtualHost statement in
 # /etc/apache2/sites-enabled/000-default.conf
 
-{% if hardenwebserver_disable_http is defined and hardenwebserver_disable_http %}
+{% if hardenwebserver_disable_http is defined and not hardenwebserver_disable_http %}
 {% for ip in hardenwebserver_bind %}
 Listen {{ ip }}:80
 {% endfor %}

@@ -8,6 +8,8 @@ Header set X-Frame-Options "sameorigin"
 #Header set X-Frame-Options "deny"
 Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"
 #Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains; preload"
+## https://www.w3.org/TR/upgrade-insecure-requests/
+Header set Upgrade-Insecure-Requests "1"
 Header set X-XSS-Protection "1; mode=block"
 Header set Content-Security-Policy "{{ hardenwebserver_header_csp }}"
 Header set Referrer-Policy {{ harden_webserver_header_refpolicy }}

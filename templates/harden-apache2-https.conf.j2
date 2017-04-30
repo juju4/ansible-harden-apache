@@ -37,6 +37,7 @@ SSLCACertificateFile {{ ssl_dir }}/ca-certs.pem
 ## https://scotthelme.co.uk/hpkp-http-public-key-pinning/
 ## https://news.netcraft.com/archives/2016/03/30/http-public-key-pinning-youre-doing-it-wrong.html
 ## https://community.letsencrypt.org/t/hpkp-best-practices-if-you-choose-to-implement/4625          = not recommended/on your own
+## https://blog.qualys.com/ssllabs/2016/09/06/is-http-public-key-pinning-dead
 Header always set Public-Key-Pins pin-sha256="{{ hardenwebserver_cert_pinning_value.stdout }}"; max-age value 5184000; includeSubDomains
 {% endif %}
 
