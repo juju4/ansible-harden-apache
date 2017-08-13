@@ -55,7 +55,10 @@
     - modsecurity_crs_60_correlation.conf
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 - name: activate some optional rules
-  file: src="/usr/share/modsecurity-crs/optional_rules/{{ item }}" dest="{{ modsecurity_active }}/{{ item }}" state=link
+  file:
+    src: "/usr/share/modsecurity-crs/optional_rules/{{ item }}"
+    dest: "{{ modsecurity_active }}/{{ item }}"
+    state: link
   with_items:
     - modsecurity_42_comment_spam.data
     - modsecurity_crs_10_ignore_static.conf
@@ -77,7 +80,10 @@
     - restart apache
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 - name: activate some experimental rules
-  file: src="/usr/share/modsecurity-crs/experimental_rules/{{ item }}" dest="{{ modsecurity_active }}/{{ item }}" state=link
+  file:
+    src: "/usr/share/modsecurity-crs/experimental_rules/{{ item }}"
+    dest: "{{ modsecurity_active }}/{{ item }}"
+    state: link
   with_items:
     - modsecurity_crs_11_brute_force.conf
     - modsecurity_crs_11_slow_dos_protection.conf
@@ -91,6 +97,7 @@
   replace: dest={{ item }} regexp=SecReadStateLimit replace=SecConnReadStateLimit backup=yes
   with_items:
     - "{{ modsecurity_active }}/modsecurity_crs_49_header_tagging.conf"
+    - "/usr/share/modsecurity-crs/experimental_rules/modsecurity_crs_11_slow_dos_protection.conf"
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
 
 #- file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_21_protocol_anomalies.conf state=absent
