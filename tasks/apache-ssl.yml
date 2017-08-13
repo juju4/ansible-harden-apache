@@ -42,7 +42,7 @@
   file: src={{ apachesslconf }} dest=/etc/apache2/sites-enabled/default-ssl.conf state=link
   notify:
     - restart apache
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and hardenwebserver_enable_defaultssl
 
 - name: HTTP Public Key Pinning (HPKP) hash extraction
   shell: >

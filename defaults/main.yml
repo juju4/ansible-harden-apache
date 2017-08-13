@@ -30,6 +30,7 @@ hardenwebserver_letsencrypt_user_key: ''
 ## staging or production url
 hardenwebserver_letsencrypt_acme_dir: 'https://acme-staging.api.letsencrypt.org/directory'
 #hardenwebserver_letsencrypt_acme_dir: 'https://acme-v01.api.letsencrypt.org/directory'
+hardenwebserver_enable_defaultssl: true
 
 ## not recommended/supported for letsencrypt
 hardenwebserver_cert_pinning: false
