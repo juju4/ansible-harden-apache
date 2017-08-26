@@ -69,7 +69,8 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
-- name: include security config in default https virtualhost
+
+- name: Debian | include security config in default https virtualhost
   blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
@@ -78,6 +79,22 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
+
+- block:
+    - name: Redhat | check if ssl.conf exists
+      stat: path={{ apachesslconf }}
+      register: defssl
+    - name: RedHat | include security config in default https virtualhost
+      blockinfile:
+        dest: "{{ apachesslconf }}"
+        block: |
+                Include {{ apacheetc }}/harden-apache2-https.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: apache https hardening"
+        insertbefore: '^(\s*)</VirtualHost>'
+      notify:
+        - restart apache
+      when: defssl.stat.exists
+  when: ansible_os_family == 'RedHat'
 
 - block:
     - name: Enabled extra security - apache2.conf

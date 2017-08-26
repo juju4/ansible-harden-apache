@@ -5,7 +5,7 @@
   with_items:
     - mod_ssl
     - openssl
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
 
 ## size should be >= certificate key size
 - name: generate ssl dhparam key
@@ -20,29 +20,73 @@
 - include: certificate-letsencrypt.yml
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt'
 
-- name: update certificate info in Apache configuration
+- name: Debian | update certificate info in Apache configuration
   replace: dest={{ apachesslconf }} regexp='{{ item.regexp }}' replace='{{ item.replace }}'
   with_items:
-## ubuntu
     - { regexp: '/etc/ssl/certs/ssl-cert-snakeoil.pem', replace: '{{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
     - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: '{{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
-## redhat
-    - { regexp: '^SSLCertificateFile .*', replace: 'SSLCertificateFile {{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
-    - { regexp: '^SSLCertificateKeyFile .*', replace: 'SSLCertificateKeyFile {{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
   notify:
     - restart apache
+  when: ansible_os_family == 'Debian'
+
+- block:
+    - name: Redhat | check if ssl.conf exists
+      stat: path={{ apachesslconf }}
+      register: defssl
+    - name: RedHat | update certificate info in Apache configuration
+      replace: dest={{ apachesslconf }} regexp='{{ item.regexp }}' replace='{{ item.replace }}'
+      with_items:
+        - { regexp: '^SSLCertificateFile .*', replace: 'SSLCertificateFile {{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
+        - { regexp: '^SSLCertificateKeyFile .*', replace: 'SSLCertificateKeyFile {{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
+      notify:
+        - restart apache
+      when: defssl.stat.exists
+  when: ansible_os_family == 'RedHat'
 
 - name: Debian | enable ssl module
   apache2_module: name=ssl state=present
   notify:
     - restart apache
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_os_family == 'Debian'
 
-- name: Debian | enable ssl apache site
+- name: Debian | enable default ssl apache site
   file: src={{ apachesslconf }} dest=/etc/apache2/sites-enabled/default-ssl.conf state=link
   notify:
     - restart apache
-  when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and hardenwebserver_enable_defaultssl
+  when: (ansible_os_family == 'Debian') and hardenwebserver_enable_defaultssl
+- name: Debian | disable default ssl apache site
+  file: dest=/etc/apache2/sites-enabled/default-ssl.conf state=absent
+  notify:
+    - restart apache
+  when: (ansible_os_family == 'Debian') and not hardenwebserver_enable_defaultssl
+- block:
+    - name: RedHat | check if backup default ssl apache site
+      stat: path=/etc/httpd/conf.d/ssl.conf.orig
+      register: defsslorig
+    - name: RedHat | check if default ssl apache site
+      stat: path=/etc/httpd/conf.d/ssl.conf
+      register: defssl
+    - name: RedHat | Copy default ssl apache site
+      copy:
+        src: /etc/httpd/conf.d/ssl.conf.orig
+        dest: /etc/httpd/conf.d/ssl.conf
+        mode: '0644'
+      when: defsslorig.stat.exists and not defssl.stat.exists
+  when: (ansible_os_family == 'RedHat') and hardenwebserver_enable_defaultssl
+- block:
+    - name: RedHat | Ensure backup of default ssl apache site
+      stat: path=/etc/httpd/conf.d/ssl.conf.orig
+      register: defssl
+    - name: RedHat | Backup default ssl apache site
+      copy:
+        src: /etc/httpd/conf.d/ssl.conf
+        dest: /etc/httpd/conf.d/ssl.conf.orig
+        mode: '0600'
+    - name: RedHat | disable default ssl apache site
+      file: dest=/etc/httpd/conf.d/ssl.conf state=absent
+      notify:
+        - restart apache
+  when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
 
 - name: HTTP Public Key Pinning (HPKP) hash extraction
   shell: >
