@@ -18,6 +18,7 @@ modsecurity_active: /etc/httpd/modsecurity.d/activated_rules
 hardenwebserver_apachesecurityconf: /etc/httpd/conf.d/security.conf
 hardenwebserver_rootdir: /var/www/html
 
+## passlib requires EPEL
 hardenwebserver_packages:
     - python-passlib
     - httpd
