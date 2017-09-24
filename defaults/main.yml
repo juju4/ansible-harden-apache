@@ -59,3 +59,5 @@ harden_webserver_header_refpolicy: strict-origin-when-cross-origin
 harden_apache_sslciphersuite: 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
 harden_apache_sslprotocol: 'All -SSLv2 -SSLv3 -TLSv1'
 
+# https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
+harden_apache_securitytxt_template: security.txt.j2
