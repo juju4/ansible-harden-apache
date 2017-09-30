@@ -76,16 +76,26 @@
 - block:
     - name: RedHat | Ensure backup of default ssl apache site
       stat: path=/etc/httpd/conf.d/ssl.conf.orig
+      register: defsslorig
+    - name: RedHat | check if default ssl apache site
+      stat: path=/etc/httpd/conf.d/ssl.conf
       register: defssl
     - name: RedHat | Backup default ssl apache site
       copy:
         src: /etc/httpd/conf.d/ssl.conf
         dest: /etc/httpd/conf.d/ssl.conf.orig
         mode: '0600'
+      when: not defsslorig.stat.exists and defssl.stat.exists
     - name: RedHat | disable default ssl apache site
       file: dest=/etc/httpd/conf.d/ssl.conf state=absent
       notify:
         - restart apache
+    - name: Ensure httpd is listening on port 443
+      lineinfile:
+        dest: /etc/httpd/httpd.conf
+        regexp: "^Listen 443"
+        line: "Listen 443"
+        backup: yes
   when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
 
 - name: HTTP Public Key Pinning (HPKP) hash extraction
