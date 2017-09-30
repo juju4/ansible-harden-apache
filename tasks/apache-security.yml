@@ -70,7 +70,7 @@
   notify:
     - restart apache
 
-- name: Debian | include security config in default https virtualhost
+- name: include security config in default https virtualhost
   blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
@@ -79,22 +79,7 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
-
-- block:
-    - name: Redhat | check if ssl.conf exists
-      stat: path={{ apachesslconf }}
-      register: defssl
-    - name: RedHat | include security config in default https virtualhost
-      blockinfile:
-        dest: "{{ apachesslconf }}"
-        block: |
-                Include {{ apacheetc }}/harden-apache2-https.conf
-        marker: "# {mark} ANSIBLE MANAGED BLOCK: apache https hardening"
-        insertbefore: '^(\s*)</VirtualHost>'
-      notify:
-        - restart apache
-      when: defssl.stat.exists
-  when: ansible_os_family == 'RedHat'
+  when: hardenwebserver_enable_defaultssl
 
 - block:
     - name: Enabled extra security - apache2.conf
@@ -147,4 +132,9 @@
   file: dest=/var/www/html/index.html state=absent
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 
-
+- name: RedHat | Allow proxy to network connect in selinux
+  seboolean:
+    name: httpd_can_network_connect
+    state: "{% if hardenwebserver_proxy_redhat_selinux_allow %}yes{% else %}no{% endif %}"
+    persistent: yes
+  when: ansible_os_family == "RedHat"

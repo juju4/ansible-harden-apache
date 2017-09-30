@@ -11,7 +11,9 @@ Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"
 ## https://www.w3.org/TR/upgrade-insecure-requests/
 Header set Upgrade-Insecure-Requests "1"
 Header set X-XSS-Protection "1; mode=block"
+{% if hardenwebserver_header_csp is defined and hardenwebserver_header_csp != '' %}
 Header set Content-Security-Policy "{{ hardenwebserver_header_csp }}"
+{% endif %}
 Header set Referrer-Policy {{ harden_webserver_header_refpolicy }}
 ## Note: might break some app... need Apache 2.2.4+
 ## https://scotthelme.co.uk/csrf-is-dead/
