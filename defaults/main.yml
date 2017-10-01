@@ -12,6 +12,8 @@ hardenwebserver_https_noconfig: false
 hardenwebserver_remove_defaultindex: false
 # http://sysadminsjourney.com/content/2010/02/01/apache-modproxy-error-13permission-denied-error-rhel/
 hardenwebserver_proxy_redhat_selinux_allow: false
+# if you use unusual ports, they have to be allowed on redhat selinux
+#hardenwebserver_ports_redhat_selinux_allow: [ 8888, 5000 ]
 
 ## curl, wget, perl...
 hardenwebserver_block_downloadagents: false
