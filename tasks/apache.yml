@@ -5,10 +5,18 @@
   with_items: "{{ hardenwebserver_packages }}"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: yum | apache-security packages install
-  yum: name={{item}} state=present
-  with_items: "{{ hardenwebserver_packages }}"
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+- block:
+    - name: yum | apache-security packages install
+      yum: name={{item}} state=present
+      with_items: "{{ hardenwebserver_packages }}"
+      register: rpminstall
+
+    - name: RedHat7 | reload systemd
+      systemd:
+        daemon_reload: yes
+        name: httpd
+      when: ansible_distribution_version.split(".")[0] == '7' and rpminstall.changed
+  when: ansible_os_family == "RedHat"
 
 - include: apache-ssl.yml
 
