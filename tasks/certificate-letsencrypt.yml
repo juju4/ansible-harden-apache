@@ -23,7 +23,7 @@
     - name: export public user key
       shell: >
         openssl rsa -in {{ ssl_privatedir }}/user.key
-            -pubout 
+            -pubout
             > {{ ssl_privatedir }}/user.pub
             creates={{ ssl_privatedir }}/user.pub
     - name: ensure correct permissions of user key
@@ -34,7 +34,7 @@
   command: >
     openssl req -sha256 -nodes -newkey rsa:4096
         -keyout {{ ssl_privatedir }}/{{ ansible_fqdn }}.key
-        -subj "{{ hardenwebserver_certinfo }}/CN={{ certificate_cn }}" 
+        -subj "{{ hardenwebserver_certinfo }}/CN={{ certificate_cn }}"
         -out {{ ssl_dir }}/{{ ansible_fqdn }}.csr
         creates={{ ssl_dir }}/{{ ansible_fqdn }}.csr
 
