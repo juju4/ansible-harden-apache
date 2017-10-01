@@ -147,6 +147,8 @@
         name: httpd_can_network_connect
         state: yes
         persistent: yes
+## FIXME! kitchen/docker in travis seems to have ansible_selinux at true, https://travis-ci.org/juju4/ansible-harden-apache/jobs/281946068
+      ignore_errors: true
   when: ansible_os_family == "RedHat" and ansible_selinux
 
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Confined_Services/sect-Managing_Confined_Services-Configuration_examples-Changing_port_numbers.html
