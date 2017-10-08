@@ -1,0 +1,33 @@
+# {{ ansible_managed }}
+[libdefaults]
+  ticket_lifetime = {{ krb5_ticket_lifetime }}
+  default_realm = {{ harden_apache_ad_sso_domain | upper }}
+  dns_lookup_realm = true
+  dns_lookup_kdc = false
+  default_keytab_name = FILE:{{ harden_apache_ad_sso_keytab_dest }}
+ 
+[realms]
+  {{ harden_apache_ad_sso_domain | upper }} = {
+    kdc = {{ krb5_kdc }}
+    admin_server = {{ krb5_admin_server }}
+    default_domain = {{ harden_apache_ad_sso_domain | lower }}
+  }
+ 
+[domain_realm]
+  .{{ harden_apache_ad_sso_domain | lower }} = {{ harden_apache_ad_sso_domain | upper }}
+  {{ harden_apache_ad_sso_domain | lower }} = {{ harden_apache_ad_sso_domain | upper }}
+ 
+[appdefaults]
+  pam = {
+    debug = false
+    ticket_lifetime = 36000
+    renew_lifetime = 36000
+    forwardable = true
+    krb4_convert = false
+  }
+
+[logging]
+#  default = SYSLOG:NOTICE
+  default = FILE:/var/log/krb5libs.log
+  kdc = FILE:/var/log/krb5kdc.log
+  admin_server = FILE:/var/log/kadmind.log

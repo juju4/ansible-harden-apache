@@ -32,6 +32,8 @@
 - include: apache-bind-redhat.yml
   when: hardenwebserver_bind is defined and hardenwebserver_bind != "" and (ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
+- include: apache-ad-sso.yml
+  when: harden_apache_ad_sso
+
 - name: ensure apache is enabled and started
   service: name={{ apache_svc }} state=started enabled=yes
-

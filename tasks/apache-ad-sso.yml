@@ -1,0 +1,73 @@
+---
+# https://active-directory-wp.com/docs/Networking/Single_Sign_On/Kerberos_SSO_with_Apache_on_Linux.html
+# https://people.redhat.com/mskinner/rhug/q1.2014/Apache_httpd.pdf
+# https://www.server-world.info/en/note?os=CentOS_7&p=httpd&f=9
+# https://www.server-world.info/en/note?os=Ubuntu_16.04&p=httpd&f=12
+
+- name: Ensure kerberos packages are present for AD SSO
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ harden_apache_ad_sso_pkg }}"
+
+- name: Configure server keytab
+  copy:
+    src: "{{ harden_apache_ad_sso_keytab }}"
+    dest: "{{ harden_apache_ad_sso_keytab_dest }}"
+    owner: "{{ www_user }}"
+    group: root
+    mode: '0640'
+
+- name: Ensure DNS resolution is using domain - search
+  lineinfile:
+    dest: /etc/resolv.conf
+    regexp: "{{ item.re }}"
+    line: "{{ item.l }}"
+    backup: yes
+  with_items:
+    - { re: '^search .*', l: "search {{ harden_apache_ad_sso_domain }}" }
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+
+- name: Ensure DNS resolution is using domain - nameservers
+  lineinfile:
+    dest: /etc/resolv.conf
+    regexp: "^nameserver {{ item }}"
+    line: "nameserver {{ item }}"
+    backup: yes
+  with_items: "{{ harden_apache_ad_sso_domain_dns }}"
+  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+
+- name: Debian | Ensure required apache modules are loaded
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - auth_kerb
+  when: ansible_os_family == 'Debian'
+  notify:
+    - restart apache
+
+- name: Ensure htaccess directory paths exist
+  file:
+    dest: "{{ item }}"
+    mode: '0755'
+    state: directory
+  with_items: "{{ harden_apache_ad_sso_htaccess_path }}"
+
+- name: Add template SSO htaccess to listed path
+  template:
+    src: "{{ harden_apache_ad_sso_htaccess_template }}"
+    dest: "{{ item }}/.htaccess"
+    mode: '0644'
+    backup: yes
+  with_items: "{{ harden_apache_ad_sso_htaccess_path }}"
+
+# verify_krb5_conf is only available in heimdal-clients kerberos package
+#   and requires AD/kerberos server to be online
+- name: Configure local kerberos
+  template:
+    src: krb5.conf.j2
+    dest: /etc/krb5.conf
+    mode: '0644'
+    backup: yes
+#    validate: 'verify_krb5_conf %s'

@@ -48,4 +48,6 @@ suites:
     provisioner:
       name: ansible_playbook
       playbook: test/integration/default-vascan/default.yml
-
+  - name: default-ad-sso
+    run_list:
+    attributes:

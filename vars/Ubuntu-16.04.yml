@@ -24,3 +24,11 @@ hardenwebserver_packages:
 ## for Docker & netstat call in serverspec
     - net-tools
 
+harden_apache_ad_sso_pkg:
+## MIT or heimdal implementation?
+  - krb5-user
+#  - heimdal-clients
+  - krb5-config
+  - libkrb5-3
+  - libapache2-mod-auth-kerb
+harden_apache_ad_sso_keytab_dest: /etc/apache2/krb5.keytab

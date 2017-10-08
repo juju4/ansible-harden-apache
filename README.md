@@ -30,7 +30,8 @@ For example
 
 ## Variables
 
-Nothing specific for now.
+Among the different options, you have to configure Apache Single-Sign On with ActiveDirectory through Kerberos.
+Role does not include configuration on Windows side and can't be part of Continuous Testing so review carefully before using in production.
 
 ## Continuous integration
 
@@ -54,6 +55,17 @@ $ vagrant ssh
 
 ## Troubleshooting & Known issues
 
+* To validate AD SSO with Kerberos
+```
+$ kinit <account>@LOCAL.DOMAIN
+$ klist
+$ kvno HTTP/<fqdn@LOCAL.DOMAIN>
+$ kinit -k -t /etc/apache2/krb5.keytab HTTP/<fqdn@LOCAL.DOMAIN>
+```
+
+## Extras
+
+* If you want to warn users who use old browsers, the following projects are among the options to add little warnings: (browser-update.org)[https://browser-update.org/], (outdatedbrowser.com)[http://outdatedbrowser.com/]
 
 ## License
 

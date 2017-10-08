@@ -22,3 +22,10 @@ hardenwebserver_packages:
     - python-passlib
     - apache2
 
+harden_apache_ad_sso_pkg:
+#  - krb5-clients
+  - krb5-config
+  - krb5-user
+  - libkrb5-3
+  - libapache2-mod-auth-kerb
+harden_apache_ad_sso_keytab_dest: /etc/apache2/krb5.keytab

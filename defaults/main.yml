@@ -66,3 +66,22 @@ harden_apache_sslprotocol: 'All -SSLv2 -SSLv3 -TLSv1'
 
 # https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
 harden_apache_securitytxt_template: security.txt.j2
+
+# ActiveDirectory SSO with kerberos?
+harden_apache_ad_sso: false
+# Reminder: IE or Firefox will need local configuration to send kerberos token
+harden_apache_ad_sso_keytab: keytab.txt
+# Need a dedicated user and a principal ticket. latter must match webserver fqdn. Crypto choice must be supported by client.
+# https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/ktpass
+# http://blog.tgbits.com/2013/05/27/creating-keytab-file-with-multiple-select-crypto-types/
+# WinDC> ktpass -princ HTTP/<fqdn@REALM> -mapuser <DOMAIN\account> -crypto AES256-SHA1 +rndPass -ptype KRB5_NT_PRINCIPAL -out keytab.txt
+harden_apache_ad_sso_domain: local.domain
+harden_apache_ad_sso_domain_dns:
+  - 192.168.1.1
+# or use virtualhost config
+harden_apache_ad_sso_htaccess_template: htaccess-sso.j2
+harden_apache_ad_sso_htaccess_path:
+  - /var/www/html/sso/.htaccess
+krb5_ticket_lifetime: 24000
+krb5_kdc: dc-1.local.domain
+krb5_admin_server: dc-1.local.domain

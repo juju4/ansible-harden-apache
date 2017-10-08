@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+<Files "*">
+  <Limit GET POST>
+    AuthName "Kerberos Login"
+    AuthType Kerberos
+    Krb5Keytab {{ harden_apache_ad_sso_keytab_dest }}
+    KrbAuthRealms {{ harden_apache_ad_sso_domain | upper }}
+    KrbMethodNegotiate On
+    KrbMethodK5Passwd Off
+    KrbSaveCredentials Off
+    KrbVerifyKDC off
+    Require valid-user
+  </Limit>
+</Files>
