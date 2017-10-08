@@ -15,7 +15,7 @@
       systemd:
         daemon_reload: yes
         name: httpd
-      when: ansible_distribution_version.split(".")[0] == '7' and rpminstall.changed
+      when: ansible_distribution_version.split(".")[0] == '7' and rpminstall.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
   when: ansible_os_family == "RedHat"
 
 - include: apache-ssl.yml
