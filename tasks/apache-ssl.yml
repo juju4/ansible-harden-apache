@@ -90,12 +90,13 @@
       file: dest=/etc/httpd/conf.d/ssl.conf state=absent
       notify:
         - restart apache
-    - name: Ensure httpd is listening on port 443
+    - name: Ensure httpd is listening on extra ports
       lineinfile:
         dest: /etc/httpd/httpd.conf
-        regexp: "^Listen 443"
-        line: "Listen 443"
+        regexp: "^Listen {{ item }}$"
+        line: "Listen {{ item }}"
         backup: yes
+      with_items: "{{ harden_apache_extra_ports }}"
   when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
 
 - name: HTTP Public Key Pinning (HPKP) hash extraction

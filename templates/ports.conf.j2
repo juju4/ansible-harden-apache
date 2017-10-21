@@ -21,4 +21,7 @@ Listen {{ ip }}:80
 {% endfor %}
 </IfModule>
 
+{% for port in harden_apache_extra_ports %}
+Listen {{ port }}
+{% endfor %}
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
