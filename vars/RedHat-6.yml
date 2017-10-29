@@ -16,7 +16,7 @@ apachesslconf: /etc/httpd/conf.d/ssl.conf
 modsecurity_conf: /etc/httpd/conf.d/mod_security.conf
 modsecurity_active: /etc/httpd/modsecurity.d/activated_rules
 hardenwebserver_apachesecurityconf: /etc/httpd/conf.d/security.conf
-hardenwebserver_rootdir: /var/www/html
+_hardenwebserver_rootdir: "{{ hardenwebserver_rootdir | default('/var/www/html') }}"
 
 hardenwebserver_packages:
     - python-passlib

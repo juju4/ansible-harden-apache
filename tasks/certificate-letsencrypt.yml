@@ -61,10 +61,10 @@
 
 #- debug: var=le_challenge
 - name: ensure letsencrypt directory exists
-  file: "dest={{ hardenwebserver_rootdir }}/.well-known/acme-challenge state=directory mode=0755"
+  file: "dest={{ _hardenwebserver_rootdir }}/.well-known/acme-challenge state=directory mode=0755"
 - name: add public file to www dir to fullfill letsencrypt challenge
   copy:
-     dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
+     dest: "{{ _hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
      content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"
   when: le_challenge|changed
 

@@ -5,7 +5,7 @@
 - name: Ensure security.txt is present - draft-foudil-securitytxt-00
   template:
     src: "{{ harden_apache_securitytxt_template }}"
-    dest: "{{ hardenwebserver_rootdir }}/security.txt"
+    dest: "{{ _hardenwebserver_rootdir }}/security.txt"
     mode: '0644'
     backup: yes
   when: harden_apache_securitytxt_template is defined and harden_apache_securitytxt_template != ''
