@@ -5,7 +5,7 @@ $ModLoad imfile
 #$ModLoad omelasticsearch
 $InputFilePollInterval 10 
 $PrivDropToGroup adm
-$WorkDirectory /var/spool/rsyslog
+$WorkDirectory {{ rsyslog_workdirectory }}
 
 # Apache access file:
 $InputFileName {{ apache_logdir }}/access*log

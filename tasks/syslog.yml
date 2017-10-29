@@ -9,6 +9,15 @@
     name: rsyslog
     state: present
 
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-working_with_queues_in_rsyslog#sec-Creating_a_New_Directory_for_rsyslog_Log_Files
+- name: Ensure rsyslog work directory exists
+  file:
+    dest: "{{ rsyslog_workdirectory }}"
+    state: directory
+    mode: '0755'
+    setype: syslogd_var_lib_t
+  when: ansible_os_family == 'RedHat'
+
 - name: Configure rsyslog to ingest apache logs
   template:
     src: "{{ harden_apache_rsyslog_template }}"

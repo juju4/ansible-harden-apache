@@ -19,6 +19,8 @@ modsecurity_active: /usr/share/modsecurity-crs/activated_rules
 hardenwebserver_apachesecurityconf: /etc/apache2/conf-available/security.conf
 _hardenwebserver_rootdir: "{{ hardenwebserver_rootdir | default('/var/www/html') }}"
 
+rsyslog_workdirectory: /var/spool/rsyslog
+
 hardenwebserver_packages:
     - python-passlib
     - apache2
