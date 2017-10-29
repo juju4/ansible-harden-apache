@@ -11,6 +11,7 @@ It was tested on the following versions:
  * 2.1
  * 2.2 (required for letsencrypt module)
  * 2.3
+ * 2.4
 If want to use role with pre-2.2 ansible, comment letsencrypt tasks include in tasks/apache-ssl.yml.
 
 ### Operating systems
