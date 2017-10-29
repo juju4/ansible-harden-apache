@@ -85,6 +85,7 @@
         src: /etc/httpd/conf.d/ssl.conf
         dest: /etc/httpd/conf.d/ssl.conf.orig
         mode: '0600'
+        remote_src: true
       when: not defsslorig.stat.exists and defssl.stat.exists
     - name: RedHat | disable default ssl apache site
       file: dest=/etc/httpd/conf.d/ssl.conf state=absent
