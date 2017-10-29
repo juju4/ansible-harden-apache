@@ -30,6 +30,9 @@ hardenwebserver_bind: ''
 # do we need extra ports to listen?
 harden_apache_extra_ports: []
 
+harden_apache_use_syslog: false
+harden_apache_rsyslog_template: 'rsyslog-apache.conf.j2'
+
 hardenwebserver_cert: selfsigned
 hardenwebserver_certinfo: '/C=US/ST=CA/L=San Francisco/O=Ansible'
 hardenwebserver_certduration: 1095

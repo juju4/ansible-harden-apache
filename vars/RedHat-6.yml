@@ -11,6 +11,7 @@ apache_svc: httpd
 apacheetc: /etc/httpd
 apache_confdir: /etc/httpd/conf.d
 apache_sitedir: /etc/httpd/conf.d
+apache_logdir: /var/log/httpd
 apacheconf: /etc/httpd/conf/httpd.conf
 apachesslconf: /etc/httpd/conf.d/ssl.conf
 modsecurity_conf: /etc/httpd/conf.d/mod_security.conf

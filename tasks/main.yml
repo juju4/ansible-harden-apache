@@ -16,3 +16,6 @@
 - include: slow.yml
 
 - include: security-txt.yml
+
+- include: syslog.yml
+  when: harden_apache_use_syslog

@@ -11,6 +11,7 @@ apache_svc: apache2
 apacheetc: /etc/apache2
 apache_confdir: /etc/apache2/conf-available
 apache_sitedir: /etc/apache2/sites-available
+apache_logdir: /var/log/apache2
 apacheconf: /etc/apache2/sites-available/000-default.conf
 apachesslconf: /etc/apache2/sites-available/default-ssl.conf
 modsecurity_conf: /etc/modsecurity/modsecurity.conf

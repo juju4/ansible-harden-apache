@@ -1,0 +1,28 @@
+# minimal version of rsyslog?
+
+$ModLoad imfile
+#$ModLoad mmnormalize
+#$ModLoad omelasticsearch
+$InputFilePollInterval 10 
+$PrivDropToGroup adm
+$WorkDirectory /var/spool/rsyslog
+
+# Apache access file:
+$InputFileName {{ apache_logdir }}/access*log
+$InputFileTag apache-access:
+$InputFileStateFile stat-apache-access
+$InputFileSeverity info
+$InputFilePersistStateInterval 20000
+$InputRunFileMonitor
+
+#Apache Error file: 
+$InputFileName {{ apache_logdir }}/error*log
+$InputFileTag apache-error:
+$InputFileStateFile stat-apache-error
+$InputFileSeverity error
+$InputFilePersistStateInterval 20000
+$InputRunFileMonitor
+
+# Filters?
+#if $msg contains ' 500 ' and $programname == 'apache2-access' then @@
+#if $programname == 'apache2-access' then @@remotesyslog

@@ -45,3 +45,6 @@ suites:
   - name: default-ad-sso
     run_list:
     attributes:
+  - name: default-syslog
+    run_list:
+    attributes:

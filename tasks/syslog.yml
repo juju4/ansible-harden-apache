@@ -1,0 +1,21 @@
+---
+# http://www.rsyslog.com/recipe-apache-logs-rsyslog-parsing-elasticsearch/
+# https://www.loggly.com/ultimate-guide/centralizing-apache-logs/
+# * rsyslog existing apache log ingestion, with json or not
+# * apache pipe to logger
+
+- name: Ensure rsyslog is present
+  package:
+    name: rsyslog
+    state: present
+
+- name: Configure rsyslog to ingest apache logs
+  template:
+    src: "{{ harden_apache_rsyslog_template }}"
+    dest: "/etc/rsyslog.d/apache2syslog"
+    owner: root
+    group: root
+    mode: '0644'
+    validate: 'rsyslogd -N2 -f %s'
+  notify:
+    - restart rsyslog
