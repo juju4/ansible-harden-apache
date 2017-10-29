@@ -1,5 +1,8 @@
 ---
 
+# using non-standard root dir?
+#hardenwebserver_rootdir: ''
+
 hardenwebserver_apache_modsecurity_engine: 'DetectionOnly'
 #hardenwebserver_apache_modsecurity_engine: 'On'
 
@@ -65,7 +68,7 @@ harden_webserver_header_refpolicy: origin
 ## https://www.ssi.gouv.fr/uploads/2017/02/security-recommendations-for-tls_v1.1.pdf
 ## https://bettercrypto.org/static/applied-crypto-hardening.pdf
 harden_apache_sslciphersuite: 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
-harden_apache_sslprotocol: 'All -SSLv2 -SSLv3 -TLSv1'
+harden_apache_sslprotocol: 'All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1'
 
 # https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
 harden_apache_securitytxt_template: security.txt.j2
