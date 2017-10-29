@@ -10,16 +10,11 @@ SSLOpenSSLConfCmd DHParameters "{{ ssl_privatedir }}/dhparam.pem"
 
 {% endif %}
 # Requires Apache >= 2.4
-## Note: SSLStaplingCache cannot occur within <VirtualHost> section
 SSLCompression off 
-{% if ansible_distribution_release != 'trusty' and ansible_distribution_release != 'xenial' %}
-#SSLUseStapling on 
-#SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
 ## needs to be created, not possible to test with self-signed certificate
 #SSLCACertificateFile /etc/ssl/ca-certs.pem
 {% if hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt' %}
 SSLCACertificateFile {{ ssl_dir }}/ca-certs.pem
-{% endif %}
 {% endif %}
 
 {% if hardenwebserver_apache_sessiontickets is not defined or not hardenwebserver_apache_sessiontickets %}
