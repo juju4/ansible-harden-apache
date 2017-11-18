@@ -101,3 +101,5 @@ harden_apache_ad_sso_htaccess_path:
 krb5_ticket_lifetime: 24000
 krb5_kdc: dc-1.local.domain
 krb5_admin_server: dc-1.local.domain
+
+harden_apache_testing: false

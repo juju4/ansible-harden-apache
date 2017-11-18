@@ -19,3 +19,6 @@
 
 - include: syslog.yml
   when: harden_apache_use_syslog
+
+- include: testing.yml
+  when: harden_apache_testing

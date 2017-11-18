@@ -1,0 +1,55 @@
+---
+# https://nghttp2.org/documentation/h2load-howto.html
+
+- name: testing | git clone h2load repository
+  git:
+    repo: https://github.com/nghttp2/nghttp2.git
+    dest: /var/tmp/nghttp2
+    update: no
+
+- name: testing | ensure h2load dependencies are present
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ testing_h2load_deps }}"
+  
+- name: testing | build h2load
+  command: "{{ item }}"
+  with_items:
+    - git submodule update --init
+    - autoreconf -i
+    - automake
+    - autoconf
+    - ./configure
+    - make
+  args:
+    chdir: /var/tmp/nghttp2
+
+- name: testing | executing h2load
+  command: "{{ item }}"
+  with_items:
+    - h2load -n100000 -c100 -m10 https://localhost
+
+testing_h2load_deps:
+  - g++
+  - make
+  - binutils
+  - autoconf
+  - automake
+  - autotools-dev
+  - libtool
+  - pkg-config
+  - zlib1g-dev
+  - libcunit1-dev
+  - libssl-dev
+  - libxml2-dev
+  - libev-dev
+  - libevent-dev
+  - libjansson-dev
+  - libc-ares-dev
+  - libjemalloc-dev
+  - libsystemd-dev
+  - libspdylay-dev
+  - cython
+  - python3-dev
+  - python-setuptools

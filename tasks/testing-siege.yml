@@ -1,0 +1,37 @@
+---
+# https://www.joedog.org/articles-tuning/
+# https://www.sonassi.com/blog/magento-kb/why-siege-isnt-an-accurate-test-tool-for-magento-performance
+# https://blog.sucuri.net/2017/03/testing-the-impacts-of-website-caching-tools.html
+# http://blog.loadimpact.com/open-source-load-testing-tool-benchmarks
+
+testing_target: http://localhost
+testing_siege_duration: 5m
+#testing_siege_args: '-f urls.txt'
+
+- name: testing | Ensure packages are present
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - siege
+    - sysstat
+
+- name: testing | check siege configuration
+  lineinfile:
+    dest: /root/.siegerc
+    line: "{{ item }}"
+  with_items:
+    - "logfile = $(HOME)/siege.log"
+
+- name: testing | launch siege with different concurrencies
+  command: "{{ item }}"
+  with_items:
+    - "siege -c1 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
+    - sleep 60
+    - "siege -c20 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
+    - sleep 60
+    - "siege -c100 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
+    - sleep 60
+    - "siege -d1 -c200 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
+    - sleep 60
+

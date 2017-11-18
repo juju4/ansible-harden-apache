@@ -1,6 +1,7 @@
 ---
 
 - hosts: all
+  vars:
+    - harden_apache_testing: true
   roles:
     - juju4.harden-apache
-
