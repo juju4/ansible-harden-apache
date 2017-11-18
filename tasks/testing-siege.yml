@@ -4,10 +4,6 @@
 # https://blog.sucuri.net/2017/03/testing-the-impacts-of-website-caching-tools.html
 # http://blog.loadimpact.com/open-source-load-testing-tool-benchmarks
 
-testing_target: http://localhost
-testing_siege_duration: 5m
-#testing_siege_args: '-f urls.txt'
-
 - name: testing | Ensure packages are present
   package:
     name: "{{ item }}"
@@ -34,4 +30,3 @@ testing_siege_duration: 5m
     - sleep 60
     - "siege -d1 -c200 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
     - sleep 60
-
