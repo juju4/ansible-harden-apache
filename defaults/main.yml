@@ -3,6 +3,9 @@
 # using non-standard root dir?
 #hardenwebserver_rootdir: ''
 
+hardenwebserver_apache_mod_disable:
+  - status
+
 hardenwebserver_apache_modsecurity_engine: 'DetectionOnly'
 #hardenwebserver_apache_modsecurity_engine: 'On'
 
@@ -53,10 +56,11 @@ hardenwebserver_cert_pinning: false
 ## https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 #hardenwebserver_header_csp: "default-src self"
 ## this settings is necessary for default ubuntu or centos page
-hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'; upgrade-insecure-requests;"
+hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'; upgrade-insecure-requests; report-uri /csp/report.php"
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self';"
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri https://xxxx.report-uri.io/r/default/csp/enforce"
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri-report-only https://xxxx.report-uri.io/r/default/csp/reportOnly"
+harden_apache_cspreport_template: csp-hotline.php.j2
 
 ## https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 harden_webserver_header_refpolicy: origin
@@ -72,6 +76,9 @@ harden_webserver_header_refpolicy: origin
 ## https://bettercrypto.org/static/applied-crypto-hardening.pdf
 harden_apache_sslciphersuite: 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
 harden_apache_sslprotocol: 'All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1'
+
+## review php settings?
+harden_apache_php: true
 
 # https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
 harden_apache_securitytxt_template: security.txt.j2
