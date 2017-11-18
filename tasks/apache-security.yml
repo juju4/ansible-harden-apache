@@ -14,6 +14,13 @@
     - restart apache
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+- name: Disable identified modules
+  apache2_module: state=absent name="{{ item }}"
+  with_items: "{{ hardenwebserver_apache_mod_disable }}"
+  notify:
+    - restart apache
+  ignore_errors: true
+
 - name: restrict permissions on apache configuration dir
   file: dest={{ apacheetc }} mode=0750 state=directory owner=root group={{ www_user }}
 - name: restrict permissions on few apache configuration files
