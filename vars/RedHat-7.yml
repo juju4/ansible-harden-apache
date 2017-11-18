@@ -26,6 +26,12 @@ hardenwebserver_packages:
     - python-passlib
     - httpd
 
+harden_apache_php:
+  - php
+harden_apache_phpdir: /etc/php
+harden_apache_phpini: /etc/php.ini
+_harden_apache_php_variants: "{{ harden_apache_php_variants | default(['apache2', 'cli']) }}"
+
 harden_apache_ad_sso_pkg:
   - krb5-libs
   - krb5-workstation
