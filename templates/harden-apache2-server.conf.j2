@@ -19,6 +19,8 @@ Header set Referrer-Policy {{ harden_webserver_header_refpolicy }}
 ## Note: might break some app... need Apache 2.2.4+
 ## https://scotthelme.co.uk/csrf-is-dead/
 Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure;SameSite
+# want to be indexed by search engine?
+Header set X-Robots-Tag none
 </IfModule>
 
 {# if not trusty, inside harden-apache-https/virtualhost section #}
