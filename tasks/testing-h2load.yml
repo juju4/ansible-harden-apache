@@ -22,6 +22,7 @@
     - autoconf
     - ./configure
     - make
+    - make install
   args:
     chdir: /var/tmp/nghttp2
 
