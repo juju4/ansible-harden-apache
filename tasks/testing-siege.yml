@@ -16,6 +16,7 @@
   lineinfile:
     dest: /root/.siegerc
     line: "{{ item }}"
+    create: yes
   with_items:
     - "logfile = $(HOME)/siege.log"
 
