@@ -29,27 +29,3 @@
   command: "{{ item }}"
   with_items:
     - h2load -n100000 -c100 -m10 https://localhost
-
-testing_h2load_deps:
-  - g++
-  - make
-  - binutils
-  - autoconf
-  - automake
-  - autotools-dev
-  - libtool
-  - pkg-config
-  - zlib1g-dev
-  - libcunit1-dev
-  - libssl-dev
-  - libxml2-dev
-  - libev-dev
-  - libevent-dev
-  - libjansson-dev
-  - libc-ares-dev
-  - libjemalloc-dev
-  - libsystemd-dev
-  - libspdylay-dev
-  - cython
-  - python3-dev
-  - python-setuptools
