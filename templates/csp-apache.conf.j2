@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+<FilesMatch "^/csp/report.php">
+    SetHandler application/x-httpd-php
+    Order allow,deny
+    Satisfy all
+</FilesMatch>
+
+<FilesMatch "/csp/log">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+<Directory /csp/log/>
+     php_admin_value engine Off
+</Directory>

@@ -1,0 +1,45 @@
+---
+# install a basic csp report log file, consider alternatives if production
+
+- name: ensure csp directories exist
+  file:
+    dest: "{{ item.d }}"
+    state: directory
+    owner: "{{ item.o }}"
+    mode: "{{ item.m }}"
+  with_items:
+    - { d: "{{ _hardenwebserver_rootdir }}/csp", o: root, m: '0755' }
+    - { d: "{{ _hardenwebserver_rootdir }}/csp/log", o: "{{ www_user }}", m: '0755' }
+
+- name: configure csp-report script
+  template:
+    src: "{{ harden_apache_cspreport_template }}"
+    dest: "{{ _hardenwebserver_rootdir }}/csp/report.php"
+    mode: '0644'
+    backup: yes
+
+- name: Ensure php is present
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ harden_apache_php }}"
+
+- name: push csp configuration
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ apache_confdir }}/{{ item }}"
+    mode: 0644
+  with_items:
+    - csp-apache.conf
+  notify:
+    - restart apache
+- name: enable csp configuration
+  file:
+    src: "{{ apache_confdir }}/{{ item }}"
+    dest: "/etc/apache2/conf-enabled/{{ item }}"
+    state: link
+  with_items:
+    - csp-apache.conf
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
