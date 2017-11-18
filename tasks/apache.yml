@@ -32,6 +32,12 @@
 - include: apache-bind-redhat.yml
   when: hardenwebserver_bind is defined and hardenwebserver_bind != "" and (ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
 
+- include: php.yml
+  when: harden_apache_php is defined and harden_apache_php
+
+- include: csp-report.yml
+  when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template != ''
+
 - include: apache-ad-sso.yml
   when: harden_apache_ad_sso
 
