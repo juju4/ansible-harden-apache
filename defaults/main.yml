@@ -61,6 +61,7 @@ hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inlin
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri https://xxxx.report-uri.io/r/default/csp/enforce"
 #hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri-report-only https://xxxx.report-uri.io/r/default/csp/reportOnly"
 harden_apache_cspreport_template: csp-hotline.php.j2
+hardenwebserver_header_expectct: 'max-age=0, report-uri,report-uri=/csp/report.php'
 
 ## https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 harden_webserver_header_refpolicy: origin
