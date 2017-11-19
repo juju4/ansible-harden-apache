@@ -18,7 +18,7 @@
     line: "{{ item }}"
     create: yes
   with_items:
-    - "logfile = $(HOME)/siege.log"
+    - "logfile = /tmp/siege.log"
 
 - name: testing | launch siege with different concurrencies
   command: "{{ item }}"

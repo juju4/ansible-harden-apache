@@ -37,3 +37,24 @@ harden_apache_ad_sso_pkg:
   - krb5-workstation
   - mod_auth_kerb
 harden_apache_ad_sso_keytab_dest: /etc/httpd/krb5.keytab
+
+testing_h2load_deps:
+  - "@Development tools"
+  - libevent
+  - libevent-devel
+  - libev
+  - libev-devel
+  - zlib-devel
+  - libxml2
+  - libxml2-devel
+  - libevent
+  - libevent-devel
+  - jansson-devel
+  - jemalloc-devel
+  - autoconf
+  - automake
+  - libtool
+  - openssl-devel
+  - c-ares-devel
+  - python34-devel
+  - python-setuptools

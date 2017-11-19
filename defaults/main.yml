@@ -103,6 +103,6 @@ krb5_kdc: dc-1.local.domain
 krb5_admin_server: dc-1.local.domain
 
 harden_apache_testing: false
-testing_target: http://localhost
+testing_target: https://localhost
 testing_siege_duration: 5m
 #testing_siege_args: '-f urls.txt'

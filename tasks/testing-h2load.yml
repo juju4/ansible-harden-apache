@@ -25,8 +25,13 @@
     - make install
   args:
     chdir: /var/tmp/nghttp2
+    creates: /usr/local/bin/h2load
+  register: build
+- name: run ldconfig
+  command: ldconfig
+  when: build.changed
 
 - name: testing | executing h2load
-  command: "{{ item }}"
+  shell: "{{ item }}"
   with_items:
-    - h2load -n100000 -c100 -m10 https://localhost
+    - "h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log"
