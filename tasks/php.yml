@@ -52,23 +52,15 @@
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | session.cookie_secure
-  replace:
+  lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
-    regexp: '^session.cookie_secure = .*'
-    replace: 'session.cookie_secure = true'
-  with_items: "{{ _harden_apache_php_variants }}"
-
-- name: PHP | session.cookie_secure
-  replace:
-    dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
-    regexp: '^session.cookie_secure = .*'
-    replace: 'session.cookie_secure = true'
+    regexp: '^session.cookie_secure =.*'
+    line: 'session.cookie_secure = true'
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | session.cookie_httponly
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
-    regexp: '^session.cookie_httponly = .*'
+    regexp: '^session.cookie_httponly =.*'
     replace: 'session.cookie_httponly = true'
   with_items: "{{ _harden_apache_php_variants }}"
-
