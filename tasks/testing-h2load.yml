@@ -35,3 +35,5 @@
   shell: "{{ item }}"
   with_items:
     - "h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log"
+  args:
+    creates: /tmp/h2load.log
