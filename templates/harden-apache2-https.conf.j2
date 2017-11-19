@@ -37,3 +37,5 @@ SSLCACertificateFile {{ ssl_dir }}/ca-certs.pem
 Header always set Public-Key-Pins pin-sha256="{{ hardenwebserver_cert_pinning_value.stdout }}"; max-age value 5184000; includeSubDomains
 {% endif %}
 
+## if mod_http2 available
+#Protocols h2 http/1.1

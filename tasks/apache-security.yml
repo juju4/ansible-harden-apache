@@ -10,6 +10,8 @@
     - reqtimeout
 ## ubuntu: ssl stapling
     - socache_shmcb
+# https://httpd.apache.org/docs/2.4/howto/http2.html
+#    - http2
   notify:
     - restart apache
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
