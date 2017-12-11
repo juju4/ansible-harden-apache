@@ -47,6 +47,12 @@ SetEnvIf Request_URI "^/favicon.ico$" dontlog
     Satisfy all
 </FilesMatch>
 
+# Disable .htaccess
+# https://httpd.apache.org/docs/2.2/howto/htaccess.html#when
+<Directory />
+    AllowOverride None
+</Directory>
+
 ## VA Scan
 ## way better between SetEnvIf and mod_rewrite?
 #SetEnvIf User-Agent sqlmap ua_vascan=1
