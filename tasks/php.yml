@@ -9,58 +9,65 @@
     state: present
   with_items: "{{ harden_apache_php }}"
 
+- name: PHP | Configure default time
+  replace:
+    dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
+    regexp: '^date.timezone = .*'
+    replace: "date.timezone = '{{ harden_php_date_timezone }}'"
+  with_items: "{{ _harden_apache_php_variants }}"
+
 - name: PHP | Disable expose php
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^expose_php = .*'
-    replace: 'expose_php = Off'
+    replace: "expose_php = {{ harden_php_expose_php }}"
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | Disable url_fopen
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^allow_url_fopen = .*'
-    replace: 'allow_url_fopen = Off'
+    replace: "allow_url_fopen = {{ harden_php_allow_url_fopen }}"
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | Disable many dangerous functions
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^disable_functions =.*'
-    replace: 'disable_functions = pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,chown,diskfreespace,disk_free_space,disk_total_space,dl,exec,escapeshellarg,escapeshellcmd,fileinode,highlight_file,max_execution_time,passthru,pclose,phpinfo,popen,proc_close,proc_open,proc_get_status,proc_nice,proc_open,proc_terminate,set_time_limit,shell_exec,show_source,system,serialize,unserialize,__construct, __destruct, __call,__wakeup'
+    replace: "disable_functions = {{ harden_php_disable_functions }}"
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | Memory limit
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^memory_limit = .*'
-    replace: 'memory_limit = 128M'
+    replace: "memory_limit = {{ harden_php_memory_limit }}"
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | Include path
   lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^include_path = .*'
-    line: 'include_path = /usr/share/php'
+    line: "include_path = {{ harden_php_include_path }}"
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | session.use_strict_mode
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^session.use_strict_mode = .*'
-    replace: 'session.use_strict_mode = 1'
+    replace: "session.use_strict_mode = {{ harden_php_session_use_strict_mode }}"
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | session.cookie_secure
   lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^session.cookie_secure =.*'
-    line: 'session.cookie_secure = true'
+    line: "session.cookie_secure = {{ harden_php_session_cookie_secure }}"
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | session.cookie_httponly
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^session.cookie_httponly =.*'
-    replace: 'session.cookie_httponly = true'
+    replace: "session.cookie_httponly = {{ harden_php_session_cookie_httponly }}"
   with_items: "{{ _harden_apache_php_variants }}"
