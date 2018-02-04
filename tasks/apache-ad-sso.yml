@@ -79,7 +79,7 @@
         dest: "{{ item }}/.htaccess"
         mode: '0644'
         backup: yes
-      with_items: "{{ harden_apache_ad_sso_htaccess_path }}"
+      with_items: "{{ harden_apache_ad_sso_dir_path }}"
   when: harden_apache_ad_sso_htaccess_template and harden_apache_ad_sso_htaccess_template != ''
 
 # verify_krb5_conf is only available in heimdal-clients kerberos package
