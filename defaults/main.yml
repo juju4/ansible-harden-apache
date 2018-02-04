@@ -105,7 +105,7 @@ harden_apache_ad_sso_domain: local.domain
 harden_apache_ad_sso_domain_dns:
   - 192.168.1.1
 # or use virtualhost config
-harden_apache_ad_sso_conf_template: harden-apache2-ad-sso.conf.j2
+harden_apache_ad_sso_conf_template: harden-apache2-ad-sso.conf
 harden_apache_ad_sso_dir_path:
   - /var/www/html/sso
 # or with .htaccess (disabled by default)
