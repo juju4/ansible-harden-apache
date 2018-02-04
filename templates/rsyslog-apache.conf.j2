@@ -8,8 +8,6 @@ $ActionResumeRetryCount     -1      # infinite retries if host is down
 $ActionQueueSaveOnShutdown  on      # save messages to disk on shutdown
 $ActionQueueTimeoutEnqueue  0       # Drop messages with no wait when they can’t be queued
 
-{% if syslogclient_use_tcp is defined and syslogclient_use_tcp %}
-
 $ModLoad imfile
 #$ModLoad mmnormalize
 #$ModLoad omelasticsearch
