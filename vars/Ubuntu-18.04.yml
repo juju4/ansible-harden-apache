@@ -26,6 +26,8 @@ hardenwebserver_packages:
     - apache2
 ## for Docker & netstat call in serverspec
     - net-tools
+# serverspec testing
+    - iproute2
 
 harden_apache_php:
   - libapache2-mod-php7.2
