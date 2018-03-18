@@ -25,6 +25,10 @@ hardenwebserver_packages:
     - python-passlib
     - httpd
 
+harden_apache_modsecurity:
+  - mod_security
+  - mod_security_crs
+
 harden_apache_ad_sso_pkg:
   - krb5-libs
   - krb5-workstation

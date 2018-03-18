@@ -32,6 +32,9 @@ harden_apache_php:
 harden_apache_phpdir: /etc/php/7.0
 _harden_apache_php_variants: "{{ harden_apache_php_variants | default(['apache2', 'cli']) }}"
 
+harden_apache_modsecurity:
+  - libapache2-modsecurity
+
 harden_apache_ad_sso_pkg:
 ## MIT or heimdal implementation?
   - krb5-user
