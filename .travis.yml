@@ -14,6 +14,11 @@ env:
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
     suite: default
   - distribution: ubuntu
+    version: 18.04
+    init: /lib/systemd/systemd
+    run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
+    suite: default
+  - distribution: ubuntu
     version: 16.04
     init: /lib/systemd/systemd
     run_opts: "'--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'"
