@@ -1,0 +1,114 @@
+---
+
+# FIXME!
+- name: active base rules
+  file: src="/usr/share/modsecurity-crs/base_rules/{{ item }}" dest="{{ modsecurity_active }}/{{ item }}" state=link
+#  with_fileglob:
+#    - /usr/share/modsecurity-crs/base_rules/*
+  with_items:
+    - modsecurity_35_bad_robots.data
+    - modsecurity_35_scanners.data
+    - modsecurity_40_generic_attacks.data
+    - modsecurity_50_outbound.data
+    - modsecurity_50_outbound_malware.data
+    - modsecurity_crs_20_protocol_violations.conf
+    - modsecurity_crs_21_protocol_anomalies.conf
+    - modsecurity_crs_23_request_limits.conf
+    - modsecurity_crs_30_http_policy.conf
+    - modsecurity_crs_35_bad_robots.conf
+    - modsecurity_crs_40_generic_attacks.conf
+    - modsecurity_crs_41_sql_injection_attacks.conf
+    - modsecurity_crs_41_xss_attacks.conf
+    - modsecurity_crs_42_tight_security.conf
+    - modsecurity_crs_45_trojans.conf
+    - modsecurity_crs_47_common_exceptions.conf
+#    - modsecurity_crs_48_local_exceptions.conf.example
+    - modsecurity_crs_49_inbound_blocking.conf
+    - modsecurity_crs_50_outbound.conf
+    - modsecurity_crs_59_outbound_blocking.conf
+    - modsecurity_crs_60_correlation.conf
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+- name: activate some optional rules
+  file:
+    src: "/usr/share/modsecurity-crs/optional_rules/{{ item }}"
+    dest: "{{ modsecurity_active }}/{{ item }}"
+    state: link
+  with_items:
+    - modsecurity_42_comment_spam.data
+    - modsecurity_crs_10_ignore_static.conf
+    - modsecurity_crs_11_avs_traffic.conf
+    - modsecurity_crs_13_xml_enabler.conf
+    - modsecurity_crs_16_authentication_tracking.conf
+    - modsecurity_crs_16_session_hijacking.conf
+    - modsecurity_crs_16_username_tracking.conf
+    - modsecurity_crs_25_cc_known.conf
+    - modsecurity_crs_42_comment_spam.conf
+## creating a lot of noise w icingaweb2
+#    - modsecurity_crs_43_csrf_protection.conf
+    - modsecurity_crs_46_av_scanning.conf
+    - modsecurity_crs_47_skip_outbound_checks.conf
+    - modsecurity_crs_49_header_tagging.conf
+    - modsecurity_crs_55_application_defects.conf
+    - modsecurity_crs_55_marketing.conf
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+- name: activate some experimental rules
+  file:
+    src: "/usr/share/modsecurity-crs/experimental_rules/{{ item }}"
+    dest: "{{ modsecurity_active }}/{{ item }}"
+    state: link
+  with_items:
+    - modsecurity_crs_11_brute_force.conf
+    - modsecurity_crs_11_slow_dos_protection.conf
+    - modsecurity_crs_11_dos_protection.conf
+    - modsecurity_crs_25_cc_track_pan.conf
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Xenial | SecReadStateLimit is depricated, use SecConnReadStateLimit instead
+  replace: dest={{ item }} regexp=SecReadStateLimit replace=SecConnReadStateLimit backup=yes
+  with_items:
+    - "{{ modsecurity_active }}/modsecurity_crs_49_header_tagging.conf"
+    - "/usr/share/modsecurity-crs/experimental_rules/modsecurity_crs_11_slow_dos_protection.conf"
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+#- file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_21_protocol_anomalies.conf state=absent
+## Note: enable this line if you want to get debug/software errors information
+#- file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_50_outbound.conf state=absent
+
+- name: ensure modsecurity_active dir has right permissions
+  file: dest="{{ modsecurity_active }}" state=directory mode=0755
+- name: add additional rules - exceptions
+  copy: "src={{ item }} dest={{ modsecurity_active }}/{{ item }} mode=0644"
+  with_items:
+    - modsecurity_crs_90_exceptions.conf
+  notify:
+    - restart apache
+
+- name: extra config against slow and low attacks
+  template: src=modsecurity_crs_80_slow.conf.j2 dest="{{ modsecurity_active }}/modsecurity_crs_80_slow.conf" mode=0644
+  notify:
+    - restart apache
+
+## http://owasp-modsecurity-core-rule-set.owasp.narkive.com/EMuDdaw9/syntax-error-on-line-51-of-etc-modsecurity-activated-rules-modsecurity-crs-16-session-hijacking-conf
+- name: syntax error fix for modsecurity session hijacking
+  replace: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_16_session_hijacking.conf regexp='^        SecRule TX:1 ".*" "chain,t:sha1,t:hexEncode,setvar:session.ip_hash' replace='        SecRule TX:1 ".*" "t:sha1,t:hexEncode,setvar:session.ip_hash' follow=yes
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+
+- name: review modsecurity.conf (2)
+  lineinfile: dest="{{ modsecurity_conf }}" line="{{ item }}" backup=yes
+  with_items:
+## https://isc.sans.edu/diary/Tracking+HTTP+POST+data+with+ELK/20345
+    - 'SecRule REQUEST_METHOD POST id:1000,phase:2,ctl:auditEngine=On,nolog,pass'
+## https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual#sanitiseArg
+    - 'SecAction nolog,phase:2,id:131,sanitiseArg:password,sanitiseArg:newPassword,sanitiseArg:oldPassword'
+    - 'Include "/usr/share/modsecurity-crs/*.conf"'
+    - 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"'
+  notify:
+    - restart apache
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
