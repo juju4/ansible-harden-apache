@@ -47,6 +47,16 @@ SetEnvIf Request_URI "^/favicon.ico$" dontlog
     Satisfy all
 </FilesMatch>
 
+# https://stackoverflow.com/questions/1653308/access-control-allow-origin-multiple-origin-domains
+# https://www.w3.org/TR/cors/
+# Allow loading of external fonts
+#<FilesMatch "\.(ttf|otf|eot|woff)$">
+#    <IfModule mod_headers.c>
+#        SetEnvIf Origin "http(s)?://(www\.)?(google.com|staging.google.com|development.google.com|otherdomain.net|dev02.otherdomain.net)$" AccessControlAllowOrigin=$0
+#        Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+#    </IfModule>
+#</FilesMatch>
+
 # Disable .htaccess
 # https://httpd.apache.org/docs/2.2/howto/htaccess.html#when
 <Directory />
