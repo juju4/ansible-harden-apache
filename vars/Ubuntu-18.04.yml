@@ -31,6 +31,7 @@ hardenwebserver_packages:
 
 harden_apache_php:
   - libapache2-mod-php7.2
+php_confext: ini
 harden_apache_phpdir: /etc/php/7.2
 _harden_apache_php_variants: "{{ harden_apache_php_variants | default(['apache2', 'cli']) }}"
 snuffleupagus_pkgs:
