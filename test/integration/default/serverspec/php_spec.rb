@@ -17,6 +17,13 @@ describe command('php -i') do
   its(:stdout) { should contain('PHP Version =>') }
 end
 
+describe command('php -i'), :if => os[:family] == 'ubuntu' && os[:release] == '16.04' do
+  its(:stdout) { should contain('snuffleupagus support => enabled') }
+end
+describe command('php -i'), :if => os[:family] == 'ubuntu' && os[:release] == '18.04' do
+  its(:stdout) { should contain('snuffleupagus support => enabled') }
+end
+
 describe file('/etc/php/7.0/apache2/php.ini'), :if => os[:family] == 'ubuntu' && os[:release] == '16.04' do
   it { should be_file }
   it { should exist }

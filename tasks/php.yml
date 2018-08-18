@@ -71,3 +71,6 @@
     regexp: '^session.cookie_httponly =.*'
     replace: "session.cookie_httponly = {{ harden_php_session_cookie_httponly }}"
   with_items: "{{ _harden_apache_php_variants }}"
+
+- import_tasks: php7-snuffleupagus.yml
+  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16) and harden_php7_snuffleupagus

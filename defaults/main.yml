@@ -89,6 +89,7 @@ harden_php_include_path: '/usr/share/php'
 harden_php_session_use_strict_mode: 1
 harden_php_session_cookie_secure: true
 harden_php_session_cookie_httponly: true
+harden_php7_snuffleupagus: true
 
 # https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
 harden_apache_securitytxt_template: security.txt.j2
@@ -118,3 +119,5 @@ harden_apache_testing: false
 testing_target: https://localhost
 testing_siege_duration: 5m
 #testing_siege_args: '-f urls.txt'
+
+install_archives: /var/_install

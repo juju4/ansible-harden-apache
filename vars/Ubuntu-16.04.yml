@@ -31,6 +31,8 @@ harden_apache_php:
   - libapache2-mod-php7.0
 harden_apache_phpdir: /etc/php/7.0
 _harden_apache_php_variants: "{{ harden_apache_php_variants | default(['apache2', 'cli']) }}"
+snuffleupagus_pkgs:
+  - php7.0-dev
 
 harden_apache_modsecurity:
   - libapache2-modsecurity

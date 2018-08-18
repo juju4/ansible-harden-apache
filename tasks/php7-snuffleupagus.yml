@@ -1,0 +1,61 @@
+---
+# https://snuffleupagus.readthedocs.io/installation.html
+
+- name: snuffleupagus | ensure dependencies are present
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ snuffleupagus_pkgs | default([]) }}"
+
+- name: snuffleupagus | ensure archives folder exists
+  file:
+    dest: "{{ install_archives }}"
+    state: directory
+    mode: '0755'
+
+- name: snuffleupagus | git clone
+  git:
+    repo: https://github.com/nbs-system/snuffleupagus
+    dest: "{{ install_archives }}/snuffleupagus"
+    update: no
+
+- name: snuffleupagus | build
+  command: "{{ item }}"
+  with_items:
+    - phpize
+    - ./configure --enable-snuffleupagus
+    - make
+  args:
+    chdir: "{{ install_archives }}/snuffleupagus/src"
+
+- name: snuffleupagus | install
+  command: "{{ item }}"
+  with_items:
+    - make install
+  args:
+    chdir: "{{ install_archives }}/snuffleupagus/src"
+
+- name: snuffleupagus | configure php
+  template:
+    src: php7-snuffleupagus.conf.j2
+    dest: "{{ harden_apache_phpdir }}/{{ item[0] }}/conf.d/php7-snuffleupagus.conf"
+    mode: '0644'
+  with_items:
+    - "{{ _harden_apache_php_variants }}"
+  notify:
+    - restart apache
+
+- name: snuffleupagus | generate secret_key
+  shell: "head -c 256 /dev/urandom | tr -dc 'a-zA-Z0-9'"
+  changed_when: false
+  register: snuffleupagus_secret
+
+- name: snuffleupagus | configure rules
+  template:
+    src: "snuffleupagus-rules.ini.j2"
+    dest: "{{ harden_apache_phpdir }}/snuffleupagus-rules.ini"
+    mode: '0644'
+  with_items:
+    - "{{ _harden_apache_php_variants }}"
+  notify:
+    - restart apache
