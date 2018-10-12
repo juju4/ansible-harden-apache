@@ -90,6 +90,7 @@ harden_php_session_use_strict_mode: 1
 harden_php_session_cookie_secure: true
 harden_php_session_cookie_httponly: true
 harden_php7_snuffleupagus: true
+harden_php7_snuffleupagus_rules_template: "snuffleupagus-rules.ini.j2"
 
 # https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
 harden_apache_securitytxt_template: security.txt.j2

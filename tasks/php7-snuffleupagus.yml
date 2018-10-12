@@ -65,10 +65,8 @@
 
 - name: snuffleupagus | configure rules
   template:
-    src: "snuffleupagus-rules.ini.j2"
+    src: "{{ harden_php7_snuffleupagus_rules_template }}"
     dest: "{{ harden_apache_phpdir }}/snuffleupagus-rules.ini"
     mode: '0644'
-  with_items:
-    - "{{ _harden_apache_php_variants }}"
   notify:
     - restart apache
