@@ -43,3 +43,4 @@
 
 - name: ensure apache is enabled and started
   service: name={{ apache_svc }} state=started enabled=yes
+  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
