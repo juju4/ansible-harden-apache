@@ -100,14 +100,12 @@
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
 
 - name: review modsecurity.conf (2)
-  lineinfile: dest="{{ modsecurity_conf }}" line="{{ item }}" backup=yes
-  with_items:
-## https://isc.sans.edu/diary/Tracking+HTTP+POST+data+with+ELK/20345
-    - 'SecRule REQUEST_METHOD POST id:1000,phase:2,ctl:auditEngine=On,nolog,pass'
-## https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual#sanitiseArg
-    - 'SecAction nolog,phase:2,id:131,sanitiseArg:password,sanitiseArg:newPassword,sanitiseArg:oldPassword'
-    - 'Include "/usr/share/modsecurity-crs/*.conf"'
-    - 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"'
+  lineinfile:
+    dest: "{{ modsecurity_conf }}"
+    regexp: "{{ item.re }}"
+    line: "{{ item.l }}"
+    backup: yes
+  with_items: "{{ harden_apache_modsecurity_lines }}"
   notify:
     - restart apache
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
