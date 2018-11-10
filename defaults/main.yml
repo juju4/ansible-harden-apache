@@ -64,6 +64,7 @@ hardenwebserver_cert_pinning: false
 ## https://content-security-policy.com/
 ## https://githubengineering.com/githubs-post-csp-journey/
 ## https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+## https://github.com/mozilla/csp-logger
 #hardenwebserver_header_csp: "default-src self"
 ## this settings is necessary for default ubuntu or centos page
 hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'; upgrade-insecure-requests; report-uri /csp/report.php"
