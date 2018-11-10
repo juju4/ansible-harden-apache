@@ -63,3 +63,6 @@ testing_h2load_deps:
   - c-ares-devel
   - python34-devel
   - python-setuptools
+
+h2load_env:
+    CXX_FLAGS: "-std=c++11 -O3"

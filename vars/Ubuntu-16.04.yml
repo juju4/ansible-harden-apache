@@ -70,3 +70,6 @@ testing_h2load_deps:
   - cython
   - python3-dev
   - python-setuptools
+
+h2load_env:
+    CXX_FLAGS: "-std=c++11 -O3"
