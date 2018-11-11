@@ -26,7 +26,7 @@
   args:
     chdir: /var/tmp/nghttp2
     creates: /usr/local/bin/h2load
-  environment: "{{ h2load_env | omit }}"
+  environment: "{{ h2load_env | default(omit) }}"
   register: build
 - name: run ldconfig
   command: ldconfig
