@@ -66,3 +66,4 @@ testing_h2load_deps:
 
 h2load_env:
     CXX_FLAGS: "-std=c++11 -O3"
+h2load_gitrev: v1.34.0
