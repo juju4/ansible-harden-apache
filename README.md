@@ -26,7 +26,7 @@ For example
 ```
 - host: all
   roles:
-    - juju4.harden-apache
+    - juju4.harden_apache
 ```
 
 ## Variables
@@ -42,14 +42,14 @@ Default kitchen config (.kitchen.yml) is lxd-based, while (.kitchen.vagrant.yml)
 Once you ensured all necessary roles are present, You can test with:
 ```
 $ gem install kitchen-ansible kitchen-lxd_cli kitchen-sync kitchen-vagrant
-$ cd /path/to/roles/juju4.harden-apache
+$ cd /path/to/roles/juju4.harden_apache
 $ kitchen verify
 $ kitchen login
 $ KITCHEN_YAML=".kitchen.vagrant.yml" kitchen verify
 ```
 or
 ```
-$ cd /path/to/roles/juju4.harden-apache/test/vagrant
+$ cd /path/to/roles/juju4.harden_apache/test/vagrant
 $ vagrant up
 $ vagrant ssh
 ```

@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: harden-apache
   author: juju4
   description: Apache2 Webserver Hardening role
   license: BSD
@@ -24,4 +25,4 @@ galaxy_info:
     - system
     - security
 dependencies:
-  - juju4.redhat-epel
+  - juju4.redhat_epel

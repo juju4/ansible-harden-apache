@@ -11,6 +11,5 @@
     - w3af_pull: false
     - w3af_pulldir: tmp/
   roles:
-    - juju4.harden-apache
+    - juju4.harden_apache
     - juju4.w3af
-

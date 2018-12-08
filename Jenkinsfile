@@ -5,7 +5,7 @@ node {
     try{
         currentBuild.result = "SUCCESS"
         def workspace = pwd()
-        def directory = "juju4.harden-apache"
+        def directory = "juju4.harden_apache"
 
         stage 'Clean Workspace'
             deleteDir()

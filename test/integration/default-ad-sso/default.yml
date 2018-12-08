@@ -4,4 +4,4 @@
   vars:
     - harden_apache_ad_sso: true
   roles:
-    - juju4.harden-apache
+    - juju4.harden_apache
