@@ -24,7 +24,7 @@
             creates={{ ssl_privatedir }}/user.pub
     - name: ensure correct permissions of user key
       file: "dest={{ ssl_privatedir }}/user.key owner=root group={{ ssl_user }} mode=0440"
-  when: hardenwebserver_letsencrypt_user_key is not defined or hardenwebserver_letsencrypt_user_key == ''
+  when: hardenwebserver_letsencrypt_user_key is not defined or not hardenwebserver_letsencrypt_user_key
 
 - name: generate certificate csr to submit
   command: >
@@ -55,16 +55,12 @@
     csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
-  register: le_challenge
+  notify:
+    - add public file to www dir to fullfill letsencrypt challenge
 
 #- debug: var=le_challenge
 - name: ensure letsencrypt directory exists
-  file: "dest={{ _hardenwebserver_rootdir }}/.well-known/acme-challenge state=directory mode=0755"
-- name: add public file to www dir to fullfill letsencrypt challenge
-  copy:
-     dest: "{{ _hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
-     content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"
-  when: le_challenge|changed
+  file: "dest={{ hardenwebserver_rootdir }}/.well-known/acme-challenge state=directory mode=0755"
 
 - meta: flush_handlers
 

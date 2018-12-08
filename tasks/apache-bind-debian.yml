@@ -20,7 +20,11 @@
   register: apachegraphite
 - block:
     - name: Restrict listening interface (graphite)
-      replace: dest=/etc/apache2/sites-enabled/apache2-graphite.conf regexp="^\s*{{ item.re }}" replace="{{ item.rep }}" follow=yes
+      replace:
+        dest: /etc/apache2/sites-enabled/apache2-graphite.conf
+        regexp: "^\s*{{ item.re }}"
+        replace: "{{ item.rep }}"
+        follow: yes
       with_items:
         - { re: '^(\s*)<VirtualHost _default_:(\d+)>', rep: '\1<VirtualHost {{ hardenwebserver_bind }}:\2>' }
         - { re: '^(\s*)<VirtualHost \*:(\d+)>', rep: '\1<VirtualHost {{ hardenwebserver_bind }}:\2>' }
@@ -28,4 +32,4 @@
         - { re: '^(\s*)Listen (\d+)$', rep: '\1Listen {{ hardenwebserver_bind }}:\2' }
       notify:
         - restart apache
-  when: apachegraphite.stat.exists and hardenwebserver_bind is defined and hardenwebserver_bind != ''
+  when: apachegraphite.stat.exists and hardenwebserver_bind is defined and hardenwebserver_bind

@@ -97,7 +97,11 @@
 
 ## http://owasp-modsecurity-core-rule-set.owasp.narkive.com/EMuDdaw9/syntax-error-on-line-51-of-etc-modsecurity-activated-rules-modsecurity-crs-16-session-hijacking-conf
 - name: syntax error fix for modsecurity session hijacking
-  replace: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_16_session_hijacking.conf regexp='^        SecRule TX:1 ".*" "chain,t:sha1,t:hexEncode,setvar:session.ip_hash' replace='        SecRule TX:1 ".*" "t:sha1,t:hexEncode,setvar:session.ip_hash' follow=yes
+  replace:
+    dest: /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_16_session_hijacking.conf
+    regexp: '^        SecRule TX:1 ".*" "chain,t:sha1,t:hexEncode,setvar:session.ip_hash'
+    replace: '        SecRule TX:1 ".*" "t:sha1,t:hexEncode,setvar:session.ip_hash'
+    follow: yes
   notify:
     - restart apache
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'

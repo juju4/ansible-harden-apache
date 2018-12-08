@@ -9,3 +9,8 @@
 
 - name: run ldconfig
   command: ldconfig
+
+- name: add public file to www dir to fullfill letsencrypt challenge
+  copy:
+     dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
+     content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"

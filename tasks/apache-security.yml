@@ -92,7 +92,12 @@
 
 - block:
     - name: Enabled extra security - apache2.conf
-      replace: dest="{{ apacheetc }}/apache2.conf" regexp="{{ item.re }}" replace="{{ item.n }}" backup=yes validate='apachectl -t -f %s'
+      replace:
+        dest: "{{ apacheetc }}/apache2.conf"
+        regexp: "{{ item.re }}"
+        replace: "{{ item.n }}"
+        backup: yes
+        validate: 'apachectl -t -f %s'
       with_items:
         - { re: '^\tOptions FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
         - { re: '^\tOptions Indexes FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
@@ -102,7 +107,11 @@
     ## Note: commented headers can break some apps like nagios
 ## Note: definition in security.conf are prime vs extra config. so this change is needed.
     - name: Enabled extra security headers - security.conf
-      replace: dest="{{ hardenwebserver_apachesecurityconf }}" regexp="{{ item.re }}" replace="{{ item.n }}" backup=yes
+      replace:
+        dest: "{{ hardenwebserver_apachesecurityconf }}"
+        regexp: "{{ item.re }}"
+        replace: "{{ item.n }}"
+        backup: yes
       with_items:
         - { re: '^#ServerTokens Minimal', n: 'ServerTokens Prod' }
         - { re: '^ServerTokens OS', n: '#ServerTokens OS' }
@@ -120,10 +129,10 @@
 
 - block:
     - name: Enabled extra security headers
-      lineinfile: >
-        dest="{{ hardenwebserver_apachesecurityconf }}"
-        line="{{ item }}"
-        create=yes
+      lineinfile:
+        dest: "{{ hardenwebserver_apachesecurityconf }}"
+        line: "{{ item }}"
+        create: yes
       with_items:
         - 'ServerTokens Prod'
         - 'ServerSignature Off'
@@ -135,7 +144,7 @@
     ## FIXME! problem w escaping ;
     #    - 'Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"'
     #    - 'Header set X-XSS-Protection "1; mode=block"'
-  when: ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_os_family == "RedHat"
 
 - name: remove default index file - information disclosure
   file: dest=/var/www/html/index.html state=absent
@@ -156,7 +165,8 @@
         name: httpd_can_network_connect
         state: yes
         persistent: yes
-## FIXME! kitchen/docker in travis seems to have ansible_selinux at true, https://travis-ci.org/juju4/ansible-harden-apache/jobs/281946068
+## FIXME! kitchen/docker in travis seems to have ansible_selinux at true,
+##      https://travis-ci.org/juju4/ansible-harden-apache/jobs/281946068
       ignore_errors: true
   when: ansible_os_family == "RedHat" and ansible_selinux
 
@@ -170,4 +180,8 @@
         setype: http_port_t
         state: present
       with_items: "{{ hardenwebserver_ports_redhat_selinux_allow }}"
-  when: ansible_os_family == "RedHat" and ansible_selinux and hardenwebserver_ports_redhat_selinux_allow is defined and hardenwebserver_ports_redhat_selinux_allow != []
+  when: >
+    ansible_os_family == "RedHat" and
+    ansible_selinux and
+    hardenwebserver_ports_redhat_selinux_allow is defined and
+    hardenwebserver_ports_redhat_selinux_allow != []

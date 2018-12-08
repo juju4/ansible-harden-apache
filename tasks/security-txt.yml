@@ -8,4 +8,4 @@
     dest: "{{ _hardenwebserver_rootdir }}/security.txt"
     mode: '0644'
     backup: yes
-  when: harden_apache_securitytxt_template is defined and harden_apache_securitytxt_template != ''
+  when: harden_apache_securitytxt_template is defined and harden_apache_securitytxt_template

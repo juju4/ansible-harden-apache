@@ -10,7 +10,10 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: disable apache port 80
-  replace: dest=/etc/apache2/ports.conf regexp='{{ item.regexp }}' replace='{{ item.replace }}'
+  replace:
+    dest: /etc/apache2/ports.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
   with_items:
     - { regexp: '^Listen 80', replace: '#Listen 80' }
     - { regexp: '^Listen (.*):80', replace: '#Listen \1:80' }
@@ -19,7 +22,10 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Restrict listening interface
-  replace: dest=/etc/httpd/conf/httpd.conf regexp="{{ item.regexp }}" replace="{{ item.replace }}"
+  replace:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
   with_items:
     - { regexp: '^Listen 80', replace: '#Listen 80' }
     - { regexp: '^Listen (.*):80', replace: '#Listen \1:80' }

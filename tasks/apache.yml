@@ -15,7 +15,10 @@
       systemd:
         daemon_reload: yes
         name: httpd
-      when: ansible_distribution_version.split(".")[0] == '7' and rpminstall.changed and not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+      when: >
+        ansible_distribution_version.split(".")[0] == '7' and
+        rpminstall.changed and
+        not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
   when: ansible_os_family == "RedHat"
 
 - include: apache-ssl.yml
@@ -28,15 +31,21 @@
   when: hardenwebserver_disable_http is defined and hardenwebserver_disable_http
 
 - include: apache-bind-debian.yml
-  when: hardenwebserver_bind is defined and hardenwebserver_bind != "" and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+  when: >
+    hardenwebserver_bind is defined and
+    hardenwebserver_bind and
+    (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 - include: apache-bind-redhat.yml
-  when: hardenwebserver_bind is defined and hardenwebserver_bind != "" and (ansible_os_family == "RedHat" or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+  when: >
+    hardenwebserver_bind is defined and
+    hardenwebserver_bind and
+    ansible_os_family == "RedHat"
 
 - include: php.yml
   when: harden_apache_php is defined and harden_apache_php
 
 - include: csp-report.yml
-  when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template != ''
+  when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template
 
 - include: apache-ad-sso.yml
   when: harden_apache_ad_sso
