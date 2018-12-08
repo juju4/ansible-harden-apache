@@ -1,12 +1,12 @@
 ---
 
 ## kitchen/lxd bug '[unique_id:alert] [pid 4882:tid 139624793384832] (EAI 2)Name or service not known: AH01564: unable to find IPv4 address of "default-ubuntu-1604-1472671788"'
-##	https://github.com/bradenwright/kitchen-lxd_cli/issues/15
+##  https://github.com/bradenwright/kitchen-lxd_cli/issues/15
 #- debug: var=inventory_hostname
 - debug: var=ansible_fqdn
 - debug: var=ansible_hostname
+
 - name: Add new hostname in /etc/hosts (local resolv)
   replace:
     "dest='/etc/hosts' regexp='localhost$' replace='localhost {{ ansible_hostname }}'"
   when: ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm")
-

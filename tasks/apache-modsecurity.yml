@@ -4,11 +4,12 @@
 
 - name: modsecurity install
   package:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   with_items: "{{ harden_apache_modsecurity }}"
 
-- stat: path={{ modsecurity_conf }}
+- name: Check if modsecurity.conf exists
+  stat: path={{ modsecurity_conf }}
   register: confms
 - debug: var=confms
 - name: copy default recommended modsecurity.conf
@@ -34,4 +35,3 @@
     - { regexp: 'SecAuditLogParts ABIJDEFHZ', replace: 'SecAuditLogParts ABCIJDEFHZ' }
   notify:
     - restart apache
-

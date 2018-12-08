@@ -31,3 +31,5 @@
 #    - sleep 60
 #    - "siege -d1 -c200 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
 #    - sleep 60
+  args:
+    creates: /tmp/siege.log

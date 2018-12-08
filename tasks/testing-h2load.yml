@@ -13,7 +13,7 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ testing_h2load_deps }}"
-  
+
 - name: testing | build h2load
   command: "{{ item }}"
   with_items:
@@ -28,10 +28,8 @@
     chdir: /var/tmp/nghttp2
     creates: /usr/local/bin/h2load
   environment: "{{ h2load_env | default(omit) }}"
-  register: build
-- name: run ldconfig
-  command: ldconfig
-  when: build.changed
+  notify:
+    - run ldconfig
 
 - name: testing | executing h2load
   shell: "{{ item }}"

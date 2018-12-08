@@ -1,17 +1,13 @@
 ---
-
 ## require ansible v2.2 for letsencrypt module
 
 - name: apt | certificate packages dependencies
-  apt: name={{item}} state=present update_cache=yes cache_valid_time=3600
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
   with_items:
     - ssl-cert
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 - name: install deps
   package: name=openssl state=present
-
-#- set_fact:
-#    certificate_cn: "www.{{ ansible_fqdn }}"
 
 - block:
     - name: creating letsencrypt user key
@@ -44,11 +40,13 @@
     curl https://letsencrypt.org/certs/isrgrootx1.pem
         https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem
         https://letsencrypt.org/certs/lets-encrypt-x4-cross-signed.pem | tee {{ ssl_dir }}/ca-certs.pem > /dev/null
-    creates={{ ssl_dir }}/ca-certs.pem
+  args:
+    creates: "{{ ssl_dir }}/ca-certs.pem"
 - name: ensure root chain file not empty
   stat: path={{ ssl_dir }}/ca-certs.pem
   register: rootchain
-- fail: msg="FATAL! root chain file generation fails."
+- name: failure
+  fail: msg="FATAL! root chain file generation fails."
   when: not rootchain.stat.exists or rootchain.stat.size == 0
 
 - name: register letsencrypt challenge
@@ -78,4 +76,3 @@
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
     data: "{{ le_challenge }}"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
-

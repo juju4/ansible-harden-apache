@@ -81,7 +81,10 @@
 - name: ensure modsecurity_active dir has right permissions
   file: dest="{{ modsecurity_active }}" state=directory mode=0755
 - name: add additional rules - exceptions
-  copy: "src={{ item }} dest={{ modsecurity_active }}/{{ item }} mode=0644"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ modsecurity_active }}/{{ item }}"
+    mode: '0644'
   with_items:
     - modsecurity_crs_90_exceptions.conf
   notify:
@@ -109,4 +112,3 @@
   notify:
     - restart apache
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-

@@ -16,4 +16,3 @@
     - { r: '^(\s*)Listen 127.0.0.1:443$', l: '\\1Listen 127.0.0.1:443' }
   notify:
     - restart apache
-

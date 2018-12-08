@@ -1,7 +1,7 @@
 ---
 
 - name: yum | apache-ssl packages install
-  yum: name={{item}} state=present
+  yum: name={{ item }} state=present
   with_items:
     - mod_ssl
     - openssl
@@ -105,4 +105,3 @@
     openssl req -in {{ ssl_dir }}/{{ ansible_fqdn }}.csr -pubkey -noout | openssl rsa -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64
   register: hardenwebserver_cert_pinning_value
   changed_when: false
-

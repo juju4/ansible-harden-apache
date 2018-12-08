@@ -17,6 +17,7 @@
   git:
     repo: https://github.com/nbs-system/snuffleupagus
     dest: "{{ install_archives }}/snuffleupagus"
+    version: HEAD
     update: no
 
 - name: snuffleupagus | build

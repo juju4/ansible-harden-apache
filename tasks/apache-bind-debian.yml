@@ -14,7 +14,9 @@
 #  notify:
 #    - restart apache
 
-- stat: path=/etc/apache2/sites-enabled/apache2-graphite.conf
+## FIXME!
+- name: Check if apache2-graphite.conf is enabled
+  stat: path=/etc/apache2/sites-enabled/apache2-graphite.conf
   register: apachegraphite
 - block:
     - name: Restrict listening interface (graphite)
@@ -27,4 +29,3 @@
       notify:
         - restart apache
   when: apachegraphite.stat.exists and hardenwebserver_bind is defined and hardenwebserver_bind != ''
-

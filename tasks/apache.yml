@@ -1,13 +1,13 @@
 ---
 
 - name: apt | apache-security packages install
-  apt: name={{item}} state=present
+  apt: name={{ item }} state=present
   with_items: "{{ hardenwebserver_packages }}"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - block:
     - name: yum | apache-security packages install
-      yum: name={{item}} state=present
+      yum: name={{ item }} state=present
       with_items: "{{ hardenwebserver_packages }}"
       register: rpminstall
 
