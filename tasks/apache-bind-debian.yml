@@ -22,7 +22,7 @@
     - name: Restrict listening interface (graphite)
       replace:
         dest: /etc/apache2/sites-enabled/apache2-graphite.conf
-        regexp: "^\s*{{ item.re }}"
+        regexp: "{{ item.re }}"
         replace: "{{ item.rep }}"
         follow: yes
       with_items:
