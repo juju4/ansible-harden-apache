@@ -1,5 +1,5 @@
+---
 
-https://raw.githubusercontent.com/sektioneins/pcc/master/phpconfigcheck.php
-
-https://github.com/psecio/iniscan
-composer require psecio/iniscan
+# https://raw.githubusercontent.com/sektioneins/pcc/master/phpconfigcheck.php
+# https://github.com/psecio/iniscan
+# composer require psecio/iniscan
