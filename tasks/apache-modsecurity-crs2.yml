@@ -82,7 +82,7 @@
   file: dest="{{ modsecurity_active }}" state=directory mode=0755
 - name: add additional rules - exceptions
   copy:
-    src: "{{ item }}"
+    src: "{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
     mode: '0644'
   with_items:
