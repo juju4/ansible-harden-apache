@@ -1,23 +1,18 @@
 ---
 
-- name: apt | apache-security packages install
-  apt: name={{ item }} state=present
-  with_items: "{{ hardenwebserver_packages }}"
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+- name: apache-security packages install
+  package: name={{ hardenwebserver_packages }} state=present
+  register: pkginstall
+  until: pkginstall is success
 
 - block:
-    - name: yum | apache-security packages install
-      yum: name={{ item }} state=present
-      with_items: "{{ hardenwebserver_packages }}"
-      register: rpminstall
-
     - name: RedHat7 | reload systemd
       systemd:
         daemon_reload: yes
         name: httpd
       when: >
         ansible_distribution_version.split(".")[0] == '7' and
-        rpminstall.changed and
+        pkginstall.changed and
         not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
   when: ansible_os_family == "RedHat"
 

@@ -6,6 +6,8 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ snuffleupagus_pkgs | default([]) }}"
+  register: pkg_result
+  until: pkg_result is success
 
 - name: snuffleupagus | ensure archives folder exists
   file:

@@ -8,6 +8,8 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ harden_apache_php }}"
+  register: pkg_result
+  until: pkg_result is success
 
 - name: PHP | Configure default time
   replace:

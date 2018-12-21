@@ -159,6 +159,8 @@
         - libselinux-python
         - libsemanage-python
         - policycoreutils-python
+      register: pkg_result
+      until: pkg_result is success
 
     - name: RedHat | Allow proxy to network connect in selinux
       seboolean:

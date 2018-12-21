@@ -8,6 +8,8 @@
   package:
     name: rsyslog
     state: present
+  register: pkg_result
+  until: pkg_result is success
 
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-working_with_queues_in_rsyslog#sec-Creating_a_New_Directory_for_rsyslog_Log_Files
 - name: Ensure rsyslog work directory exists

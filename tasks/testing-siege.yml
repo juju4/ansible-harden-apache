@@ -11,6 +11,8 @@
   with_items:
     - siege
     - sysstat
+  register: pkg_result
+  until: pkg_result is success
 
 - name: testing | check siege configuration
   lineinfile:

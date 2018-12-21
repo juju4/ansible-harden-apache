@@ -6,6 +6,8 @@
     - mod_ssl
     - openssl
   when: ansible_os_family == "RedHat"
+  register: pkg_result
+  until: pkg_result is success
 
 ## size should be >= certificate key size
 - name: generate ssl dhparam key

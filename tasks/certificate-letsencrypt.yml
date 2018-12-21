@@ -2,12 +2,14 @@
 ## require ansible v2.2 for letsencrypt module
 
 - name: apt | certificate packages dependencies
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
-  with_items:
-    - ssl-cert
+  apt: name=ssl-cert state=present update_cache=yes cache_valid_time=3600
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  register: pkg_result
+  until: pkg_result is success
 - name: install deps
   package: name=openssl state=present
+  register: pkg_result
+  until: pkg_result is success
 
 - block:
     - name: creating letsencrypt user key
