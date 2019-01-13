@@ -1,4 +1,5 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
+
 [libdefaults]
   ticket_lifetime = {{ krb5_ticket_lifetime }}
   default_realm = {{ harden_apache_ad_sso_domain | upper }}

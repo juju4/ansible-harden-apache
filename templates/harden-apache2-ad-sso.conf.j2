@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
 
 {% for dir in harden_apache_ad_sso_dir_path %}
 <Directory {{ dir }}>

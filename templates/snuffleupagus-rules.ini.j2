@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
 # https://snuffleupagus.readthedocs.io/config.html
 
 sp.global.secret_key("{{ snuffleupagus_secret1.stdout | default(snuffleupagus_secret2.stdout) }}");

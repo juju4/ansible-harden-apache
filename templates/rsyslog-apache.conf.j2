@@ -1,4 +1,5 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
+
 # minimal version of rsyslog?
 $ActionQueueType            LinkedList # use asynchronous processing
 $ActionQueueFileName        apache  # unique name prefix for spool files
