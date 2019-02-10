@@ -52,7 +52,7 @@
   when: not rootchain.stat.exists or rootchain.stat.size == 0
 
 - name: register letsencrypt challenge
-  letsencrypt:
+  acme_certificate:
     account_key: "{{ ssl_privatedir }}/user.key"
     csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
@@ -68,7 +68,7 @@
 
 ## Note: validation is over http... can't remove http before this task.
 - name: validate letsencrypt challenge
-  letsencrypt:
+  acme_certificate:
     account_key: "{{ ssl_privatedir }}/user.key"
     csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
