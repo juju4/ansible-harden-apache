@@ -1,10 +1,11 @@
 ---
 
 - name: yum | apache-ssl packages install
-  yum: name={{ item }} state=present
-  with_items:
-    - mod_ssl
-    - openssl
+  yum:
+    name:
+      - mod_ssl
+      - openssl
+    state: present
   when: ansible_os_family == "RedHat"
   register: pkg_result
   until: pkg_result is success

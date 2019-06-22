@@ -18,7 +18,7 @@
 - include: security-txt.yml
 
 - include: syslog.yml
-  when: harden_apache_use_syslog
+  when: harden_apache_use_syslog|bool
 
 - include: testing.yml
-  when: harden_apache_testing
+  when: harden_apache_testing|bool

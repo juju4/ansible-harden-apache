@@ -23,7 +23,7 @@
 - include: apache-modsecurity.yml
 
 - include: apache-https-only.yml
-  when: hardenwebserver_disable_http is defined and hardenwebserver_disable_http
+  when: hardenwebserver_disable_http is defined and hardenwebserver_disable_http|bool
 
 - include: apache-bind-debian.yml
   when: >
@@ -37,13 +37,13 @@
     ansible_os_family == "RedHat"
 
 - include: php.yml
-  when: harden_apache_php is defined and harden_apache_php
+  when: harden_apache_php is defined and harden_apache_php|bool
 
 - include: csp-report.yml
   when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template
 
 - include: apache-ad-sso.yml
-  when: harden_apache_ad_sso
+  when: harden_apache_ad_sso|bool
 
 - name: ensure apache is enabled and started
   service: name={{ apache_svc }} state=started enabled=yes
