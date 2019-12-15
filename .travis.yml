@@ -107,13 +107,19 @@ script:
 
 after_failure:
   # Check what happened on systemd systems.
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm systemctl -l --no-pager status apache2.service'
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm systemctl -l --no-pager status httpd.service'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm journalctl -xe --no-pager'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cc --version'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm c++ --version'
 
 after_script:
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm systemctl -l --no-pager status apache2.service'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm systemctl -l --no-pager status httpd.service'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm apachectl -v'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm apachectl -t'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm apachectl -l'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm httpd -v'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm httpd -t'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm httpd -l'
   # Clean up
   - 'sudo docker stop "$(cat ${container_id})"'
 
