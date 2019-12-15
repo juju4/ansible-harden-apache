@@ -62,7 +62,7 @@ testing_h2load_deps:
   - openssl-devel
   - c-ares-devel
   - python36-devel
-  - python-setuptools
+  - python3-setuptools
 
 h2load_env:
     CXX_FLAGS: "-std=c++11 -O3"
