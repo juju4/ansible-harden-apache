@@ -1,5 +1,6 @@
 ---
 
 - include: testing-siege.yml
+  when: ansible_distribution_major_version|int < 8
 
 - include: testing-h2load.yml
