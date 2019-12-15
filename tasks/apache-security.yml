@@ -3,7 +3,9 @@
 ## headers for security.conf, reqtimeout for modsecurity slow attacks
 # https://www.acunetix.com/blog/articles/slow-http-dos-attacks-mitigate-apache-http-server/
 - name: Enabled extra modules
-  apache2_module: state=present name="{{ item }}"
+  apache2_module:
+    name: "{{ item }}"
+    state: present
   with_items:
     - headers
     - rewrite
@@ -17,16 +19,29 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Disable identified modules
-  apache2_module: state=absent name="{{ item }}"
+  apache2_module:
+    name: "{{ item }}"
+    state: absent
   with_items: "{{ hardenwebserver_apache_mod_disable }}"
   notify:
     - restart apache
   ignore_errors: true
 
 - name: restrict permissions on apache configuration dir
-  file: dest={{ apacheetc }} mode=0750 state=directory owner=root group={{ www_user }}
+  file:
+    dest: "{{ apacheetc }}"
+    mode: '0750'
+    state: directory
+    owner: root
+    group: "{{ www_user }}"
 - name: restrict permissions on few apache configuration files
-  file: dest={{ item }} mode=0640 state=file owner=root group={{ www_user }} follow=yes
+  file:
+    dest: "{{ item }}"
+    mode: '0640'
+    state: file
+    owner: root
+    group: "{{ www_user }}"
+    follow: yes
   with_items:
     - "{{ apache_confdir }}/security.conf"
     - "{{ apachesslconf }}"
@@ -153,12 +168,11 @@
 - block:
     - name: RedHat | Ensure selinux dependencies are present
       package:
-        name: "{{ item }}"
+        name:
+          - libselinux-python
+          - libsemanage-python
+          - policycoreutils-python
         state: present
-      with_items:
-        - libselinux-python
-        - libsemanage-python
-        - policycoreutils-python
       register: pkg_result
       until: pkg_result is success
       when: ansible_distribution_major_version|int < 8
