@@ -166,7 +166,7 @@
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 
 - block:
-    - name: RedHat | Ensure selinux dependencies are present
+    - name: RedHat7- | Ensure selinux dependencies are present
       package:
         name:
           - libselinux-python
@@ -176,6 +176,17 @@
       register: pkg_result
       until: pkg_result is success
       when: ansible_distribution_major_version|int < 8
+
+    - name: RedHat8+ | Ensure selinux dependencies are present
+      package:
+        name:
+          - python3-libselinux
+          - python3-libsemanage
+          - python3-policycoreutils
+        state: present
+      register: pkg_result
+      until: pkg_result is success
+      when: ansible_distribution_major_version|int >= 8
 
     - name: RedHat | Allow proxy to network connect in selinux
       seboolean:
