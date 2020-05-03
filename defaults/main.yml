@@ -47,8 +47,10 @@ harden_apache_use_syslog: false
 harden_apache_rsyslog_template: 'rsyslog-apache.conf.j2'
 
 hardenwebserver_cert: selfsigned
-hardenwebserver_certinfo: '/C=US/ST=CA/L=San Francisco/O=Ansible'
-hardenwebserver_certduration: 1095
+#hardenwebserver_certduration: +90d
+#cert_email:
+#cert_san:
+#cert_orgname: 'Apache Ansible'
 ## Ansible v2.2 module. will use hostname fqdn
 #hardenwebserver_cert: letsencrypt
 # path on orchestrator, if empty will be created
