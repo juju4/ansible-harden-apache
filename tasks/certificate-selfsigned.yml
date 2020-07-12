@@ -2,10 +2,7 @@
 
 - name: Ensure openssl is present
   package:
-    name:
-      - openssl
-      - python3-pip
-      - python3-setuptools
+    name: "{{ openssl_pkgs | default(['openssl', 'python3-pip', 'python3-setuptools', 'python3-openssl' ]) }}"
     state: present
   register: pkg_result
   until: pkg_result is success
@@ -24,7 +21,7 @@
   pip:
     name: cryptography
     state: present
-    executable: pip3
+    executable: "{{ hardenwebserver_apache_cryptography | default('pip3') }}"
 
 - name: Ensure target directory exists
   file:
