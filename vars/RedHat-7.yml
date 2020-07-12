@@ -26,6 +26,13 @@ hardenwebserver_packages:
     - python-passlib
     - httpd
 
+python_pip: python36-pip
+openssl_pkgs:
+  - openssl
+  - python3-pip
+  - python3-setuptools
+  - pyOpenSSL
+
 harden_apache_php:
   - php
 php_confext: ini
