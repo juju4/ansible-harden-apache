@@ -108,6 +108,11 @@ after_script:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm httpd -v'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm httpd -t'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm httpd -l'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk https://localhost'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk -X HEAD https://localhost'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk -X OPTIONS https://localhost'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -la /var/log/apache /var/log/httpd'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache /var/log/httpd -type f -exec tail -50 {} \;'
   # Clean up
   - 'sudo docker stop "$(cat ${container_id})"'
 
