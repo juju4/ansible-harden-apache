@@ -16,6 +16,7 @@ provisioner:
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
   enable_yum_epel: true
 #  name: chef_solo
+  ansible_omnibus_url: https://raw.githubusercontent.com/juju4/omnibus-ansible/master/ansible_install.sh
 
 platforms:
   - name: ubuntu-20.04
