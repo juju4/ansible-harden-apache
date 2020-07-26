@@ -54,20 +54,14 @@
     src: "{{ item }}.j2"
     dest: "{{ apacheetc }}/{{ item }}"
     mode: 0644
-  with_items:
-    - harden-apache2-http.conf
-    - harden-apache2-https.conf
+  with_items: "{{ harden_apache2_etc }}"
 
 - name: push harden configuration templates - apache conf dir
   template:
     src: "{{ item }}.j2"
     dest: "{{ apache_confdir }}/{{ item }}"
     mode: 0644
-  with_items:
-    - harden-apache2-common.conf
-    - harden-apache2-php.conf
-    - harden-apache2-server.conf
-    - harden-apache2-gzip.conf
+  with_items: "{{ harden_apache2_confs }}"
   notify:
     - restart apache
 - name: enable harden configuration templates - apache conf dir
@@ -75,11 +69,7 @@
     src: "{{ apache_confdir }}/{{ item }}"
     dest: "/etc/apache2/conf-enabled/{{ item }}"
     state: link
-  with_items:
-    - harden-apache2-common.conf
-    - harden-apache2-php.conf
-    - harden-apache2-server.conf
-    - harden-apache2-gzip.conf
+  with_items: "{{ harden_apache2_confs }}"
   notify:
     - restart apache
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -93,6 +83,7 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
+  when: 'harden-apache2-http.conf' in harden_apache2_etc
 
 - name: include security config in default https virtualhost
   blockinfile:
@@ -103,7 +94,7 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
-  when: hardenwebserver_enable_defaultssl|bool
+  when: hardenwebserver_enable_defaultssl|bool and 'harden-apache2-https.conf' in harden_apache2_etc
 
 - block:
     - name: Enabled extra security - apache2.conf

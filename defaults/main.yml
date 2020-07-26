@@ -43,6 +43,15 @@ hardenwebserver_bind: ''
 # do we need extra ports to listen?
 harden_apache_extra_ports: []
 
+harden_apache2_etc:
+    - harden-apache2-http.conf
+    - harden-apache2-https.conf
+harden_apache2_confs:
+    - harden-apache2-common.conf
+    - harden-apache2-php.conf
+    - harden-apache2-server.conf
+    - harden-apache2-gzip.conf
+
 harden_apache_use_syslog: false
 harden_apache_rsyslog_template: 'rsyslog-apache.conf.j2'
 
