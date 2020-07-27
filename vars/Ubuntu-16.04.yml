@@ -48,6 +48,7 @@ harden_apache_ad_sso_pkg:
 harden_apache_ad_sso_keytab_dest: /etc/apache2/krb5.keytab
 
 openssl_pkgs: ['openssl', 'python-pip', 'python-setuptools', 'python-openssl' ]
+hardenwebserver_apache_cryptography: pip
 
 testing_h2load_deps:
   - g++
