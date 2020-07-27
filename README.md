@@ -49,6 +49,12 @@ $ KITCHEN_YAML=".kitchen.vagrant.yml" kitchen verify
 ```
 or
 ```
+$ pip install molecule docker
+$ molecule test
+$ MOLECULE_DISTRO=ubuntu:20.04 molecule test --destroy=never
+```
+or
+```
 $ cd /path/to/roles/juju4.harden_apache/test/vagrant
 $ vagrant up
 $ vagrant ssh

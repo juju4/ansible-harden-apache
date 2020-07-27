@@ -1,0 +1,119 @@
+---
+
+- name: Verify
+  hosts: hardenapache
+  pre_tasks:
+    - set_fact:
+        verify_pkgs:
+          - apache2
+        verify_cfg: /etc/apache2/apache2.conf
+        verify_cfg_t: apache2ctl -t
+        verify_ps: apache2
+      when: ansible_os_family == "Debian"
+    - set_fact:
+        verify_pkgs:
+          - httpd
+        verify_cfg: /etc/httpd/httpd.conf
+        verify_cfg_t: httpd -t
+        verify_ps: httpd
+      when: ansible_os_family == "RedHat"
+  tasks:
+  - name: Check if needed packages are installed
+    command: "dpkg-query -l {{ item }}"
+    changed_when: false
+    with_items: "{{ verify_pkgs }}"
+  - name: Ensure config is present
+    stat:
+      path: "{{ verify_cfg }}"
+    register: cfg
+    become: true
+  - name: Validate config present
+    assert:
+      that: cfg.stat.exists and cfg.stat.size != 0
+  - name: Ensure process is running
+    command: "pgrep -u root {{ verify_ps }}"
+    register: ps
+    changed_when: false
+  - name: Validate ps output
+    assert:
+      that: ps.stdout
+  - name: Ensure ports are listening
+    wait_for:
+      host: "{{ item.h }}"
+      port: "{{ item.p }}"
+      timeout: 10
+    with_items:
+      - { h: localhost, p: 443 }
+      - { h: localhost, p: 80 }
+
+  - name: Test config
+    command: "{{ verify_cfg_t }}"
+    register: conftest
+    changed_when: false
+  - name: Validate conf test output
+    assert:
+      that: >
+        "'Syntax OK' in conftest.stderr"
+
+  - name: Fetch web1
+    uri:
+      url: https://localhost/
+      validate_certs: false
+      return_content: true
+      method: GET
+      status_code: 200
+    register: web1
+  - name: Validate web1
+    assert:
+      that: >
+        "'<title>Apache2 Ubuntu Default Page: It works</title>' in web1.content"
+  - name: Fetch web2
+    uri:
+      url: https://localhost/
+      validate_certs: false
+      return_content: true
+      method: HEAD
+      status_code: 200
+    register: web2
+  - name: Fetch web3
+    uri:
+      url: https://localhost/
+      validate_certs: false
+      return_content: true
+      method: OPTIONS
+      status_code: 403
+    register: web3
+  - name: Validate web3
+    assert:
+      that: >
+        "'<title>403 Forbidden</title>' in web3.content"
+  - name: Fetch web4
+    uri:
+      url: https://localhost/nonexistent
+      validate_certs: false
+      return_content: true
+      method: GET
+      status_code: 404
+    register: web4
+  - name: Validate web4
+    assert:
+      that: >
+        "'<title>404 Not Found</title>' in web4.content"
+  - name: Fetch web5
+    uri:
+      url: https://localhost/
+      validate_certs: false
+      method: GET
+      status_code: 200
+      headers:
+        X-Forwarded-For: 127.0.0.127
+    register: web5
+  - name: Fetch content of /var/log/apache2/access_json.log
+    slurp:
+      src: /var/log/apache2/access_json.log
+    register: jsonlog
+  - name: Validate jsonlog
+    assert:
+      that: >
+        "'\"vhost\":\"localhost\", \"xff\":\"127.0.0.127\"' in jsonlog['content'] | b64decode and
+        '\"request\":\"OPTIONS / HTTP/1.1\"' in jsonlog['content'] | b64decode"
