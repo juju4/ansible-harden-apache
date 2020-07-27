@@ -1,0 +1,13 @@
+{{ ansible_managed | comment }}
+
+# https://httpd.apache.org/docs/current/mod/mod_log_config.html
+# https://blog.rapid7.com/2014/08/12/json-logging-in-apache-and-nginx-with-logentries/
+# try to keep same format than juju4.harden-nginx
+LogFormat "{ \"time\":\"%{{ '{%' }}Y-%m-%dT%H:%M:%S%z}t\", \"time_local\":\"%t\", \"remote_addr\":\"%a\", \"remote_user\":\"%u\", \"host\":\"%V\", \"request\":\"%r\", \"uri\":\"%U\", \"query_parameters\":\"%q\", \"protocol\":\"%H\", \"request_method\":\"%m\", \"request_time\":\"%T\", \"status\":\"%>s\", \"http_user_agent\":\"%{User-agent}i\", \"http_referer\":\"%{Referer}i\", \"vhost\":\"%V\", \"xff\":\"%{X-Forwarded-For}i\" }" combined_json
+#LogFormat "{ \"time\":\"%{{ '{%Y' }}-%m-%d}tT%{{ '{%' }}T}t.%{msec_frac}tZ\", \"process\":\"%D\", \"filename\":\"%f\", \"remoteIP\":\"%a\", \"host\":\"%V\", \"request\":\"%U\", \"query\":\"%q\", \"method\":\"%m\", \"status\":\"%>s\", \"userAgent\":\"%{User-agent}i\", \"referer\":\"%{Referer}i\" }," combined
+#LogFormat "{ \"time\":\"%t\", \"remoteIP\":\"%a\", \"vhost\":\"%V\", \"request\":\"%U\", \"query\":\"%q\", \"method\":\"%m\", \"status\":\"%>s\", \"userAgent\":\"%{User-agent}i\", \"referer\":\"%{Referer}i\" }"
+
+# https://stackoverflow.com/questions/39592834/how-to-make-apache-output-its-logs-in-json-instead-of-its-default-logging-format
+# https://httpd.apache.org/docs/2.4/logs.html
+ErrorLogFormat "{ \"time\":\"%{{ '{%Y' }}-%m-%d}tT%{{ '{%' }}T}t.%{msec_frac}tZ\", \"function\" : \"[%-m:%l]\" , \"process\" : \"[pid %P:tid %T]\" , \"message\" : \"%M\" ,\ \"referer\"\ : \"%{Referer}i\" },"
+#ErrorLogFormat "{ \"time\":\"%{cu}tZ\", \"function\" : \"[%-m:%l]\" , \"process\" : \"[pid %P:tid %T]\" , \"message\" : \"%M\"}"

@@ -51,6 +51,7 @@ harden_apache2_confs:
     - harden-apache2-php.conf
     - harden-apache2-server.conf
     - harden-apache2-gzip.conf
+    - harden-apache2-log.conf
 
 harden_apache_use_syslog: false
 harden_apache_rsyslog_template: 'rsyslog-apache.conf.j2'
