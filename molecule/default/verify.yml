@@ -3,25 +3,39 @@
 - name: Verify
   hosts: hardenapache
   pre_tasks:
-    - set_fact:
+    - name: Debian | set facts
+      set_fact:
         verify_pkgs:
           - apache2
         verify_cfg: /etc/apache2/apache2.conf
         verify_cfg_t: apache2ctl -t
         verify_ps: apache2
+        title_root: '<title>Apache2 Ubuntu Default Page: It works</title>'
+        status_root: '200'
+        json_log: /var/log/apache2/access_json.log
       when: ansible_os_family == "Debian"
-    - set_fact:
+    - name: RedHat | set facts
+      set_fact:
         verify_pkgs:
           - httpd
-        verify_cfg: /etc/httpd/httpd.conf
+        verify_cfg: /etc/httpd/conf/httpd.conf
         verify_cfg_t: httpd -t
         verify_ps: httpd
+        title_root: '<title>Apache HTTP Server Test Page powered by CentOS</title>'
+        status_root: '403'
+        json_log: /var/log/httpd/access_json.log
       when: ansible_os_family == "RedHat"
   tasks:
-  - name: Check if needed packages are installed
+  - name: Debian | Check if needed packages are installed
     command: "dpkg-query -l {{ item }}"
     changed_when: false
     with_items: "{{ verify_pkgs }}"
+    when: ansible_os_family == "Debian"
+  - name: RedHat | Check if needed packages are installed
+    command: "rpm -qi {{ item }}"
+    changed_when: false
+    with_items: "{{ verify_pkgs }}"
+    when: ansible_os_family == "RedHat"
   - name: Ensure config is present
     stat:
       path: "{{ verify_cfg }}"
@@ -61,19 +75,19 @@
       validate_certs: false
       return_content: true
       method: GET
-      status_code: 200
+      status_code: "{{ status_root }}"
     register: web1
   - name: Validate web1
     assert:
       that: >
-        "'<title>Apache2 Ubuntu Default Page: It works</title>' in web1.content"
+        "title_root in web1.content"
   - name: Fetch web2
     uri:
       url: https://localhost/
       validate_certs: false
       return_content: true
       method: HEAD
-      status_code: 200
+      status_code: "{{ status_root }}"
     register: web2
   - name: Fetch web3
     uri:
@@ -104,13 +118,13 @@
       url: https://localhost/
       validate_certs: false
       method: GET
-      status_code: 200
+      status_code: "{{ status_root }}"
       headers:
         X-Forwarded-For: 127.0.0.127
     register: web5
   - name: Fetch content of /var/log/apache2/access_json.log
     slurp:
-      src: /var/log/apache2/access_json.log
+      src: "{{ json_log }}"
     register: jsonlog
   - name: Validate jsonlog
     assert:

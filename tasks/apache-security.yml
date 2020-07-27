@@ -106,7 +106,7 @@
   blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
-            CustomLog ${APACHE_LOG_DIR}/access_json.log combined_json
+            CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache custom json log"
     insertbefore: '^(\s*)</VirtualHost>'
   notify:

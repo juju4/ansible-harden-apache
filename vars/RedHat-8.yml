@@ -24,6 +24,7 @@ rsyslog_workdirectory: /var/lib/rsyslog
 ## passlib requires EPEL
 hardenwebserver_packages:
 #    - python-passlib
+    - python3-dnf
     - httpd
 
 python_pip: python3-pip

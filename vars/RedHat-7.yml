@@ -24,14 +24,17 @@ rsyslog_workdirectory: /var/lib/rsyslog
 ## passlib requires EPEL
 hardenwebserver_packages:
     - python-passlib
+    - python-setuptools
     - httpd
 
-python_pip: python36-pip
+python_pip: python-pip
 openssl_pkgs:
   - openssl
-  - python3-pip
-  - python3-setuptools
+  - python-pip
+  - python-setuptools
+  - python2-cryptography
   - pyOpenSSL
+hardenwebserver_apache_cryptography: pip
 
 harden_apache_php:
   - php
