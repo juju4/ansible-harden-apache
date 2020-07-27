@@ -7,5 +7,5 @@
     src: "{{ harden_apache_securitytxt_template }}"
     dest: "{{ _hardenwebserver_rootdir }}/security.txt"
     mode: '0644'
-    backup: yes
+    backup: true
   when: harden_apache_securitytxt_template is defined and harden_apache_securitytxt_template

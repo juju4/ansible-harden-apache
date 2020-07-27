@@ -33,6 +33,7 @@
     - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: '{{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_os_family == 'Debian'
 
 - block:
@@ -51,6 +52,7 @@
           }
       notify:
         - restart apache
+        - restart apache - docker
       when: defssl.stat.exists
   when: ansible_os_family == 'RedHat'
 
@@ -58,17 +60,20 @@
   apache2_module: name=ssl state=present
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_os_family == 'Debian'
 
 - name: Debian | enable default ssl apache site
   file: src={{ apachesslconf }} dest=/etc/apache2/sites-enabled/default-ssl.conf state=link
   notify:
     - restart apache
+    - restart apache - docker
   when: (ansible_os_family == 'Debian') and hardenwebserver_enable_defaultssl
 - name: Debian | disable default ssl apache site
   file: dest=/etc/apache2/sites-enabled/default-ssl.conf state=absent
   notify:
     - restart apache
+    - restart apache - docker
   when: (ansible_os_family == 'Debian') and not hardenwebserver_enable_defaultssl
 - block:
     - name: RedHat | check if backup default ssl apache site
@@ -102,12 +107,13 @@
       file: dest=/etc/httpd/conf.d/ssl.conf state=absent
       notify:
         - restart apache
+        - restart apache - docker
     - name: Ensure httpd is listening on extra ports
       lineinfile:
         dest: /etc/httpd/httpd.conf
         regexp: "^Listen {{ item }}$"
         line: "Listen {{ item }}"
-        backup: yes
+        backup: true
       with_items: "{{ harden_apache_extra_ports }}"
   when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
 

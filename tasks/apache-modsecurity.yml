@@ -22,6 +22,7 @@
     remote_src: true
   notify:
     - restart apache
+    - restart apache - docker
   when: not confms.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
 - include: apache-modsecurity-crs2.yml
@@ -38,3 +39,4 @@
     - { regexp: 'SecAuditLogParts ABIJDEFHZ', replace: 'SecAuditLogParts ABCIJDEFHZ' }
   notify:
     - restart apache
+    - restart apache - docker

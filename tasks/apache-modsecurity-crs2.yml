@@ -2,7 +2,10 @@
 
 # FIXME!
 - name: active base rules
-  file: src="/usr/share/modsecurity-crs/base_rules/{{ item }}" dest="{{ modsecurity_active }}/{{ item }}" state=link
+  file:
+    src: "/usr/share/modsecurity-crs/base_rules/{{ item }}"
+    dest: "{{ modsecurity_active }}/{{ item }}"
+    state: link
 #  with_fileglob:
 #    - /usr/share/modsecurity-crs/base_rules/*
   with_items:
@@ -52,6 +55,7 @@
     - modsecurity_crs_55_marketing.conf
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 - name: activate some experimental rules
   file:
@@ -65,6 +69,7 @@
     - modsecurity_crs_25_cc_track_pan.conf
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Xenial | SecReadStateLimit is depricated, use SecConnReadStateLimit instead
@@ -89,11 +94,13 @@
     - modsecurity_crs_90_exceptions.conf
   notify:
     - restart apache
+    - restart apache - docker
 
 - name: extra config against slow and low attacks
   template: src=modsecurity_crs_80_slow.conf.j2 dest="{{ modsecurity_active }}/modsecurity_crs_80_slow.conf" mode=0644
   notify:
     - restart apache
+    - restart apache - docker
 
 ## http://owasp-modsecurity-core-rule-set.owasp.narkive.com/EMuDdaw9/syntax-error-on-line-51-of-etc-modsecurity-activated-rules-modsecurity-crs-16-session-hijacking-conf
 - name: syntax error fix for modsecurity session hijacking
@@ -101,9 +108,10 @@
     dest: /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_16_session_hijacking.conf
     regexp: '^        SecRule TX:1 ".*" "chain,t:sha1,t:hexEncode,setvar:session.ip_hash'
     replace: '        SecRule TX:1 ".*" "t:sha1,t:hexEncode,setvar:session.ip_hash'
-    follow: yes
+    follow: true
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
 
 - name: review modsecurity.conf (2)
@@ -111,8 +119,9 @@
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
-    backup: yes
+    backup: true
   with_items: "{{ harden_apache_modsecurity_lines }}"
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

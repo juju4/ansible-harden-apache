@@ -25,7 +25,7 @@
     dest: /etc/resolv.conf
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
-    backup: yes
+    backup: true
   with_items:
     - { re: '^search .*', l: "search {{ harden_apache_ad_sso_domain }}" }
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
@@ -35,7 +35,7 @@
     dest: /etc/resolv.conf
     regexp: "^nameserver {{ item }}"
     line: "nameserver {{ item }}"
-    backup: yes
+    backup: true
   with_items: "{{ harden_apache_ad_sso_domain_dns }}"
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
 
@@ -48,6 +48,7 @@
   when: ansible_os_family == 'Debian'
   notify:
     - restart apache
+    - restart apache - docker
 
 - name: Ensure directory paths for AD SSO exist
   file:
@@ -64,6 +65,7 @@
         mode: 0644
       notify:
         - restart apache
+        - restart apache - docker
     - name: enable AD SSO configuration
       file:
         src: "{{ apache_confdir }}/{{ harden_apache_ad_sso_conf_template }}"
@@ -71,6 +73,7 @@
         state: link
       notify:
         - restart apache
+        - restart apache - docker
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   when: harden_apache_ad_sso_conf_template is defined and harden_apache_ad_sso_conf_template
 
@@ -80,7 +83,7 @@
         src: "{{ harden_apache_ad_sso_htaccess_template }}"
         dest: "{{ item }}/.htaccess"
         mode: '0644'
-        backup: yes
+        backup: true
       with_items: "{{ harden_apache_ad_sso_dir_path }}"
   when: harden_apache_ad_sso_htaccess_template is defined and harden_apache_ad_sso_htaccess_template
 
@@ -91,5 +94,5 @@
     src: krb5.conf.j2
     dest: /etc/krb5.conf
     mode: '0644'
-    backup: yes
+    backup: true
 #    validate: 'verify_krb5_conf %s'

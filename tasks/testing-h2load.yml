@@ -6,7 +6,7 @@
     repo: https://github.com/nghttp2/nghttp2.git
     dest: /var/tmp/nghttp2
     version: "{{ h2load_gitrev | default(omit) }}"
-    update: no
+    update: true
 
 - name: testing | ensure h2load dependencies are present
   package:
@@ -34,8 +34,6 @@
     - run ldconfig
 
 - name: testing | executing h2load
-  shell: "{{ item }}"
-  with_items:
-    - "h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log"
+  shell: "h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log"
   args:
     creates: /tmp/h2load.log

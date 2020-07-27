@@ -16,6 +16,7 @@
 #    - http2
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Disable identified modules
@@ -25,6 +26,7 @@
   with_items: "{{ hardenwebserver_apache_mod_disable }}"
   notify:
     - restart apache
+    - restart apache - docker
   ignore_errors: true
 
 - name: restrict permissions on apache configuration dir
@@ -41,7 +43,7 @@
     state: file
     owner: root
     group: "{{ www_user }}"
-    follow: yes
+    follow: true
   with_items:
     - "{{ apache_confdir }}/security.conf"
     - "{{ apachesslconf }}"
@@ -64,6 +66,7 @@
   with_items: "{{ harden_apache2_confs }}"
   notify:
     - restart apache
+    - restart apache - docker
 - name: enable harden configuration templates - apache conf dir
   file:
     src: "{{ apache_confdir }}/{{ item }}"
@@ -72,6 +75,7 @@
   with_items: "{{ harden_apache2_confs }}"
   notify:
     - restart apache
+    - restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: include security config in default http virtualhost
@@ -83,7 +87,8 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
-  when: 'harden-apache2-http.conf' in harden_apache2_etc
+    - restart apache - docker
+  when: "'harden-apache2-http.conf' in harden_apache2_etc"
 
 - name: include security config in default https virtualhost
   blockinfile:
@@ -94,6 +99,7 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
+    - restart apache - docker
   when: hardenwebserver_enable_defaultssl|bool and 'harden-apache2-https.conf' in harden_apache2_etc
 
 - name: include custom log config in default https virtualhost
@@ -105,6 +111,7 @@
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
     - restart apache
+    - restart apache - docker
   when: "'harden-apache2-log.conf' in harden_apache2_confs"
 
 - block:
@@ -113,13 +120,14 @@
         dest: "{{ apacheetc }}/apache2.conf"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
-        backup: yes
+        backup: true
         validate: 'apachectl -t -f %s'
       with_items:
         - { re: '^\tOptions FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
         - { re: '^\tOptions Indexes FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
       notify:
         - restart apache
+        - restart apache - docker
 
     ## Note: commented headers can break some apps like nagios
 ## Note: definition in security.conf are prime vs extra config. so this change is needed.
@@ -128,7 +136,7 @@
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
-        backup: yes
+        backup: true
       with_items:
         - { re: '^#ServerTokens Minimal', n: 'ServerTokens Prod' }
         - { re: '^ServerTokens OS', n: '#ServerTokens OS' }
@@ -139,6 +147,7 @@
 #    #    - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "deny"' }
 #      notify:
 #        - restart apache
+#        - restart apache - docker
 
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
@@ -149,7 +158,7 @@
       lineinfile:
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         line: "{{ item }}"
-        create: yes
+        create: true
       with_items:
         - 'ServerTokens Prod'
         - 'ServerSignature Off'
@@ -193,8 +202,8 @@
     - name: RedHat | Allow proxy to network connect in selinux
       seboolean:
         name: httpd_can_network_connect
-        state: yes
-        persistent: yes
+        state: true
+        persistent: true
 ## FIXME! kitchen/docker in travis seems to have ansible_selinux at true,
 ##      https://travis-ci.org/juju4/ansible-harden-apache/jobs/281946068
       ignore_errors: true

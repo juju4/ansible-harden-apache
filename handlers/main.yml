@@ -4,6 +4,10 @@
   service: name={{ apache_svc }} state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
+- name: restart apache - docker
+  command: "apache2ctl restart"
+  when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+
 - name: restart rsyslog
   service: name=rsyslog state=restarted
 

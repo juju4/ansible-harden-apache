@@ -19,8 +19,8 @@
   git:
     repo: https://github.com/nbs-system/snuffleupagus
     dest: "{{ install_archives }}/snuffleupagus"
-    version: HEAD
-    update: no
+    version: "{{ hardenapache2_snuffleupagus_version | default('e548cc0354d3924c60931c3117bfb135b1c0d555') }}"
+    update: false
 
 - name: snuffleupagus | build
   command: "{{ item.c }}"
@@ -49,6 +49,7 @@
     - "{{ _harden_apache_php_variants }}"
   notify:
     - restart apache
+    - restart apache - docker
 
 - name: snuffleupagus | check if existing secret
   stat: path="/root/.php7_done"
@@ -73,3 +74,4 @@
     mode: '0644'
   notify:
     - restart apache
+    - restart apache - docker

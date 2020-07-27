@@ -8,7 +8,7 @@
 - block:
     - name: RedHat7 | reload systemd
       systemd:
-        daemon_reload: yes
+        daemon_reload: true
         name: httpd
       when: >
         ansible_distribution_version.split(".")[0] == '7' and
