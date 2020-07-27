@@ -1,5 +1,10 @@
 ---
 
+- name: Ensure curl is present
+  package:
+    name: curl
+    state: present
+
 - include: testing-siege.yml
   when: ansible_distribution_major_version|int < 8
 
