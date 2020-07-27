@@ -5,7 +5,7 @@
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart apache - docker
-  command: "{% if ansible_os_family == "RedHat" %}apachectl{% else %}apache2ctl{% endif %} restart"
+  command: "{% if ansible_os_family == 'RedHat' %}apachectl{% else %}apache2ctl{% endif %} restart"
   when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: restart rsyslog
