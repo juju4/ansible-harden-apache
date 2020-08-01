@@ -111,6 +111,7 @@ after_script:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk https://localhost'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk -X HEAD https://localhost'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk -X OPTIONS https://localhost'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk -H "Referer: http://www.example.com" -H "X-Forwarded-For: 127.0.0.128" "https://localhost/?a=b&c=d"'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -la /var/log/apache2 /var/log/httpd'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache2 /var/log/httpd -type f -exec tail -50 {} \;'
   # Clean up

@@ -115,12 +115,13 @@
         "'<title>404 Not Found</title>' in web4.content"
   - name: Fetch web5
     uri:
-      url: https://localhost/
+      url: https://localhost/?a=b&c=d
       validate_certs: false
       method: GET
       status_code: "{{ status_root }}"
       headers:
         X-Forwarded-For: 127.0.0.127
+        Referer: http://www.example.com
     register: web5
   - name: Fetch content of /var/log/apache2/access_json.log
     slurp:
@@ -129,5 +130,6 @@
   - name: Validate jsonlog
     assert:
       that: >
-        "'\"vhost\":\"localhost\", \"xff\":\"127.0.0.127\"' in jsonlog['content'] | b64decode and
+        "'\"vhost\":\"localhost\",\"xff\":\"127.0.0.127\"' in jsonlog['content'] | b64decode and
+        "'\"http_referer\":\"http://www.example.com\",\"vhost\":\"localhost.0.0.127\"' in jsonlog['content'] | b64decode and
         '\"request\":\"OPTIONS / HTTP/1.1\"' in jsonlog['content'] | b64decode"
