@@ -102,6 +102,18 @@
     - restart apache - docker
   when: hardenwebserver_enable_defaultssl|bool and 'harden-apache2-https.conf' in harden_apache2_etc
 
+- name: include custom log config in default http virtualhost
+  blockinfile:
+    dest: "{{ apacheconf }}"
+    block: |
+            CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: apache custom json log"
+    insertbefore: '^(\s*)</VirtualHost>'
+  notify:
+    - restart apache
+    - restart apache - docker
+  when: not hardenwebserver_disable_http and 'harden-apache2-log.conf' in harden_apache2_confs
+
 - name: include custom log config in default https virtualhost
   blockinfile:
     dest: "{{ apachesslconf }}"
@@ -112,7 +124,7 @@
   notify:
     - restart apache
     - restart apache - docker
-  when: "'harden-apache2-log.conf' in harden_apache2_confs"
+  when: hardenwebserver_enable_defaultssl|bool and not hardenwebserver_https_noconfig and 'harden-apache2-log.conf' in harden_apache2_confs
 
 - block:
     - name: Enabled extra security - apache2.conf
