@@ -119,9 +119,9 @@ after_script:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk -X OPTIONS https://localhost'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm curl -vk -H "Referer: http://www.example.com" -H "X-Forwarded-For: 127.0.0.128" "https://localhost/?a=b&c=d"'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ls -la /var/log/apache2 /var/log/httpd'
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache2/access* /var/log/httpd/access* -iname -type f -exec tail -50 {} \;'
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache2/error* /var/log/httpd/error* -type f -exec tail -50 {} \;'
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache2/modsec* /var/log/httpd/modsec* -type f -exec tail -50 {} \;'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache2 /var/log/httpd -iname "access*" -type f -exec tail -50 {} \;'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache2 /var/log/httpd -iname "error*" -type f -exec tail -50 {} \;'
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm find /var/log/apache2 /var/log/httpd -iname "modsec*" -type f -exec tail -50 {} \;'
   # Clean up
   - 'sudo docker stop "$(cat ${container_id})"'
 
