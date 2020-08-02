@@ -46,10 +46,10 @@
     - restart apache - docker
 
 - name: Configure Json log in modsecurity.conf - PR#914, 2.9.1+
-  replace:
+  lineinfile:
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
+    line: "{{ item.replace }}"
     backup: yes
   with_items:
     - { regexp: 'SecAuditLogFormat .*', replace: "SecAuditLogFormat JSON" }
