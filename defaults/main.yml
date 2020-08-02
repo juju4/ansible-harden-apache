@@ -18,6 +18,7 @@ harden_apache_modsecurity_lines:
     - { re: '^SecTmpDir .*', l: 'SecTmpDir /tmp/modsectmp' }
     - { re: '^SecDataDir .*', l: 'SecDataDir /tmp/modsecdata' }
 #    - { re: '', l: '' }
+harden_apache_modsecurity_jsonlog: true
 
 ## if you want to disable http.
 ## Note: http is required to validate letsencrypt challenge directly

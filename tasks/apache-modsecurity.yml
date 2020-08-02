@@ -32,7 +32,11 @@
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 18)
 
 - name: review modsecurity.conf (1)
-  replace: "dest={{ modsecurity_conf }} regexp='{{ item.regexp }}' replace='{{ item.replace }}' backup=yes"
+  replace:
+    dest: "{{ modsecurity_conf }}"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    backup: yes
   with_items:
     - { regexp: 'SecRuleEngine .*', replace: "SecRuleEngine {{ hardenwebserver_apache_modsecurity_engine }}" }
     - { regexp: 'SecResponseBodyAccess On', replace: 'SecResponseBodyAccess Off' }
@@ -40,3 +44,16 @@
   notify:
     - restart apache
     - restart apache - docker
+
+- name: Configure Json log in modsecurity.conf - PR#914, 2.9.1+
+  replace:
+    dest: "{{ modsecurity_conf }}"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    backup: yes
+  with_items:
+    - { regexp: 'SecAuditLogFormat .*', replace: "SecAuditLogFormat JSON" }
+  notify:
+    - restart apache
+    - restart apache - docker
+  when: harden_apache_modsecurity_jsonlog
