@@ -56,4 +56,4 @@
   notify:
     - restart apache
     - restart apache - docker
-  when: harden_apache_modsecurity_jsonlog
+  when: harden_apache_modsecurity_jsonlog and not (ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 7)
