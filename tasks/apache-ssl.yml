@@ -138,3 +138,4 @@
     executable: /bin/bash
   register: hardenwebserver_cert_pinning_value
   changed_when: false
+  when: harden_apache_hpkp_enable
