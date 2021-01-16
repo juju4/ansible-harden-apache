@@ -6,7 +6,7 @@
     repo: https://github.com/nghttp2/nghttp2.git
     dest: /var/tmp/nghttp2
     version: "{{ h2load_gitrev | default(omit) }}"
-    update: true
+    update: false
 
 - name: testing | ensure h2load dependencies are present
   package:
