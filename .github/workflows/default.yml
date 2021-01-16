@@ -76,18 +76,18 @@ jobs:
           systemd-analyze security || true
           rsyslogd -v
           apachectl -v
-          apachectl -t
-          apachectl -l
+          sudo apachectl -t
+          sudo apachectl -l
         continue-on-error: true
       - name: After script - etc
         run: |
-          cat /etc/apache2/sites-available/000-default.conf
-          cat /etc/apache2/sites-available/default-ssl.conf
-          cat /etc/modsecurity/modsecurity.conf
+          sudo cat /etc/apache2/sites-available/000-default.conf
+          sudo cat /etc/apache2/sites-available/default-ssl.conf
+          sudo cat /etc/modsecurity/modsecurity.conf
         continue-on-error: true
       - name: After script - files
         run: |
-          find /etc/nginx -type f -ls
+          sudo find /etc/apache2 -type f -ls
         continue-on-error: true
       - name: After script - curl
         run: |
@@ -102,5 +102,5 @@ jobs:
       - name: After script - logs
         run: |
           ls -la /var/log/apache2
-          find /var/log/apache2 -type f -exec tail -50 {} \;
+          sudo find /var/log/apache2 -type f -exec tail -50 {} \;
         continue-on-error: true
