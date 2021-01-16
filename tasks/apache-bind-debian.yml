@@ -8,12 +8,12 @@
     - restart apache
     - restart apache - docker
 
-#- name: Keep localhost as listening interface - ports.conf
-#   lineinfile: dest=/etc/apache2/ports.conf regexp="{{ item.r }}" line="{{ item.l }}" follow=yes
-#  with_items:
-#    - { r: '^(\s*)Listen 127.0.0.1:443$', l: '    Listen 127.0.0.1:443' }
-#  notify:
-#    - restart apache
+# - name: Keep localhost as listening interface - ports.conf
+#    lineinfile: dest=/etc/apache2/ports.conf regexp="{{ item.r }}" line="{{ item.l }}" follow=yes
+#   with_items:
+#     - { r: '^(\s*)Listen 127.0.0.1:443$', l: '    Listen 127.0.0.1:443' }
+#   notify:
+#     - restart apache
 
 ## FIXME!
 - name: Check if apache2-graphite.conf is enabled
@@ -24,6 +24,7 @@
       replace:
         dest: /etc/apache2/sites-enabled/apache2-graphite.conf
         regexp: "{{ item.re }}"
+        mode: '0644'
         replace: "{{ item.rep }}"
         follow: true
       with_items:

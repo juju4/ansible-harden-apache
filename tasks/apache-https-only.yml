@@ -15,6 +15,7 @@
     dest: /etc/apache2/ports.conf
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
+    mode: '0644'
   with_items:
     - { regexp: '^Listen 80', replace: '#Listen 80' }
     - { regexp: '^Listen (.*):80', replace: '#Listen \1:80' }
@@ -28,6 +29,7 @@
     dest: /etc/httpd/conf/httpd.conf
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
+    mode: '0644'
   with_items:
     - { regexp: '^Listen 80', replace: '#Listen 80' }
     - { regexp: '^Listen (.*):80', replace: '#Listen \1:80' }

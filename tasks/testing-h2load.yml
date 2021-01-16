@@ -34,6 +34,9 @@
     - run ldconfig
 
 - name: testing | executing h2load
-  shell: "h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log"
+  shell: |
+    set -o pipefail
+    h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log
   args:
+    executable: /bin/bash
     creates: /tmp/h2load.log

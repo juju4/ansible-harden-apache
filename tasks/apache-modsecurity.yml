@@ -36,6 +36,7 @@
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
+    mode: '0644'
     backup: yes
   with_items:
     - { regexp: 'SecRuleEngine .*', replace: "SecRuleEngine {{ hardenwebserver_apache_modsecurity_engine }}" }
@@ -50,6 +51,7 @@
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.regexp }}"
     line: "{{ item.replace }}"
+    mode: '0644'
     backup: yes
   with_items:
     - { regexp: 'SecAuditLogFormat .*', replace: "SecAuditLogFormat JSON" }

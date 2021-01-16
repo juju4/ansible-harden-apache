@@ -22,13 +22,13 @@ _hardenwebserver_rootdir: "{{ hardenwebserver_rootdir | default('/var/www/html')
 rsyslog_workdirectory: /var/spool/rsyslog
 
 hardenwebserver_packages:
-    - python3-passlib
-    - python3-pip
-    - apache2
-## for Docker & netstat call in serverspec
-    - net-tools
-# serverspec testing
-    - iproute2
+  - python3-passlib
+  - python3-pip
+  - apache2
+  ## for Docker & netstat call in serverspec
+  - net-tools
+  # serverspec testing
+  - iproute2
 
 harden_apache_php:
   - libapache2-mod-php7.4
@@ -43,9 +43,9 @@ harden_apache_modsecurity:
   - modsecurity-crs
 
 harden_apache_ad_sso_pkg:
-## MIT or heimdal implementation?
+  ## MIT or heimdal implementation?
   - krb5-user
-#  - heimdal-clients
+  # - heimdal-clients
   - krb5-config
   - libkrb5-3
   - libapache2-mod-auth-kerb

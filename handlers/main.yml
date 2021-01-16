@@ -18,3 +18,4 @@
   copy:
      dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
      content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"
+     mode: '0644'

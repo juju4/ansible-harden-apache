@@ -12,7 +12,7 @@
 
 ## size should be >= certificate key size
 - name: generate ssl dhparam key
-#  command: "openssl dhparam -out {{ ssl_privatedir }}/dhparam4.pem 4096 creates=/etc/nginx/ssl/dhparam4.pem"
+  # command: "openssl dhparam -out {{ ssl_privatedir }}/dhparam4.pem 4096 creates=/etc/nginx/ssl/dhparam4.pem"
   command: >
     openssl dhparam -dsaparam -out {{ ssl_privatedir }}/dhparam.pem 4096
   args:
@@ -27,7 +27,11 @@
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt'
 
 - name: Debian | update certificate info in Apache configuration
-  replace: dest={{ apachesslconf }} regexp='{{ item.regexp }}' replace='{{ item.replace }}'
+  replace:
+    dest: "{{ apachesslconf }}"
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+    mode: '0644'
   with_items:
     - { regexp: '/etc/ssl/certs/ssl-cert-snakeoil.pem', replace: '{{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
     - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: '{{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
@@ -45,11 +49,12 @@
         dest: "{{ apachesslconf }}"
         regexp: "{{ item.regexp }}"
         replace: "{{ item.replace }}"
+        mode: '0644'
       with_items:
         - { regexp: '^SSLCertificateFile .*', replace: 'SSLCertificateFile {{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
         - { regexp: '^SSLCertificateKeyFile .*',
             replace: 'SSLCertificateKeyFile {{ ssl_privatedir }}/{{ ansible_fqdn }}.key'
-          }
+        }
       notify:
         - restart apache
         - restart apache - docker
@@ -64,7 +69,11 @@
   when: ansible_os_family == 'Debian'
 
 - name: Debian | enable default ssl apache site
-  file: src={{ apachesslconf }} dest=/etc/apache2/sites-enabled/default-ssl.conf state=link
+  file:
+    src: "{{ apachesslconf }}"
+    dest: /etc/apache2/sites-enabled/default-ssl.conf
+    mode: '0644'
+    state: link
   notify:
     - restart apache
     - restart apache - docker
@@ -113,15 +122,19 @@
         dest: /etc/httpd/httpd.conf
         regexp: "^Listen {{ item }}$"
         line: "Listen {{ item }}"
+        mode: '0644'
         backup: true
       with_items: "{{ harden_apache_extra_ports }}"
   when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
 
 - name: HTTP Public Key Pinning (HPKP) hash extraction
-  shell: >
+  shell: |
+    set -o pipefail
     openssl req -in {{ ssl_dir }}/{{ ansible_fqdn }}.csr -pubkey -noout |
         openssl rsa -pubin -outform der |
         openssl dgst -sha256 -binary |
         openssl enc -base64
+  args:
+    executable: /bin/bash
   register: hardenwebserver_cert_pinning_value
   changed_when: false

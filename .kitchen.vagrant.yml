@@ -10,12 +10,12 @@ provisioner:
   name: ansible_playbook
   roles_path: ../
   hosts: all
-#  ansible_verbose: true
+  # ansible_verbose: true
   ansible_verbose: false
   ansible_verbosity: 4
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
   enable_yum_epel: true
-#  name: chef_solo
+  # name: chef_solo
   ansible_omnibus_url: https://raw.githubusercontent.com/juju4/omnibus-ansible/master/ansible_install.sh
 
 platforms:
@@ -31,7 +31,7 @@ suites:
   - name: bind-restriction
     run_list:
     attributes:
-        hardenwebserver_bind: 127.0.0.1
+      hardenwebserver_bind: 127.0.0.1
     includes:
       - ubuntu-18.04
       - centos/7

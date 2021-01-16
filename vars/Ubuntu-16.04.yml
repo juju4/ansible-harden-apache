@@ -22,10 +22,10 @@ _hardenwebserver_rootdir: "{{ hardenwebserver_rootdir | default('/var/www/html')
 rsyslog_workdirectory: /var/spool/rsyslog
 
 hardenwebserver_packages:
-    - python-passlib
-    - apache2
-## for Docker & netstat call in serverspec
-    - net-tools
+  - python-passlib
+  - apache2
+  ## for Docker & netstat call in serverspec
+  - net-tools
 
 harden_apache_php:
   - libapache2-mod-php7.0
@@ -39,15 +39,15 @@ harden_apache_modsecurity:
   - libapache2-modsecurity
 
 harden_apache_ad_sso_pkg:
-## MIT or heimdal implementation?
+  ## MIT or heimdal implementation?
   - krb5-user
-#  - heimdal-clients
+  # - heimdal-clients
   - krb5-config
   - libkrb5-3
   - libapache2-mod-auth-kerb
 harden_apache_ad_sso_keytab_dest: /etc/apache2/krb5.keytab
 
-openssl_pkgs: ['openssl', 'python-pip', 'python-setuptools', 'python-openssl' ]
+openssl_pkgs: ['openssl', 'python-pip', 'python-setuptools', 'python-openssl']
 hardenwebserver_apache_cryptography: pip
 
 testing_h2load_deps:
@@ -75,5 +75,5 @@ testing_h2load_deps:
   - python-setuptools
 
 h2load_env:
-    CXX_FLAGS: "-std=c++11 -O3"
+  CXX_FLAGS: "-std=c++11 -O3"
 h2load_gitrev: v1.34.0

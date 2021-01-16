@@ -18,6 +18,7 @@
   lineinfile:
     dest: /root/.siegerc
     line: "{{ item }}"
+    mode: '0600'
     create: true
   with_items:
     - "logfile = /tmp/siege.log"
@@ -26,12 +27,12 @@
   command: "{{ item }}"
   with_items:
     - "siege -c1 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
-#    - sleep 60
-#    - "siege -c20 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
-#    - sleep 60
-#    - "siege -c100 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
-#    - sleep 60
-#    - "siege -d1 -c200 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
-#    - sleep 60
+    # - sleep 60
+    # - "siege -c20 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
+    # - sleep 60
+    # - "siege -c100 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
+    # - sleep 60
+    # - "siege -d1 -c200 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
+    # - sleep 60
   args:
     creates: /tmp/siege.log

@@ -10,10 +10,10 @@
     - headers
     - rewrite
     - reqtimeout
-## ubuntu: ssl stapling
+    ## ubuntu: ssl stapling
     - socache_shmcb
-# https://httpd.apache.org/docs/2.4/howto/http2.html
-#    - http2
+    # https://httpd.apache.org/docs/2.4/howto/http2.html
+    # - http2
   notify:
     - restart apache
     - restart apache - docker
@@ -55,14 +55,14 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ apacheetc }}/{{ item }}"
-    mode: 0644
+    mode: '0644'
   with_items: "{{ harden_apache2_etc }}"
 
 - name: push harden configuration templates - apache conf dir
   template:
     src: "{{ item }}.j2"
     dest: "{{ apache_confdir }}/{{ item }}"
-    mode: 0644
+    mode: '0644'
   with_items: "{{ harden_apache2_confs }}"
   notify:
     - restart apache
@@ -71,6 +71,7 @@
   file:
     src: "{{ apache_confdir }}/{{ item }}"
     dest: "/etc/apache2/conf-enabled/{{ item }}"
+    mode: '0644'
     state: link
   with_items: "{{ harden_apache2_confs }}"
   notify:
@@ -85,6 +86,7 @@
             Include {{ apacheetc }}/harden-apache2-http.conf
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache http hardening"
     insertbefore: '^(\s*)</VirtualHost>'
+    mode: '0644'
   notify:
     - restart apache
     - restart apache - docker
@@ -97,6 +99,7 @@
             Include {{ apacheetc }}/harden-apache2-https.conf
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache https hardening"
     insertbefore: '^(\s*)</VirtualHost>'
+    mode: '0644'
   notify:
     - restart apache
     - restart apache - docker
@@ -109,6 +112,7 @@
             CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache custom json log"
     insertbefore: '^(\s*)</VirtualHost>'
+    mode: '0644'
   notify:
     - restart apache
     - restart apache - docker
@@ -132,6 +136,7 @@
         dest: "{{ apacheetc }}/apache2.conf"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
+        mode: '0644'
         backup: true
         validate: 'apachectl -t -f %s'
       with_items:
@@ -142,46 +147,48 @@
         - restart apache - docker
 
     ## Note: commented headers can break some apps like nagios
-## Note: definition in security.conf are prime vs extra config. so this change is needed.
+    ## Note: definition in security.conf are prime vs extra config. so this change is needed.
     - name: Enabled extra security headers - security.conf
       replace:
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
+        mode: '0644'
         backup: true
       with_items:
         - { re: '^#ServerTokens Minimal', n: 'ServerTokens Prod' }
         - { re: '^ServerTokens OS', n: '#ServerTokens OS' }
         - { re: '^#ServerSignature Off', n: 'ServerSignature Off' }
-#        - { re: '^ServerSignature On', n: '#ServerSignature On' }
-#        - { re: '^#Header set X-Content-Type-Options: "nosniff"', n: 'Header set X-Content-Type-Options: "nosniff"' }
-#        - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "sameorigin"' }
-#    #    - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "deny"' }
-#      notify:
-#        - restart apache
-#        - restart apache - docker
+        # - { re: '^ServerSignature On', n: '#ServerSignature On' }
+        # - { re: '^#Header set X-Content-Type-Options: "nosniff"', n: 'Header set X-Content-Type-Options: "nosniff"' }
+        # - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "sameorigin"' }
+        #  - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "deny"' }
+        # notify:
+        #   - restart apache
+        #   - restart apache - docker
 
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-#- fail: msg=test
+# - fail: msg=test
 
 - block:
     - name: Enabled extra security headers
       lineinfile:
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         line: "{{ item }}"
+        mode: '0644'
         create: true
       with_items:
         - 'ServerTokens Prod'
         - 'ServerSignature Off'
         - 'Header set X-Content-Type-Options: "nosniff"'
         - 'Header set X-Frame-Options: "sameorigin"'
-## HTTPoxy, 201607
-#        - 'RequestHeader unset Proxy early'
-    #    - 'Header set X-Frame-Options: "deny"'
-    ## FIXME! problem w escaping ;
-    #    - 'Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"'
-    #    - 'Header set X-XSS-Protection "1; mode=block"'
+        ## HTTPoxy, 201607
+        # - 'RequestHeader unset Proxy early'
+        # - 'Header set X-Frame-Options: "deny"'
+        ## FIXME! problem w escaping ;
+        # - 'Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"'
+        # - 'Header set X-XSS-Protection "1; mode=block"'
   when: ansible_os_family == "RedHat"
 
 - name: remove default index file - information disclosure
@@ -216,8 +223,8 @@
         name: httpd_can_network_connect
         state: true
         persistent: true
-## FIXME! kitchen/docker in travis seems to have ansible_selinux at true,
-##      https://travis-ci.org/juju4/ansible-harden-apache/jobs/281946068
+      ## FIXME! kitchen/docker in travis seems to have ansible_selinux at true,
+      ##      https://travis-ci.org/juju4/ansible-harden-apache/jobs/281946068
       ignore_errors: true
   when: ansible_os_family == "RedHat" and ansible_selinux
 

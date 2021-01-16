@@ -17,7 +17,7 @@
         openssl genrsa 4096 > {{ ssl_privatedir }}/user.key
             creates={{ ssl_privatedir }}/user.key
       register: userkey
-#    - debug: var=userkey
+    # - debug: var=userkey
     - name: export public user key
       shell: >
         openssl rsa -in {{ ssl_privatedir }}/user.key
@@ -38,11 +38,13 @@
 
 ## https://letsencrypt.org/certificates/
 - name: create root chain file for ssl stapling
-  shell: >
+  shell: |
+    set -o pipefail
     curl https://letsencrypt.org/certs/isrgrootx1.pem
         https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem
         https://letsencrypt.org/certs/lets-encrypt-x4-cross-signed.pem | tee {{ ssl_dir }}/ca-certs.pem > /dev/null
   args:
+    executable: /bin/bash
     creates: "{{ ssl_dir }}/ca-certs.pem"
 - name: ensure root chain file not empty
   stat: path={{ ssl_dir }}/ca-certs.pem
@@ -60,7 +62,7 @@
   notify:
     - add public file to www dir to fullfill letsencrypt challenge
 
-#- debug: var=le_challenge
+# - debug: var=le_challenge
 - name: ensure letsencrypt directory exists
   file: "dest={{ hardenwebserver_rootdir }}/.well-known/acme-challenge state=directory mode=0755"
 

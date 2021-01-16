@@ -23,9 +23,9 @@ rsyslog_workdirectory: /var/lib/rsyslog
 
 ## passlib requires EPEL
 hardenwebserver_packages:
-#    - python-passlib
-    - python3-dnf
-    - httpd
+  # - python-passlib
+  - python3-dnf
+  - httpd
 
 python_pip: python3-pip
 openssl_pkgs:
@@ -73,5 +73,5 @@ testing_h2load_deps:
   - python3-setuptools
 
 h2load_env:
-    CXX_FLAGS: "-std=c++11 -O3"
+  CXX_FLAGS: "-std=c++11 -O3"
 h2load_gitrev: v1.34.0

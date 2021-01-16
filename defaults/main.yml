@@ -1,23 +1,23 @@
 ---
 
 # using non-standard root dir?
-#hardenwebserver_rootdir: ''
+# hardenwebserver_rootdir: ''
 
 hardenwebserver_apache_mod_disable:
   - status
 
 hardenwebserver_apache_modsecurity_engine: 'DetectionOnly'
-#hardenwebserver_apache_modsecurity_engine: 'On'
+# hardenwebserver_apache_modsecurity_engine: 'On'
 harden_apache_modsecurity_lines:
-## https://isc.sans.edu/diary/Tracking+HTTP+POST+data+with+ELK/20345
-    - { re: '^SecRule REQUEST_METHOD POST id:1000,', l: 'SecRule REQUEST_METHOD POST id:1000,phase:2,ctl:auditEngine=On,nolog,pass' }
-## https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual#sanitiseArg
-    - { re: '^SecAction nolog,phase:2,id:131,', l: 'SecAction nolog,phase:2,id:131,sanitiseArg:password,sanitiseArg:newPassword,sanitiseArg:oldPassword' }
-    - { re: 'Include "/usr/share/modsecurity-crs/*.conf"', l: 'Include "/usr/share/modsecurity-crs/*.conf"' }
-    - { re: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"', l: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"' }
-    - { re: '^SecTmpDir .*', l: 'SecTmpDir /tmp/modsectmp' }
-    - { re: '^SecDataDir .*', l: 'SecDataDir /tmp/modsecdata' }
-#    - { re: '', l: '' }
+  ## https://isc.sans.edu/diary/Tracking+HTTP+POST+data+with+ELK/20345
+  - { re: '^SecRule REQUEST_METHOD POST id:1000,', l: 'SecRule REQUEST_METHOD POST id:1000,phase:2,ctl:auditEngine=On,nolog,pass' }
+  ## https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual#sanitiseArg
+  - { re: '^SecAction nolog,phase:2,id:131,', l: 'SecAction nolog,phase:2,id:131,sanitiseArg:password,sanitiseArg:newPassword,sanitiseArg:oldPassword' }
+  - { re: 'Include "/usr/share/modsecurity-crs/*.conf"', l: 'Include "/usr/share/modsecurity-crs/*.conf"' }
+  - { re: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"', l: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"' }
+  - { re: '^SecTmpDir .*', l: 'SecTmpDir /tmp/modsectmp' }
+  - { re: '^SecDataDir .*', l: 'SecDataDir /tmp/modsecdata' }
+  # - { re: '', l: '' }
 harden_apache_modsecurity_jsonlog: true
 
 ## if you want to disable http.
@@ -30,7 +30,7 @@ hardenwebserver_remove_defaultindex: false
 # http://sysadminsjourney.com/content/2010/02/01/apache-modproxy-error-13permission-denied-error-rhel/
 hardenwebserver_proxy_redhat_selinux_allow: false
 # if you use unusual ports, they have to be allowed on redhat selinux
-#hardenwebserver_ports_redhat_selinux_allow: [ 8888, 5000 ]
+# hardenwebserver_ports_redhat_selinux_allow: [ 8888, 5000 ]
 
 ## curl, wget, perl...
 hardenwebserver_block_downloadagents: false
@@ -38,37 +38,37 @@ hardenwebserver_cachecontrol: false
 
 ## if defined/not empty, restrict webserver listen interface
 ## FIXME! only support one interface
-#hardenwebserver_bind: 192.168.1.1
+# hardenwebserver_bind: 192.168.1.1
 hardenwebserver_bind: ''
 
 # do we need extra ports to listen?
 harden_apache_extra_ports: []
 
 harden_apache2_etc:
-    - harden-apache2-http.conf
-    - harden-apache2-https.conf
+  - harden-apache2-http.conf
+  - harden-apache2-https.conf
 harden_apache2_confs:
-    - harden-apache2-common.conf
-    - harden-apache2-php.conf
-    - harden-apache2-server.conf
-    - harden-apache2-gzip.conf
-    - harden-apache2-log.conf
+  - harden-apache2-common.conf
+  - harden-apache2-php.conf
+  - harden-apache2-server.conf
+  - harden-apache2-gzip.conf
+  - harden-apache2-log.conf
 
 harden_apache_use_syslog: false
 harden_apache_rsyslog_template: 'rsyslog-apache.conf.j2'
 
 hardenwebserver_cert: selfsigned
-#hardenwebserver_certduration: +90d
-#cert_email:
-#cert_san:
-#cert_orgname: 'Apache Ansible'
+# hardenwebserver_certduration: +90d
+# cert_email:
+# cert_san:
+# cert_orgname: 'Apache Ansible'
 ## Ansible v2.2 module. will use hostname fqdn
-#hardenwebserver_cert: letsencrypt
+# hardenwebserver_cert: letsencrypt
 # path on orchestrator, if empty will be created
 hardenwebserver_letsencrypt_user_key: ''
 ## staging or production url
 hardenwebserver_letsencrypt_acme_dir: 'https://acme-staging.api.letsencrypt.org/directory'
-#hardenwebserver_letsencrypt_acme_dir: 'https://acme-v01.api.letsencrypt.org/directory'
+# hardenwebserver_letsencrypt_acme_dir: 'https://acme-v01.api.letsencrypt.org/directory'
 hardenwebserver_enable_defaultssl: true
 
 ## not recommended/supported for letsencrypt
@@ -78,19 +78,19 @@ hardenwebserver_cert_pinning: false
 ## https://githubengineering.com/githubs-post-csp-journey/
 ## https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 ## https://github.com/mozilla/csp-logger
-#hardenwebserver_header_csp: "default-src self"
+# hardenwebserver_header_csp: "default-src self"
 ## this settings is necessary for default ubuntu or centos page
 hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'; upgrade-insecure-requests; report-uri /csp/report.php"
-#hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self';"
-#hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri https://xxxx.report-uri.io/r/default/csp/enforce"
-#hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri-report-only https://xxxx.report-uri.io/r/default/csp/reportOnly"
+# hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self';"
+# hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri https://xxxx.report-uri.io/r/default/csp/enforce"
+# hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri-report-only https://xxxx.report-uri.io/r/default/csp/reportOnly"
 harden_apache_cspreport_template: csp-hotline.php.j2
 hardenwebserver_header_expectct: 'max-age=0, report-uri,report-uri=/csp/report.php'
 
 ## https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 harden_webserver_header_refpolicy: origin
-#harden_webserver_header_refpolicy: strict-origin-when-cross-origin
-#harden_webserver_header_refpolicy: no-referrer-when-downgrade
+# harden_webserver_header_refpolicy: strict-origin-when-cross-origin
+# harden_webserver_header_refpolicy: no-referrer-when-downgrade
 
 ## https://cipherli.st/
 ## https://wiki.mozilla.org/Security/Server_Side_TLS
@@ -135,7 +135,7 @@ harden_apache_ad_sso_conf_template: harden-apache2-ad-sso.conf
 harden_apache_ad_sso_dir_path:
   - /var/www/html/sso
 # or with .htaccess (disabled by default)
-#harden_apache_ad_sso_htaccess_template: htaccess-sso.j2
+# harden_apache_ad_sso_htaccess_template: htaccess-sso.j2
 krb5_ticket_lifetime: 24000
 krb5_kdc: dc-1.local.domain
 krb5_admin_server: dc-1.local.domain
@@ -143,6 +143,6 @@ krb5_admin_server: dc-1.local.domain
 harden_apache_testing: false
 testing_target: https://localhost
 testing_siege_duration: 5m
-#testing_siege_args: '-f urls.txt'
+# testing_siege_args: '-f urls.txt'
 
 install_archives: /var/_install

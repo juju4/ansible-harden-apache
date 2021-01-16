@@ -5,9 +5,10 @@
   file:
     src: "/usr/share/modsecurity-crs/base_rules/{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
+    mode: '0644'
     state: link
-#  with_fileglob:
-#    - /usr/share/modsecurity-crs/base_rules/*
+  # with_fileglob:
+  #   - /usr/share/modsecurity-crs/base_rules/*
   with_items:
     - modsecurity_35_bad_robots.data
     - modsecurity_35_scanners.data
@@ -25,7 +26,7 @@
     - modsecurity_crs_42_tight_security.conf
     - modsecurity_crs_45_trojans.conf
     - modsecurity_crs_47_common_exceptions.conf
-#    - modsecurity_crs_48_local_exceptions.conf.example
+    # - modsecurity_crs_48_local_exceptions.conf.example
     - modsecurity_crs_49_inbound_blocking.conf
     - modsecurity_crs_50_outbound.conf
     - modsecurity_crs_59_outbound_blocking.conf
@@ -35,6 +36,7 @@
   file:
     src: "/usr/share/modsecurity-crs/optional_rules/{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
+    mode: '0644'
     state: link
   with_items:
     - modsecurity_42_comment_spam.data
@@ -46,8 +48,8 @@
     - modsecurity_crs_16_username_tracking.conf
     - modsecurity_crs_25_cc_known.conf
     - modsecurity_crs_42_comment_spam.conf
-## creating a lot of noise w icingaweb2
-#    - modsecurity_crs_43_csrf_protection.conf
+    ## creating a lot of noise w icingaweb2
+    # - modsecurity_crs_43_csrf_protection.conf
     - modsecurity_crs_46_av_scanning.conf
     - modsecurity_crs_47_skip_outbound_checks.conf
     - modsecurity_crs_49_header_tagging.conf
@@ -61,6 +63,7 @@
   file:
     src: "/usr/share/modsecurity-crs/experimental_rules/{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
+    mode: '0644'
     state: link
   with_items:
     - modsecurity_crs_11_brute_force.conf
@@ -73,18 +76,26 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Xenial | SecReadStateLimit is depricated, use SecConnReadStateLimit instead
-  replace: dest={{ item }} regexp=SecReadStateLimit replace=SecConnReadStateLimit backup=yes
+  replace:
+    dest: "{{ item }}"
+    regexp: SecReadStateLimit
+    replace: SecConnReadStateLimit
+    mode: '0644'
+    backup: yes
   with_items:
     - "{{ modsecurity_active }}/modsecurity_crs_49_header_tagging.conf"
     - "/usr/share/modsecurity-crs/experimental_rules/modsecurity_crs_11_slow_dos_protection.conf"
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
 
-#- file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_21_protocol_anomalies.conf state=absent
+# - file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_21_protocol_anomalies.conf state=absent
 ## Note: enable this line if you want to get debug/software errors information
-#- file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_50_outbound.conf state=absent
+# - file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_50_outbound.conf state=absent
 
 - name: ensure modsecurity_active dir has right permissions
-  file: dest="{{ modsecurity_active }}" state=directory mode=0755
+  file:
+    dest: "{{ modsecurity_active }}"
+    state: directory
+    mode: '0755'
 - name: add additional rules - exceptions
   copy:
     src: "{{ item }}"
@@ -108,6 +119,7 @@
     dest: /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_16_session_hijacking.conf
     regexp: '^        SecRule TX:1 ".*" "chain,t:sha1,t:hexEncode,setvar:session.ip_hash'
     replace: '        SecRule TX:1 ".*" "t:sha1,t:hexEncode,setvar:session.ip_hash'
+    mode: '0644'
     follow: true
   notify:
     - restart apache
@@ -119,6 +131,7 @@
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
+    mode: '0644'
     backup: true
   with_items: "{{ harden_apache_modsecurity_lines }}"
   notify:

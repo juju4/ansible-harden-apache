@@ -40,6 +40,7 @@
   file:
     src: "{{ apache_confdir }}/{{ item }}"
     dest: "/etc/apache2/conf-enabled/{{ item }}"
+    mode: '0644'
     state: link
   with_items:
     - csp-apache.conf

@@ -25,6 +25,7 @@
     dest: /etc/resolv.conf
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
+    mode: '0644'
     backup: true
   with_items:
     - { re: '^search .*', l: "search {{ harden_apache_ad_sso_domain }}" }
@@ -35,6 +36,7 @@
     dest: /etc/resolv.conf
     regexp: "^nameserver {{ item }}"
     line: "nameserver {{ item }}"
+    mode: '0644'
     backup: true
   with_items: "{{ harden_apache_ad_sso_domain_dns }}"
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
@@ -70,6 +72,7 @@
       file:
         src: "{{ apache_confdir }}/{{ harden_apache_ad_sso_conf_template }}"
         dest: "/etc/apache2/conf-enabled/{{ harden_apache_ad_sso_conf_template }}"
+        mode: '0644'
         state: link
       notify:
         - restart apache
