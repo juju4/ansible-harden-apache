@@ -73,6 +73,6 @@ testing_h2load_deps:
   - cython
   - python3-dev
   - python-setuptools
-h2load_gitrev: HEAD
+h2load_gitrev: v1.42.0
 h2load_env:
   PYTHON_VERSION: 3
