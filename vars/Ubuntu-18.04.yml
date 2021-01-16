@@ -75,4 +75,4 @@ testing_h2load_deps:
   - python-setuptools
 h2load_gitrev: HEAD
 h2load_env:
-  PYTHON_VERSION: 3.9.1
+  PYTHON_VERSION: 3
