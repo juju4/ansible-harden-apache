@@ -2,4 +2,4 @@
 - name: Converge
   hosts: all
   roles:
-    - juju4.harden-apache
+    - juju4.harden_apache
