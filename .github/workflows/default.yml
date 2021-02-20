@@ -92,16 +92,19 @@ jobs:
           apachectl -v
           sudo apachectl -t
           sudo apachectl -l
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - etc
         run: |
           sudo cat /etc/apache2/sites-available/000-default.conf
           sudo cat /etc/apache2/sites-available/default-ssl.conf
           sudo cat /etc/modsecurity/modsecurity.conf
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - files
         run: |
           sudo find /etc/apache2 -type f -ls
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - curl
         run: |
@@ -112,9 +115,11 @@ jobs:
           curl -vk -H Referer:http://www.example.com -H X-Forwarded-For:127.0.0.128 https://localhost/
           curl -vk --cookie COOKIE=test_cookie https://localhost
           curl -vk -H "Referer: http://www.example.com" -H "X-Forwarded-For: 127.0.0.128" "https://localhost/?a=b&c=d"
+        if: ${{ always() }}
         continue-on-error: true
       - name: After script - logs
         run: |
           ls -la /var/log/apache2
           sudo find /var/log/apache2 -type f -exec tail -50 {} \;
+        if: ${{ always() }}
         continue-on-error: true
