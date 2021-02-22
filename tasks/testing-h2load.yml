@@ -40,3 +40,5 @@
   args:
     executable: /bin/bash
     creates: /tmp/h2load.log
+  environment:
+    PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
