@@ -6,10 +6,10 @@ set :backend, :exec
 set welcome = 'Apache2 Ubuntu Default Page: It works'
 if (os[:family] == 'ubuntu')
   set conn = 'SSL connection using TLSv1.3'
-  set public_key = 'Public-Key: (4096 bit)'
+  set public_key = 'Public-Key: \(4096 bit\)'
 else
   set conn = 'SSL connection using TLSv1.2'
-  set public_key = 'Public-Key: (2048 bit)'
+  set public_key = 'Public-Key: \(2048 bit\)'
 end
 
 describe package('httpd'), :if => os[:family] == 'redhat' do
