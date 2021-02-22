@@ -37,7 +37,7 @@
     ansible_os_family == "RedHat"
 
 - include: php.yml
-  when: harden_apache_php is defined and harden_apache_php|bool
+  when: harden_apache_php_enable is defined and harden_apache_php_enable|bool
 
 - include: csp-report.yml
   when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template
