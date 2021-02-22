@@ -3,6 +3,15 @@ require 'serverspec'
 # Required by serverspec
 set :backend, :exec
 
+set welcome = 'Apache2 Ubuntu Default Page: It works'
+if (os[:family] == 'ubuntu')
+  set conn = 'SSL connection using TLSv1.3'
+  set public_key = 'Public-Key: (4096 bit)'
+else
+  set conn = 'SSL connection using TLSv1.2'
+  set public_key = 'Public-Key: (2048 bit)'
+end
+
 if ENV['SERVERSPEC_WEB'] == 'nginx'
 
   describe package('nginx') do
@@ -60,8 +69,8 @@ describe command('apachectl -M') do
 end
 
 describe command('curl -vk https://localhost') do
-  its(:stdout) { should match /<title>Welcome to nginx!<\/title>/ }
-  its(:stderr) { should match /SSL connection using TLSv1.2/ }
+  its(:stdout) { should match /#{welcome}/ }
+  its(:stderr) { should match /#{conn}/ }
   its(:stderr) { should match /HTTP\/.* 200/ }
   its(:exit_status) { should eq 0 }
 end
@@ -78,7 +87,7 @@ end
 
 describe command('openssl s_client -connect localhost:443 < /dev/null 2>/dev/null | openssl x509 -text -in /dev/stdin') do
   its(:stdout) { should match /sha256/ }
-  its(:stdout) { should match /Public-Key: \(2048 bit\)/ }
+  its(:stdout) { should match /#{public_key}/ }
 end
 ## enumerate ciphers? multiple openssl s_client, nmap, sslscan, ...
 #http://superuser.com/questions/109213/how-do-i-list-the-ssl-tls-cipher-suites-a-particular-website-offers
