@@ -69,7 +69,7 @@ jobs:
       - name: ansible-lint
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden_apache && ansible-lint
-      - name: run test
+      - name: Install lxd requirements
         run: |
           sudo apt-get update -qq
           sudo apt-get -y install lxd acl dnsmasq-base zfsutils-linux -q
@@ -80,7 +80,8 @@ jobs:
           echo "# image list"
           sudo lxc image list
           echo "# download image"
-          sudo lxc image copy ubuntu:${{ matrix.version }} local: --alias=${{ matrix.distribution }}-${{ matrix.version }}
+          [ ${{ matrix.distribution }} == ubuntu ] || sudo lxc image copy images:${{ matrix.distribution }}/${{ matrix.version }}/amd64 local: --alias=${{ matrix.distribution }}-${{ matrix.version }}-nossh || true
+          [ ${{ matrix.distribution }} == ubuntu ] && sudo lxc image copy ubuntu:${{ matrix.version }} local: --alias=${{ matrix.distribution }}-${{ matrix.version }} || true
           echo "# image list"
           sudo lxc image list
           ## configure network
@@ -104,6 +105,7 @@ jobs:
           sudo zpool list
           sudo lxc profile device add default root disk path=/ pool=pool1
           sudo lxc profile show default
+          [ "X${{ matrix.distribution }}" == "Xcentos" ] && cd $GITHUB_WORKSPACE/juju4.harden_apache && sudo sh -x ./test/lxd/centos-ssh-image.sh ${{ matrix.version }} || true
       - name: Install kitchen requirements
         run: |
           sudo gem install test-kitchen --version "=1.25.0"
