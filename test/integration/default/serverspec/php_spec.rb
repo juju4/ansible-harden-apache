@@ -33,8 +33,8 @@ describe file('/etc/php/7.0/apache2/php.ini'), :if => os[:family] == 'ubuntu' &&
   its(:content) { should match /^memory_limit = 128M/ }
   its(:content) { should match /^include_path = \/usr\/share\/php/ }
   its(:content) { should match /^session.use_strict_mode = 1/ }
-  its(:content) { should match /^session.cookie_secure = true/ }
-  its(:content) { should match /^session.cookie_httponly = true/ }
+  its(:content) { should match /^session.cookie_secure = true/i }
+  its(:content) { should match /^session.cookie_httponly = true/i }
 end
 
 describe file('/etc/php5/apache2/php.ini'), :if => os[:family] == 'ubuntu' && os[:release] == '14.04' do
