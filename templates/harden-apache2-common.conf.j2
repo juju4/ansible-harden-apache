@@ -15,7 +15,7 @@ SetEnvIf Request_URI "^/favicon.ico$" dontlog
     Deny from all
     Satisfy all
 </FilesMatch>
-<FilesMatch "\.(inc|old|svn|git|pub|sec|gpg|sql|sqlite|swp|bak|orig|disabled)$">
+<FilesMatch "\.(inc|old|svn|git|pub|sec|gpg|sql|sqlite|swp|bak|orig|disabled|env)$">
     Order allow,deny
     Deny from all
     Satisfy all
