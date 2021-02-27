@@ -19,7 +19,7 @@
   git:
     repo: https://github.com/nbs-system/snuffleupagus
     dest: "{{ install_archives }}/snuffleupagus"
-    version: "{{ hardenapache2_snuffleupagus_version | default('e548cc0354d3924c60931c3117bfb135b1c0d555') }}"
+    version: "{{ hardenapache2_snuffleupagus_version | default('c5d249119375c95fdcdf4124b330c918fb03f4b5') }}"
     update: false
 
 - name: snuffleupagus | build
