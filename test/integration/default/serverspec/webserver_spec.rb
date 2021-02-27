@@ -8,7 +8,7 @@ set welcome_code = 'HTTP\/.* 200'
 set conn = 'SSL connection using TLSv1.3'
 set public_key = 'Public-Key: \(4096 bit\)'
 if (os[:family] == 'ubuntu')
-elsif (os[:family] == 'redhat' && os[:release] == '7')
+elsif (os[:family] == 'redhat' && os[:release].scan(/^7\./) != [])
   set welcome = 'Apache HTTP Server Test Page powered by CentOS'
   set conn = 'SSL connection using TLS_ECDHE'
 elsif (os[:family] == 'redhat')
