@@ -60,6 +60,8 @@ describe command('curl -vk https://localhost') do
   its(:stdout) { should match /#{welcome}/ }
   its(:stderr) { should match /#{conn}/ }
   its(:stderr) { should match /#{welcome_code}/ }
+  its(:stderr) { should match /X-Frame-Options: sameorigin/ }
+  its(:stderr) { should match /default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self';/ }
   its(:exit_status) { should eq 0 }
 end
 describe command('curl -vk https://localhost/nonexistent') do
