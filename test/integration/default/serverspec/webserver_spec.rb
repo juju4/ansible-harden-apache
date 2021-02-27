@@ -74,7 +74,7 @@ describe command('curl -vk https://localhost/nonexistent') do
   its(:exit_status) { should eq 0 }
 end
 describe command('curl -vk -X OPTIONS https://localhost') do
-  its(:stdout) { should match /<title>403 Forbidden<\/title>/ }
+  its(:stdout) { should match /#{options_title}/ }
   its(:stderr) { should match /HTTP\/.* 403/ }
   its(:exit_status) { should eq 0 }
 end
