@@ -157,6 +157,7 @@ jobs:
         continue-on-error: true
       - name: After script - systemd
         run: |
+          cd $GITHUB_WORKSPACE/juju4.harden_apache
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'systemctl -l --no-pager status apache2' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'systemd-analyze security' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'rsyslogd -v' || true
@@ -167,6 +168,7 @@ jobs:
         continue-on-error: true
       - name: After script - etc
         run: |
+          cd $GITHUB_WORKSPACE/juju4.harden_apache
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo cat /etc/apache2/sites-available/000-default.conf' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo cat /etc/apache2/sites-available/default-ssl.conf' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo cat /etc/modsecurity/modsecurity.conf' || true
@@ -174,11 +176,16 @@ jobs:
         continue-on-error: true
       - name: After script - files
         run: |
-          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/apache2 -type f -ls
+          cd $GITHUB_WORKSPACE/juju4.harden_apache
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/httpd /etc/apache2 -type f -ls'
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/httpd/conf.d /etc/apache2/conf-enabled -type f -exec cat {} \;'
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo cat /etc/php.ini' || true
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/php/ -type f -exec cat {} \;' || true
         if: ${{ always() }}
         continue-on-error: true
       - name: After script - curl
         run: |
+          cd $GITHUB_WORKSPACE/juju4.harden_apache
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'curl -vk https://localhost' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'curl -vk https://localhost?a=b' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'curl -vk -X HEAD https://localhost' || true
@@ -190,7 +197,8 @@ jobs:
         continue-on-error: true
       - name: After script - logs
         run: |
-          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'ls -la /var/log/apache2' || true
-          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /var/log/apache2 -type f -exec tail -50 {} \;' || true
+          cd $GITHUB_WORKSPACE/juju4.harden_apache
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'ls -la /var/log/httpd /var/log/apache2' || true
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /var/log/httpd /var/log/apache2 -type f -exec tail -50 {} \;' || true
         if: ${{ always() }}
         continue-on-error: true
