@@ -79,7 +79,7 @@
   replace:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^session.cookie_httponly =.*'
-    replace: "session.cookie_httponly = {{ harden_php_session_cookie_httponly }}"
+    replace: "session.cookie_httponly = {{ harden_php_session_cookie_httponly | lower }}"
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
