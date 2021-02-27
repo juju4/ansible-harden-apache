@@ -12,10 +12,10 @@
   until: pkg_result is success
 
 - name: PHP | Configure default time
-  replace:
+  lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^date.timezone = .*'
-    replace: "date.timezone = '{{ harden_php_date_timezone }}'"
+    line: "date.timezone = '{{ harden_php_date_timezone }}'"
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
@@ -44,10 +44,10 @@
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | Memory limit
-  replace:
+  lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^memory_limit = .*'
-    replace: "memory_limit = {{ harden_php_memory_limit }}"
+    line: "memory_limit = {{ harden_php_memory_limit }}"
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
@@ -60,10 +60,10 @@
   with_items: "{{ _harden_apache_php_variants }}"
 
 - name: PHP | session.use_strict_mode
-  replace:
+  lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^session.use_strict_mode = .*'
-    replace: "session.use_strict_mode = {{ harden_php_session_use_strict_mode }}"
+    line: "session.use_strict_mode = {{ harden_php_session_use_strict_mode }}"
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
