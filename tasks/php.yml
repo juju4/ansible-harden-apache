@@ -63,7 +63,7 @@
   lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^session.use_strict_mode = .*'
-    line: "session.use_strict_mode = {{ harden_php_session_use_strict_mode }}"
+    line: "session.use_strict_mode = {{ harden_php_session_use_strict_mode | lower }}"
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
@@ -71,7 +71,7 @@
   lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
     regexp: '^session.cookie_secure =.*'
-    line: "session.cookie_secure = {{ harden_php_session_cookie_secure }}"
+    line: "session.cookie_secure = {{ harden_php_session_cookie_secure | lower }}"
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
