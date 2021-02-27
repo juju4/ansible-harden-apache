@@ -4,14 +4,20 @@ require 'serverspec'
 set :backend, :exec
 
 set welcome = 'Apache2 Ubuntu Default Page: It works'
+set welcome_code = 'HTTP\/.* 200'
 set conn = 'SSL connection using TLSv1.3'
 set public_key = 'Public-Key: \(4096 bit\)'
 if (os[:family] == 'ubuntu')
+elsif (os[:family] == 'redhat' && os[:release] == '7')
+  set welcome = 'Apache HTTP Server Test Page powered by CentOS'
+  set conn = 'SSL connection using TLS_ECDHE'
+elsif (os[:family] == 'redhat')
+  set welcome = 'CentOS .* Apache HTTP'
+  set welcome_code = 'HTTP\/.* 403'
+  set conn = 'SSL connection using TLSv1.3'
+  set public_key = 'Public-Key: \(4096 bit\)'
 else
   set conn = 'SSL connection using TLSv1.2'
-end
-if (os[:family] == 'redhat' && os[:release] == '7')
-  set conn = 'SSL connection using TLS_ECDHE'
 end
 
 describe package('httpd'), :if => os[:family] == 'redhat' do
@@ -53,7 +59,7 @@ end
 describe command('curl -vk https://localhost') do
   its(:stdout) { should match /#{welcome}/ }
   its(:stderr) { should match /#{conn}/ }
-  its(:stderr) { should match /HTTP\/.* 200/ }
+  its(:stderr) { should match /#{welcome_code}/ }
   its(:exit_status) { should eq 0 }
 end
 describe command('curl -vk https://localhost/nonexistent') do
