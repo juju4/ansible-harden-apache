@@ -176,8 +176,8 @@ jobs:
       - name: After script - files
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden_apache
-          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/httpd /etc/apache2 -type f -ls'
-          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/httpd/conf.d /etc/apache2/conf-enabled -type f -exec cat {} \;'
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/httpd /etc/apache2 -type f -ls' || true
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/httpd/conf.d /etc/apache2/conf-enabled -type f -exec cat {} \;' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo cat /etc/php.ini' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo find /etc/php/ -type f -exec cat {} \;' || true
         if: ${{ always() }}
