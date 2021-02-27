@@ -4,12 +4,15 @@ require 'serverspec'
 set :backend, :exec
 
 set welcome = 'Apache2 Ubuntu Default Page: It works'
+set conn = 'SSL connection using TLSv1.3'
+set public_key = 'Public-Key: \(4096 bit\)'
 if (os[:family] == 'ubuntu')
-  set conn = 'SSL connection using TLSv1.3'
-  set public_key = 'Public-Key: \(4096 bit\)'
 else
   set conn = 'SSL connection using TLSv1.2'
   set public_key = 'Public-Key: \(2048 bit\)'
+end
+if (os[:family] == 'redhat' && os[:release] == '7')
+  set conn = 'SSL connection using TLS_ECDHE'
 end
 
 describe package('httpd'), :if => os[:family] == 'redhat' do

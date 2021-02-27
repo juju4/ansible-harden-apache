@@ -3,10 +3,14 @@ require 'serverspec'
 # Required by serverspec
 set :backend, :exec
 
+set conn = 'SSL connection using TLSv1.3'
 if (os[:family] == 'ubuntu')
   set conn = 'SSL connection using TLSv1.3'
 else
   set conn = 'SSL connection using TLSv1.2'
+end
+if (os[:family] == 'redhat' && os[:release] == '7')
+  set conn = 'SSL connection using TLS_ECDHE'
 end
 
 describe command('curl -kv https://localhost/csp/report.php') do
