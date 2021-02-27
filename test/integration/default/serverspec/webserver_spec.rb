@@ -10,6 +10,7 @@ set public_key = 'Public-Key: \(4096 bit\)'
 if (os[:family] == 'ubuntu')
 elsif (os[:family] == 'redhat' && os[:release].scan(/^7\./) != [])
   set welcome = 'Apache HTTP Server Test Page powered by CentOS'
+  set welcome_code = 'HTTP\/.* 403'
   set conn = 'SSL connection using TLS_ECDHE'
 elsif (os[:family] == 'redhat')
   set welcome = 'CentOS .* Apache HTTP'
