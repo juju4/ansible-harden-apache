@@ -13,7 +13,8 @@
 - name: Check if modsecurity.conf exists
   stat: path={{ modsecurity_conf }}
   register: confms
-- debug: var=confms
+- name: Debug | modsecurity.conf state
+  debug: var=confms
 - name: copy default recommended modsecurity.conf
   copy:
     src: /etc/modsecurity/modsecurity.conf-recommended
