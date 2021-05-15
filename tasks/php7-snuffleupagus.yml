@@ -38,7 +38,7 @@
     - make install
   args:
     chdir: "{{ install_archives }}/snuffleupagus/src"
-    creates: /usr/lib/php/20170718/snuffleupagus.so
+    creates: /usr/lib/php/20190902/snuffleupagus.so
 
 - name: snuffleupagus | configure php
   template:
