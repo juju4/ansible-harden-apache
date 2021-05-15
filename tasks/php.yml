@@ -100,4 +100,3 @@
   when: >
     (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16) and
     not harden_php7_snuffleupagus
-
