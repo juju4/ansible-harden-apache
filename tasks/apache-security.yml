@@ -55,14 +55,14 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ apacheetc }}/{{ item }}"
-    mode: '0644'
+    mode: '0640'
   with_items: "{{ harden_apache2_etc }}"
 
 - name: push harden configuration templates - apache conf dir
   template:
     src: "{{ item }}.j2"
     dest: "{{ apache_confdir }}/{{ item }}"
-    mode: '0644'
+    mode: '0640'
   with_items: "{{ harden_apache2_confs }}"
   notify:
     - restart apache
@@ -71,7 +71,7 @@
   file:
     src: "{{ apache_confdir }}/{{ item }}"
     dest: "/etc/apache2/conf-enabled/{{ item }}"
-    mode: '0644'
+    mode: '0640'
     state: link
   with_items: "{{ harden_apache2_confs }}"
   notify:
@@ -86,7 +86,7 @@
             Include {{ apacheetc }}/harden-apache2-http.conf
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache http hardening"
     insertbefore: '^(\s*)</VirtualHost>'
-    mode: '0644'
+    mode: '0640'
   notify:
     - restart apache
     - restart apache - docker
@@ -99,7 +99,7 @@
             Include {{ apacheetc }}/harden-apache2-https.conf
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache https hardening"
     insertbefore: '^(\s*)</VirtualHost>'
-    mode: '0644'
+    mode: '0640'
   notify:
     - restart apache
     - restart apache - docker
@@ -112,7 +112,7 @@
             CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache custom json log"
     insertbefore: '^(\s*)</VirtualHost>'
-    mode: '0644'
+    mode: '0640'
   notify:
     - restart apache
     - restart apache - docker
@@ -136,7 +136,7 @@
         dest: "{{ apacheetc }}/apache2.conf"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
-        mode: '0644'
+        mode: '0640'
         backup: true
         validate: 'apachectl -t -f %s'
       with_items:
@@ -153,7 +153,7 @@
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
-        mode: '0644'
+        mode: '0640'
         backup: true
       with_items:
         - { re: '^#ServerTokens Minimal', n: 'ServerTokens Prod' }
@@ -176,7 +176,7 @@
       lineinfile:
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         line: "{{ item }}"
-        mode: '0644'
+        mode: '0640'
         create: true
       with_items:
         - 'ServerTokens Prod'

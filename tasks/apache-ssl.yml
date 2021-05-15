@@ -31,7 +31,7 @@
     dest: "{{ apachesslconf }}"
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
-    mode: '0644'
+    mode: '0640'
   with_items:
     - { regexp: '/etc/ssl/certs/ssl-cert-snakeoil.pem', replace: '{{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
     - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: '{{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
@@ -49,7 +49,7 @@
         dest: "{{ apachesslconf }}"
         regexp: "{{ item.regexp }}"
         replace: "{{ item.replace }}"
-        mode: '0644'
+        mode: '0640'
       with_items:
         - { regexp: '^SSLCertificateFile .*', replace: 'SSLCertificateFile {{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
         - { regexp: '^SSLCertificateKeyFile .*',
@@ -72,7 +72,7 @@
   file:
     src: "{{ apachesslconf }}"
     dest: /etc/apache2/sites-enabled/default-ssl.conf
-    mode: '0644'
+    mode: '0640'
     state: link
   notify:
     - restart apache
@@ -95,7 +95,7 @@
       copy:
         src: /etc/httpd/conf.d/ssl.conf.orig
         dest: /etc/httpd/conf.d/ssl.conf
-        mode: '0644'
+        mode: '0640'
       when: defsslorig.stat.exists and not defssl.stat.exists
   when: (ansible_os_family == 'RedHat') and hardenwebserver_enable_defaultssl
 - block:
