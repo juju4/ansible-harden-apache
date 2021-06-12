@@ -14,6 +14,12 @@ elsif (os[:family] == 'redhat' && os[:release].scan(/^7\./) != [])
   set welcome_code = 'HTTP\/.* 403'
   set conn = 'SSL connection using TLS_ECDHE'
   set options_title = welcome
+elsif (os[:family] == 'redhat' && os[:release].scan(/^8\./) != [])
+  set welcome = 'HTTP Server Test Page powered by CentOS'
+  set welcome_code = 'HTTP\/.* 403'
+  set conn = 'SSL connection using TLSv1.3'
+  set public_key = 'Public-Key: \(4096 bit\)'
+  set options_title = welcome
 elsif (os[:family] == 'redhat')
   set welcome = 'CentOS .* Apache HTTP'
   set welcome_code = 'HTTP\/.* 403'
