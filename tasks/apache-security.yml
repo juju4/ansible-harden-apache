@@ -223,7 +223,7 @@
         name: httpd_can_network_connect
         state: true
         persistent: true
-  when: ansible_os_family == "RedHat" and ansible_selinux
+  when: ansible_os_family == "RedHat" and ansible_selinux is defined and ansible_selinux.status != 'disabled'
 
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Confined_Services/sect-Managing_Confined_Services-Configuration_examples-Changing_port_numbers.html
 # https://wiki.centos.org/HowTos/SELinux#head-ad837f60830442ae77a81aedd10c20305a811388
