@@ -20,10 +20,10 @@
 - name: ensure good permissions for ssl dhparam key
   file: "dest={{ ssl_privatedir }}/dhparam.pem mode=0440 owner=root group={{ www_user }}"
 
-- include: certificate-selfsigned.yml
+- import_tasks: certificate-selfsigned.yml
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'selfsigned'
 
-- include: certificate-letsencrypt.yml
+- import_tasks: certificate-letsencrypt.yml
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt'
 
 - name: Debian | update certificate info in Apache configuration

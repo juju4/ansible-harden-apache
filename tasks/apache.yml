@@ -16,33 +16,33 @@
         not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
   when: ansible_os_family == "RedHat"
 
-- include: apache-ssl.yml
+- import_tasks: apache-ssl.yml
 
-- include: apache-security.yml
+- import_tasks: apache-security.yml
 
-- include: apache-modsecurity.yml
+- import_tasks: apache-modsecurity.yml
 
-- include: apache-https-only.yml
+- import_tasks: apache-https-only.yml
   when: hardenwebserver_disable_http is defined and hardenwebserver_disable_http|bool
 
-- include: apache-bind-debian.yml
+- import_tasks: apache-bind-debian.yml
   when: >
     hardenwebserver_bind is defined and
     hardenwebserver_bind and
     (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
-- include: apache-bind-redhat.yml
+- import_tasks: apache-bind-redhat.yml
   when: >
     hardenwebserver_bind is defined and
     hardenwebserver_bind and
     ansible_os_family == "RedHat"
 
-- include: php.yml
+- import_tasks: php.yml
   when: harden_apache_php_enable is defined and harden_apache_php_enable|bool
 
-- include: csp-report.yml
+- import_tasks: csp-report.yml
   when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template
 
-- include: apache-ad-sso.yml
+- import_tasks: apache-ad-sso.yml
   when: harden_apache_ad_sso|bool
 
 - name: ensure apache is enabled and started

@@ -26,10 +26,10 @@
     - restart apache - docker
   when: not confms.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
-- include: apache-modsecurity-crs2.yml
+- import_tasks: apache-modsecurity-crs2.yml
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 18)
 
-- include: apache-modsecurity-crs3.yml
+- import_tasks: apache-modsecurity-crs3.yml
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 18)
 
 - name: review modsecurity.conf (1)
