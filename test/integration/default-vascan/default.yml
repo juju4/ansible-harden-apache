@@ -10,6 +10,8 @@
     - w3af_scan_output_file: "/tmp/output-w3af.txt"
     - w3af_pull: false
     - w3af_pulldir: tmp/
+  collections:
+    - community.crypto
   roles:
     - juju4.harden_apache
     - juju4.w3af

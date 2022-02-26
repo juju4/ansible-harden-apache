@@ -7,5 +7,7 @@
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
   vars:
     - harden_apache_testing: true
+  collections:
+    - community.crypto
   roles:
     - juju4.harden_apache
