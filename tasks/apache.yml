@@ -45,6 +45,9 @@
 - import_tasks: apache-ad-sso.yml
   when: harden_apache_ad_sso|bool
 
+- import_tasks: systemd.yml
+  when: harden_apache_systemd_hardening
+
 - name: ensure apache is enabled and started
   service: name={{ apache_svc }} state=started enabled=yes
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")

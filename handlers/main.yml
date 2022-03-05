@@ -1,5 +1,11 @@
 ---
 
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  when: >
+    not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+
 - name: restart apache
   service: name={{ apache_svc }} state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
@@ -16,6 +22,6 @@
 
 - name: add public file to www dir to fullfill letsencrypt challenge
   copy:
-     dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
-     content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"
-     mode: '0644'
+    dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
+    content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"
+    mode: '0644'

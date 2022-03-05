@@ -103,6 +103,19 @@ harden_webserver_header_refpolicy: origin
 harden_apache_sslciphersuite: 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
 harden_apache_sslprotocol: 'All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1'
 
+harden_apache_systemd_hardening: true
+harden_apache_systemd_ipaddressallow: 'localhost link-local multicast 10.0.0.0/8 192.168.0.0/16'
+harden_apache_systemd_dir_acl: []
+#  - { p: "/etc/httpd", perm: rx, m: '0750' }
+#  - { p: "/etc/ssl/private", perm: rx, m: '0750' }
+#  - { p: /etc/letsencrypt/archive, perm: rx, m: '0700' }
+#  - { p: /etc/letsencrypt/live, perm: rx, m: '0700' }
+#  - { p: "/var/log/nginx", perm: rwx, m: '0775' }
+harden_apache_systemd_files_acl: []
+#  - { p: "/etc/httpd/conf/httpd.conf", perm: r }
+#  - { p: "/etc/ssl/private/{{ ansible_fqdn }}.key", perm: r }
+#  - { p: "/etc/letsencrypt/archive/{{ ansible_fqdn }}/privkey1.pem", perm: r }
+
 ## review php settings?
 harden_apache_php_enable: true
 harden_php_date_timezone: UTC

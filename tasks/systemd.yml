@@ -1,0 +1,42 @@
+---
+
+- name: Ensure override folder exists
+  file:
+    dest: "/etc/systemd/system/{{ apache_svc }}.service.d"
+    state: directory
+    mode: '0755'
+
+# if issue, check /var/log/audit/audit.log
+- name: Review apache httpd systemd options
+  template:
+    src: systemd-override.conf.j2
+    dest: "/etc/systemd/system/{{ apache_svc }}.service.d/override.conf"
+    mode: '0644'
+  notify:
+    - reload systemd
+    - restart apache
+
+- name: Ensure directories exists
+  file:
+    path: "{{ item.p }}"
+    mode: "{{ item.m }}"
+    state: directory
+  with_items: "{{ harden_apache_systemd_dir_acl }}"
+
+- name: Ensure directories are accessible to apache httpd
+  acl:
+    path: "{{ item.p }}"
+    entity: "{{ www_user }}"
+    etype: user
+    permissions: "{{ item.perm }}"
+    state: present
+  with_items: "{{ harden_apache_systemd_dir_acl }}"
+
+- name: Ensure files are accessible to apache httpd
+  acl:
+    path: "{{ item.p }}"
+    entity: "{{ www_user }}"
+    etype: user
+    permissions: "{{ item.perm }}"
+    state: present
+  with_items: "{{ harden_apache_systemd_files_acl }}"

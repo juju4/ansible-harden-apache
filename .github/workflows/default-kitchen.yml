@@ -154,12 +154,21 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden_apache
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'systemctl -l --no-pager status apache2' || true
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'systemctl -l --no-pager status httpd' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'rsyslogd -v' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'apachectl -v' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo apachectl -t' || true
           sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'sudo apachectl -l' || true
         if: ${{ always() }}
         continue-on-error: true
+      - name: After script - systemd-analyze
+        run: |
+          cd $GITHUB_WORKSPACE/juju4.harden_apache
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'systemd-analyze security apache2 --no-pager' || true
+          sudo kitchen exec ${{ matrix.suite }}-${{ matrix.distribution }}-${{ matrix.version2 }} -c 'systemd-analyze security httpd --no-pager' || true
+        if: ${{ always() }}
+        continue-on-error: true
+
       - name: After script - etc
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden_apache
