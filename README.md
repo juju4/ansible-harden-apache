@@ -75,7 +75,9 @@ $ kinit -k -t /etc/apache2/krb5.keytab HTTP/<fqdn@LOCAL.DOMAIN>
 
 * If you want to warn users who use old browsers, the following projects are among the options to add little warnings: (browser-update.org)[https://browser-update.org/], (outdatedbrowser.com)[http://outdatedbrowser.com/]
 
+* Centos-8-stream Github CI failing on `ERROR! couldn't resolve module/action 'openssl_privatekey'.`
+It works fine when run manually.
+
 ## License
 
 BSD 2-clause
-
