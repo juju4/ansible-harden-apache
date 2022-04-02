@@ -30,14 +30,14 @@
   when: ansible_os_family == 'Debian'
 
 - name: restrict permissions on apache configuration dir
-  file:
+  ansible.builtin.file:
     dest: "{{ apacheetc }}"
     mode: '0750'
     state: directory
     owner: root
     group: "{{ www_user }}"
 - name: restrict permissions on few apache configuration files
-  file:
+  ansible.builtin.file:
     dest: "{{ item }}"
     mode: '0640'
     state: file
@@ -52,14 +52,14 @@
   when: ansible_os_family == 'Debian'
 
 - name: push harden configuration templates - apacheetc
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ apacheetc }}/{{ item }}"
     mode: '0640'
   with_items: "{{ harden_apache2_etc }}"
 
 - name: push harden configuration templates - apache conf dir
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ apache_confdir }}/{{ item }}"
     mode: '0640'
@@ -68,7 +68,7 @@
     - restart apache
     - restart apache - docker
 - name: enable harden configuration templates - apache conf dir
-  file:
+  ansible.builtin.file:
     src: "{{ apache_confdir }}/{{ item }}"
     dest: "/etc/apache2/conf-enabled/{{ item }}"
     mode: '0640'
@@ -80,7 +80,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: include security config in default http virtualhost
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "{{ apacheconf }}"
     block: |
             Include {{ apacheetc }}/harden-apache2-http.conf
@@ -93,7 +93,7 @@
   when: "'harden-apache2-http.conf' in harden_apache2_etc"
 
 - name: include security config in default https virtualhost
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
             Include {{ apacheetc }}/harden-apache2-https.conf
@@ -106,7 +106,7 @@
   when: hardenwebserver_enable_defaultssl|bool and 'harden-apache2-https.conf' in harden_apache2_etc
 
 - name: include custom log config in default http virtualhost
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "{{ apacheconf }}"
     block: |
             CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
@@ -119,7 +119,7 @@
   when: not hardenwebserver_disable_http and 'harden-apache2-log.conf' in harden_apache2_confs
 
 - name: include custom log config in default https virtualhost
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
             CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
@@ -132,7 +132,7 @@
 
 - block:
     - name: Enabled extra security - apache2.conf
-      replace:
+      ansible.builtin.replace:
         dest: "{{ apacheetc }}/apache2.conf"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
@@ -149,7 +149,7 @@
     ## Note: commented headers can break some apps like nagios
     ## Note: definition in security.conf are prime vs extra config. so this change is needed.
     - name: Enabled extra security headers - security.conf
-      replace:
+      ansible.builtin.replace:
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         regexp: "{{ item.re }}"
         replace: "{{ item.n }}"
@@ -173,7 +173,7 @@
 
 - block:
     - name: Enabled extra security headers
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: "{{ hardenwebserver_apachesecurityconf }}"
         line: "{{ item }}"
         mode: '0640'
@@ -192,12 +192,12 @@
   when: ansible_os_family == "RedHat"
 
 - name: remove default index file - information disclosure
-  file: dest=/var/www/html/index.html state=absent
+  ansible.builtin.file: dest=/var/www/html/index.html state=absent
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 
 - block:
     - name: RedHat7- | Ensure selinux dependencies are present
-      package:
+      ansible.builtin.package:
         name:
           - libselinux-python
           - libsemanage-python
@@ -208,7 +208,7 @@
       when: ansible_distribution_major_version|int < 8
 
     - name: RedHat8+ | Ensure selinux dependencies are present
-      package:
+      ansible.builtin.package:
         name:
           - python3-libselinux
           - python3-libsemanage

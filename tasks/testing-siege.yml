@@ -5,7 +5,7 @@
 # http://blog.loadimpact.com/open-source-load-testing-tool-benchmarks
 
 - name: testing | Ensure packages are present
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items:
@@ -15,7 +15,7 @@
   until: pkg_result is success
 
 - name: testing | check siege configuration
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /root/.siegerc
     line: "{{ item }}"
     mode: '0600'
@@ -24,7 +24,7 @@
     - "logfile = /tmp/siege.log"
 
 - name: testing | launch siege with different concurrencies
-  command: "{{ item }}"
+  ansible.builtin.command: "{{ item }}"
   with_items:
     - "siege -c1 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"
     # - sleep 60

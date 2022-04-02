@@ -1,13 +1,13 @@
 ---
 
 - name: apache-security packages install
-  package: name={{ hardenwebserver_packages }} state=present
+  ansible.builtin.package: name={{ hardenwebserver_packages }} state=present
   register: pkginstall
   until: pkginstall is success
 
 - block:
     - name: RedHat7 | reload systemd
-      systemd:
+      ansible.builtin.systemd:
         daemon_reload: true
         name: httpd
       when: >
@@ -49,5 +49,5 @@
   when: harden_apache_systemd_hardening
 
 - name: ensure apache is enabled and started
-  service: name={{ apache_svc }} state=started enabled=yes
+  ansible.builtin.service: name={{ apache_svc }} state=started enabled=yes
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")

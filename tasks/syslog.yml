@@ -5,7 +5,7 @@
 # * apache pipe to logger
 
 - name: Ensure rsyslog is present
-  package:
+  ansible.builtin.package:
     name: rsyslog
     state: present
   register: pkg_result
@@ -13,7 +13,7 @@
 
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-working_with_queues_in_rsyslog#sec-Creating_a_New_Directory_for_rsyslog_Log_Files
 - name: Ensure rsyslog work directory exists
-  file:
+  ansible.builtin.file:
     dest: "{{ rsyslog_workdirectory }}"
     state: directory
     mode: '0755'
@@ -21,7 +21,7 @@
   when: ansible_os_family == 'RedHat'
 
 - name: Configure rsyslog to ingest apache logs
-  template:
+  ansible.builtin.template:
     src: "{{ harden_apache_rsyslog_template }}"
     dest: "/etc/rsyslog.d/apache2syslog"
     owner: root

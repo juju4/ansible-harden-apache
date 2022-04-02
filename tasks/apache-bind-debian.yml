@@ -3,13 +3,13 @@
 ## https://httpd.apache.org/docs/2.4/en/bind.html
 
 - name: Restrict listening interface - ports.conf
-  template: src=ports.conf.j2 dest=/etc/apache2/ports.conf mode=0644 backup=yes
+  ansible.builtin.template: src=ports.conf.j2 dest=/etc/apache2/ports.conf mode=0644 backup=yes
   notify:
     - restart apache
     - restart apache - docker
 
 # - name: Keep localhost as listening interface - ports.conf
-#    lineinfile: dest=/etc/apache2/ports.conf regexp="{{ item.r }}" line="{{ item.l }}" follow=yes
+#    ansible.builtin.lineinfile: dest=/etc/apache2/ports.conf regexp="{{ item.r }}" line="{{ item.l }}" follow=yes
 #   with_items:
 #     - { r: '^(\s*)Listen 127.0.0.1:443$', l: '    Listen 127.0.0.1:443' }
 #   notify:
@@ -17,11 +17,11 @@
 
 ## FIXME!
 - name: Check if apache2-graphite.conf is enabled
-  stat: path=/etc/apache2/sites-enabled/apache2-graphite.conf
+  ansible.builtin.stat: path=/etc/apache2/sites-enabled/apache2-graphite.conf
   register: apachegraphite
 - block:
     - name: Restrict listening interface (graphite)
-      replace:
+      ansible.builtin.replace:
         dest: /etc/apache2/sites-enabled/apache2-graphite.conf
         regexp: "{{ item.re }}"
         mode: '0644'

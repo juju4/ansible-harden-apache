@@ -1,7 +1,7 @@
 ---
 
 - name: yum | apache-ssl packages install
-  yum:
+  ansible.builtin.yum:
     name:
       - mod_ssl
       - openssl
@@ -13,12 +13,12 @@
 ## size should be >= certificate key size
 - name: generate ssl dhparam key
   # command: "openssl dhparam -out {{ ssl_privatedir }}/dhparam4.pem 4096 creates=/etc/nginx/ssl/dhparam4.pem"
-  command: >
+  ansible.builtin.command: >
     openssl dhparam -dsaparam -out {{ ssl_privatedir }}/dhparam.pem 4096
   args:
     creates: "{{ ssl_privatedir }}/dhparam.pem"
 - name: ensure good permissions for ssl dhparam key
-  file: "dest={{ ssl_privatedir }}/dhparam.pem mode=0440 owner=root group={{ www_user }}"
+  ansible.builtin.file: "dest={{ ssl_privatedir }}/dhparam.pem mode=0440 owner=root group={{ www_user }}"
 
 - import_tasks: certificate-selfsigned.yml
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'selfsigned'
@@ -27,7 +27,7 @@
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt'
 
 - name: Debian | update certificate info in Apache configuration
-  replace:
+  ansible.builtin.replace:
     dest: "{{ apachesslconf }}"
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
@@ -42,10 +42,10 @@
 
 - block:
     - name: Redhat | check if ssl.conf exists
-      stat: path={{ apachesslconf }}
+      ansible.builtin.stat: path={{ apachesslconf }}
       register: defssl
     - name: RedHat | update certificate info in Apache configuration
-      replace:
+      ansible.builtin.replace:
         dest: "{{ apachesslconf }}"
         regexp: "{{ item.regexp }}"
         replace: "{{ item.replace }}"
@@ -69,7 +69,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: Debian | enable default ssl apache site
-  file:
+  ansible.builtin.file:
     src: "{{ apachesslconf }}"
     dest: /etc/apache2/sites-enabled/default-ssl.conf
     mode: '0640'
@@ -79,20 +79,20 @@
     - restart apache - docker
   when: (ansible_os_family == 'Debian') and hardenwebserver_enable_defaultssl
 - name: Debian | disable default ssl apache site
-  file: dest=/etc/apache2/sites-enabled/default-ssl.conf state=absent
+  ansible.builtin.file: dest=/etc/apache2/sites-enabled/default-ssl.conf state=absent
   notify:
     - restart apache
     - restart apache - docker
   when: (ansible_os_family == 'Debian') and not hardenwebserver_enable_defaultssl
 - block:
     - name: RedHat | check if backup default ssl apache site
-      stat: path=/etc/httpd/conf.d/ssl.conf.orig
+      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf.orig
       register: defsslorig
     - name: RedHat | check if default ssl apache site
-      stat: path=/etc/httpd/conf.d/ssl.conf
+      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf
       register: defssl
     - name: RedHat | Copy default ssl apache site
-      copy:
+      ansible.builtin.copy:
         src: /etc/httpd/conf.d/ssl.conf.orig
         dest: /etc/httpd/conf.d/ssl.conf
         mode: '0640'
@@ -100,25 +100,25 @@
   when: (ansible_os_family == 'RedHat') and hardenwebserver_enable_defaultssl
 - block:
     - name: RedHat | Ensure backup of default ssl apache site
-      stat: path=/etc/httpd/conf.d/ssl.conf.orig
+      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf.orig
       register: defsslorig
     - name: RedHat | check if default ssl apache site
-      stat: path=/etc/httpd/conf.d/ssl.conf
+      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf
       register: defssl
     - name: RedHat | Backup default ssl apache site
-      copy:
+      ansible.builtin.copy:
         src: /etc/httpd/conf.d/ssl.conf
         dest: /etc/httpd/conf.d/ssl.conf.orig
         mode: '0600'
         remote_src: true
       when: not defsslorig.stat.exists and defssl.stat.exists
     - name: RedHat | disable default ssl apache site
-      file: dest=/etc/httpd/conf.d/ssl.conf state=absent
+      ansible.builtin.file: dest=/etc/httpd/conf.d/ssl.conf state=absent
       notify:
         - restart apache
         - restart apache - docker
     - name: Ensure httpd is listening on extra ports
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/httpd/httpd.conf
         regexp: "^Listen {{ item }}$"
         line: "Listen {{ item }}"
@@ -128,7 +128,7 @@
   when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
 
 - name: HTTP Public Key Pinning (HPKP) hash extraction
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     openssl req -in {{ ssl_dir }}/{{ ansible_fqdn }}.csr -pubkey -noout |
         openssl rsa -pubin -outform der |

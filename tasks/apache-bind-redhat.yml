@@ -3,7 +3,7 @@
 ## https://httpd.apache.org/docs/2.4/en/bind.html
 
 - name: Restrict listening interface
-  replace:
+  ansible.builtin.replace:
     dest: /etc/httpd/conf/httpd.conf
     regexp: "{{ item.re }}"
     replace: "{{ item.rep }}"
@@ -18,7 +18,7 @@
     - restart apache - docker
 
 - name: Keep localhost as listening interface
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/httpd/conf/httpd.conf
     regexp: "{{ item.r }}"
     line: "{{ item.l }}"

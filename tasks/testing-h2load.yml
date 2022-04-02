@@ -2,14 +2,14 @@
 # https://nghttp2.org/documentation/h2load-howto.html
 
 - name: testing | git clone h2load repository
-  git:
+  ansible.builtin.git:
     repo: https://github.com/nghttp2/nghttp2.git
     dest: /var/tmp/nghttp2
     version: "{{ h2load_gitrev | default(omit) }}"
     update: false
 
 - name: testing | ensure h2load dependencies are present
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items: "{{ testing_h2load_deps }}"
@@ -17,7 +17,7 @@
   until: pkg_result is success
 
 - name: testing | build h2load
-  command: "{{ item }}"
+  ansible.builtin.command: "{{ item }}"
   with_items:
     - git submodule update --init
     - autoreconf -i
@@ -34,7 +34,7 @@
     - run ldconfig
 
 - name: testing | executing h2load
-  shell: |
+  ansible.builtin.shell: |
     set -o pipefail
     h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log
   args:

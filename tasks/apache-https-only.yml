@@ -1,18 +1,18 @@
 ---
 
 - name: disable default apache site
-  file: dest=/etc/apache2/sites-enabled/000-default.conf state=absent
+  ansible.builtin.file: dest=/etc/apache2/sites-enabled/000-default.conf state=absent
   notify:
     - restart apache
     - restart apache - docker
   register: disdefault
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 - name: Debug | /etc/apache2/sites-enabled/000-default.conf state
-  debug: var=disdefault
+  ansible.builtin.debug: var=disdefault
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: disable apache port 80
-  replace:
+  ansible.builtin.replace:
     dest: /etc/apache2/ports.conf
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
@@ -26,7 +26,7 @@
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Restrict listening interface
-  replace:
+  ansible.builtin.replace:
     dest: /etc/httpd/conf/httpd.conf
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"

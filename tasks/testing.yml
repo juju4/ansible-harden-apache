@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure curl is present
-  package:
+  ansible.builtin.package:
     name: curl
     state: present
 
