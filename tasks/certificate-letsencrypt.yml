@@ -64,7 +64,10 @@
 
 # - debug: var=le_challenge
 - name: ensure letsencrypt directory exists
-  ansible.builtin.file: "dest={{ hardenwebserver_rootdir }}/.well-known/acme-challenge state=directory mode=0755"
+  ansible.builtin.file:
+    dest: "{{ hardenwebserver_rootdir }}/.well-known/acme-challenge"
+    state: directory
+    mode: '0755'
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
