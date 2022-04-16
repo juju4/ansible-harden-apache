@@ -15,6 +15,8 @@ provisioner:
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
   enable_yum_epel: true
   ansible_omnibus_url: https://raw.githubusercontent.com/juju4/omnibus-ansible/master/ansible_install.sh
+  ansible_binary_path: /usr/bin
+  require_pip3: true
 
 platforms:
   - name: ubuntu-20.04
