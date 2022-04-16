@@ -10,4 +10,5 @@
   collections:
     - community.crypto
   roles:
+    - { role: juju4.redhat_epel, when: ansible_os_family == "RedHat" }
     - juju4.harden_apache
