@@ -3,7 +3,7 @@
 ## https://www.feistyduck.com/library/modsecurity-handbook-free/
 
 - name: modsecurity install
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items: "{{ harden_apache_modsecurity }}"
@@ -11,12 +11,12 @@
   until: pkg_result is success
 
 - name: Check if modsecurity.conf exists
-  stat: path={{ modsecurity_conf }}
+  ansible.builtin.stat: path={{ modsecurity_conf }}
   register: confms
 - name: Debug | modsecurity.conf state
-  debug: var=confms
+  ansible.builtin.debug: var=confms
 - name: copy default recommended modsecurity.conf
-  copy:
+  ansible.builtin.copy:
     src: /etc/modsecurity/modsecurity.conf-recommended
     dest: "{{ modsecurity_conf }}"
     mode: '0644'
@@ -33,7 +33,7 @@
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 18)
 
 - name: review modsecurity.conf (1)
-  replace:
+  ansible.builtin.replace:
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
@@ -48,7 +48,7 @@
     - restart apache - docker
 
 - name: Configure Json log in modsecurity.conf - PR#914, 2.9.1+
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.regexp }}"
     line: "{{ item.replace }}"

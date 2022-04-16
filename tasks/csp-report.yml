@@ -2,7 +2,7 @@
 # install a basic csp report log file, consider alternatives if production
 
 - name: ensure csp directories exist
-  file:
+  ansible.builtin.file:
     dest: "{{ item.d }}"
     state: directory
     owner: "{{ item.o }}"
@@ -12,14 +12,14 @@
     - { d: "{{ _hardenwebserver_rootdir }}/csp/log", o: "{{ www_user }}", m: '0755' }
 
 - name: configure csp-report script
-  template:
+  ansible.builtin.template:
     src: "{{ harden_apache_cspreport_template }}"
     dest: "{{ _hardenwebserver_rootdir }}/csp/report.php"
     mode: '0644'
     backup: true
 
 - name: Ensure php is present
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items: "{{ harden_apache_php }}"
@@ -27,7 +27,7 @@
   until: pkg_result is success
 
 - name: push csp configuration
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ apache_confdir }}/{{ item }}"
     mode: 0644
@@ -37,7 +37,7 @@
     - restart apache
     - restart apache - docker
 - name: enable csp configuration
-  file:
+  ansible.builtin.file:
     src: "{{ apache_confdir }}/{{ item }}"
     dest: "/etc/apache2/conf-enabled/{{ item }}"
     mode: '0644'

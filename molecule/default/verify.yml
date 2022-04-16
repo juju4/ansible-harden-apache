@@ -4,7 +4,7 @@
   hosts: hardenapache
   pre_tasks:
     - name: Debian | set facts
-      set_fact:
+      ansible.builtin.set_fact:
         verify_pkgs:
           - apache2
         verify_cfg: /etc/apache2/apache2.conf
@@ -15,7 +15,7 @@
         json_log: /var/log/apache2/access_json.log
       when: ansible_os_family == "Debian"
     - name: RedHat | set facts
-      set_fact:
+      ansible.builtin.set_fact:
         verify_pkgs:
           - httpd
         verify_cfg: /etc/httpd/conf/httpd.conf
@@ -27,32 +27,32 @@
       when: ansible_os_family == "RedHat"
   tasks:
     - name: Debian | Check if needed packages are installed
-      command: "dpkg-query -l {{ item }}"
+      ansible.builtin.command: "dpkg-query -l {{ item }}"
       changed_when: false
       with_items: "{{ verify_pkgs }}"
       when: ansible_os_family == "Debian"
     - name: RedHat | Check if needed packages are installed
-      command: "rpm -qi {{ item }}"  # noqa 303
+      ansible.builtin.command: "rpm -qi {{ item }}"  # noqa 303
       changed_when: false
       with_items: "{{ verify_pkgs }}"
       when: ansible_os_family == "RedHat"
     - name: Ensure config is present
-      stat:
+      ansible.builtin.stat:
         path: "{{ verify_cfg }}"
       register: cfg
       become: true
     - name: Validate config present
-      assert:
+      ansible.builtin.assert:
         that: cfg.stat.exists and cfg.stat.size != 0
     - name: Ensure process is running
-      command: "pgrep -u root {{ verify_ps }}"
+      ansible.builtin.command: "pgrep -u root {{ verify_ps }}"
       register: ps
       changed_when: false
     - name: Validate ps output
-      assert:
+      ansible.builtin.assert:
         that: ps.stdout
     - name: Ensure ports are listening
-      wait_for:
+      ansible.builtin.wait_for:
         host: "{{ item.h }}"
         port: "{{ item.p }}"
         timeout: 10
@@ -61,16 +61,16 @@
         - { h: localhost, p: 80 }
 
     - name: Test config
-      command: "{{ verify_cfg_t }}"
+      ansible.builtin.command: "{{ verify_cfg_t }}"
       register: conftest
       changed_when: false
     - name: Validate conf test output
-      assert:
+      ansible.builtin.assert:
         that: >
           "'Syntax OK' in conftest.stderr"
 
     - name: Fetch web1
-      uri:
+      ansible.builtin.uri:
         url: https://localhost/
         validate_certs: false
         return_content: true
@@ -78,11 +78,11 @@
         status_code: "{{ status_root }}"
       register: web1
     - name: Validate web1
-      assert:
+      ansible.builtin.assert:
         that: >
           "title_root in web1.content"
     - name: Fetch web2
-      uri:
+      ansible.builtin.uri:
         url: https://localhost/
         validate_certs: false
         return_content: true
@@ -90,7 +90,7 @@
         status_code: "{{ status_root }}"
       register: web2
     - name: Fetch web3
-      uri:
+      ansible.builtin.uri:
         url: https://localhost/
         validate_certs: false
         return_content: true
@@ -98,11 +98,11 @@
         status_code: 403
       register: web3
     - name: Validate web3
-      assert:
+      ansible.builtin.assert:
         that: >
           "'<title>403 Forbidden</title>' in web3.content"
     - name: Fetch web4
-      uri:
+      ansible.builtin.uri:
         url: https://localhost/nonexistent
         validate_certs: false
         return_content: true
@@ -110,11 +110,11 @@
         status_code: 404
       register: web4
     - name: Validate web4
-      assert:
+      ansible.builtin.assert:
         that: >
           "'<title>404 Not Found</title>' in web4.content"
     - name: Fetch web5
-      uri:
+      ansible.builtin.uri:
         url: https://localhost/?a=b&c=d
         validate_certs: false
         method: GET
@@ -124,11 +124,11 @@
           Referer: http://www.example.com
       register: web5
     - name: Fetch content of /var/log/apache2/access_json.log
-      slurp:
+      ansible.builtin.slurp:
         src: "{{ json_log }}"
       register: jsonlog
     - name: Validate jsonlog
-      assert:
+      ansible.builtin.assert:
         that: >
           "'\"vhost\":\"localhost\",\"xff\":\"127.0.0.127\"' in jsonlog['content'] | b64decode and
           "'\"http_referer\":\"http://www.example.com\",\"vhost\":\"localhost.0.0.127\"' in jsonlog['content'] | b64decode and

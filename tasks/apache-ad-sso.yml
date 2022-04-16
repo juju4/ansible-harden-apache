@@ -5,7 +5,7 @@
 # https://www.server-world.info/en/note?os=Ubuntu_16.04&p=httpd&f=12
 
 - name: Ensure kerberos packages are present for AD SSO
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items: "{{ harden_apache_ad_sso_pkg }}"
@@ -13,7 +13,7 @@
   until: pkg_result is success
 
 - name: Configure server keytab
-  copy:
+  ansible.builtin.copy:
     src: "{{ harden_apache_ad_sso_keytab }}"
     dest: "{{ harden_apache_ad_sso_keytab_dest }}"
     owner: "{{ www_user }}"
@@ -21,7 +21,7 @@
     mode: '0640'
 
 - name: Ensure DNS resolution is using domain - search
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/resolv.conf
     regexp: "{{ item.re }}"
     line: "{{ item.l }}"
@@ -32,7 +32,7 @@
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
 
 - name: Ensure DNS resolution is using domain - nameservers
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/resolv.conf
     regexp: "^nameserver {{ item }}"
     line: "nameserver {{ item }}"
@@ -53,7 +53,7 @@
     - restart apache - docker
 
 - name: Ensure directory paths for AD SSO exist
-  file:
+  ansible.builtin.file:
     dest: "{{ item }}"
     mode: '0755'
     state: directory
@@ -61,7 +61,7 @@
 
 - block:
     - name: push AD SSO configuration template
-      template:
+      ansible.builtin.template:
         src: "{{ harden_apache_ad_sso_conf_template }}.j2"
         dest: "{{ apache_confdir }}/{{ harden_apache_ad_sso_conf_template }}"
         mode: 0644
@@ -69,7 +69,7 @@
         - restart apache
         - restart apache - docker
     - name: enable AD SSO configuration
-      file:
+      ansible.builtin.file:
         src: "{{ apache_confdir }}/{{ harden_apache_ad_sso_conf_template }}"
         dest: "/etc/apache2/conf-enabled/{{ harden_apache_ad_sso_conf_template }}"
         mode: '0644'
@@ -82,7 +82,7 @@
 
 - block:
     - name: Add template SSO htaccess to listed path
-      template:
+      ansible.builtin.template:
         src: "{{ harden_apache_ad_sso_htaccess_template }}"
         dest: "{{ item }}/.htaccess"
         mode: '0644'
@@ -93,7 +93,7 @@
 # verify_krb5_conf is only available in heimdal-clients kerberos package
 #   and requires AD/kerberos server to be online
 - name: Configure local kerberos
-  template:
+  ansible.builtin.template:
     src: krb5.conf.j2
     dest: /etc/krb5.conf
     mode: '0644'

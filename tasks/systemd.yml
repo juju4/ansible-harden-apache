@@ -1,14 +1,14 @@
 ---
 
 - name: Ensure override folder exists
-  file:
+  ansible.builtin.file:
     dest: "/etc/systemd/system/{{ apache_svc }}.service.d"
     state: directory
     mode: '0755'
 
 # if issue, check /var/log/audit/audit.log
 - name: Review apache httpd systemd options
-  template:
+  ansible.builtin.template:
     src: systemd-override.conf.j2
     dest: "/etc/systemd/system/{{ apache_svc }}.service.d/override.conf"
     mode: '0644'
@@ -17,7 +17,7 @@
     - restart apache
 
 - name: Ensure directories exists
-  file:
+  ansible.builtin.file:
     path: "{{ item.p }}"
     mode: "{{ item.m }}"
     state: directory

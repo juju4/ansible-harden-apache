@@ -1,14 +1,14 @@
 ---
 
 - name: Ensure openssl is present
-  package:
+  ansible.builtin.package:
     name: "{{ openssl_pkgs | default(['openssl', 'python3-pip', 'python3-setuptools', 'python3-openssl' ]) }}"
     state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: apt | self-signed certificate packages dependencies
-  apt:
+  ansible.builtin.apt:
     name: ssl-cert
     state: present
     update_cache: true
@@ -18,19 +18,19 @@
   until: pkg_result is success
 
 - name: Ensure python cryptography is present
-  pip:
+  ansible.builtin.pip:
     name: cryptography
     state: present
     executable: "{{ hardenwebserver_apache_cryptography | default('pip3') }}"
 
 - name: Ensure target directory exists
-  file:
+  ansible.builtin.file:
     dest: "{{ ssl_privatedir | dirname }}"
     state: directory
     mode: '0755'
 
 - name: Check if OpenSSL private key exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
   register: private_key
 
@@ -57,7 +57,7 @@
     provider: selfsigned
 
 - name: Validate private key file permissions
-  file:
+  ansible.builtin.file:
     path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
     owner: "root"
     group: "{% if ansible_os_family == 'Debian' %}ssl-cert{% else %}root{% endif %}"

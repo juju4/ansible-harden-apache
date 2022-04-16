@@ -3,7 +3,7 @@
 # initial draft (https://github.com/EdOverflow/security-txt) was placing file as /.well-known/security.txt
 # ietf draf (https://www.ietf.org/id/draft-foudil-securitytxt-00.txt) says located in the website's top-level directory
 - name: Ensure security.txt is present - draft-foudil-securitytxt-00
-  template:
+  ansible.builtin.template:
     src: "{{ harden_apache_securitytxt_template }}"
     dest: "{{ _hardenwebserver_rootdir }}/security.txt"
     mode: '0644'
