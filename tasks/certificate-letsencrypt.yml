@@ -70,7 +70,7 @@
     mode: '0755'
 
 - name: Flush handlers
-  ansible.builtin.meta: flush_handlers
+  meta: flush_handlers
 
 ## Note: validation is over http... can't remove http before this task.
 - name: validate letsencrypt challenge
