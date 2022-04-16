@@ -56,7 +56,7 @@
   register: done
 
 - name: snuffleupagus | generate secret_key
-  ansible.builtin.shell: |
+  shell: |
     set -o pipefail
     head -c 256 /dev/urandom | tr -dc 'a-zA-Z0-9' | tee /root/.php7_done
   args:
