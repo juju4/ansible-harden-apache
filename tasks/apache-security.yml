@@ -130,7 +130,8 @@
     - restart apache - docker
   when: hardenwebserver_enable_defaultssl|bool and not hardenwebserver_https_noconfig and 'harden-apache2-log.conf' in harden_apache2_confs
 
-- block:
+- name: Debian
+  block:
     - name: Enabled extra security - apache2.conf
       ansible.builtin.replace:
         dest: "{{ apacheetc }}/apache2.conf"
@@ -171,7 +172,8 @@
 
 # - fail: msg=test
 
-- block:
+- name: RedHat
+  block:
     - name: Enabled extra security headers
       ansible.builtin.lineinfile:
         dest: "{{ hardenwebserver_apachesecurityconf }}"
@@ -195,7 +197,8 @@
   ansible.builtin.file: dest=/var/www/html/index.html state=absent
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 
-- block:
+- name: RedHat selinux facts
+  block:
     - name: RedHat7- | Ensure selinux dependencies are present
       ansible.builtin.package:
         name:
@@ -227,7 +230,8 @@
 
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Confined_Services/sect-Managing_Confined_Services-Configuration_examples-Changing_port_numbers.html
 # https://wiki.centos.org/HowTos/SELinux#head-ad837f60830442ae77a81aedd10c20305a811388
-- block:
+- name: RedHat selinux
+  block:
     - name: RedHat | Allow httpd to listen to unusual ports
       seport:
         ports: "{{ item }}"

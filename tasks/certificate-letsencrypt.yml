@@ -11,7 +11,8 @@
   register: pkg_result
   until: pkg_result is success
 
-- block:
+- name: letsencrypt user key not provided
+  block:
     - name: creating letsencrypt user key
       ansible.builtin.shell: >
         openssl genrsa 4096 > {{ ssl_privatedir }}/user.key

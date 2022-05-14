@@ -59,7 +59,8 @@
     state: directory
   with_items: "{{ harden_apache_ad_sso_dir_path }}"
 
-- block:
+- name: AD SSO template
+  block:
     - name: push AD SSO configuration template
       ansible.builtin.template:
         src: "{{ harden_apache_ad_sso_conf_template }}.j2"
@@ -80,7 +81,8 @@
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   when: harden_apache_ad_sso_conf_template is defined and harden_apache_ad_sso_conf_template
 
-- block:
+- name: htaccess
+  block:
     - name: Add template SSO htaccess to listed path
       ansible.builtin.template:
         src: "{{ harden_apache_ad_sso_htaccess_template }}"

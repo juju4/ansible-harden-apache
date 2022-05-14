@@ -5,7 +5,8 @@
   register: pkginstall
   until: pkginstall is success
 
-- block:
+- name: RedHat
+  block:
     - name: RedHat7 | reload systemd
       ansible.builtin.systemd:
         daemon_reload: true

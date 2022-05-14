@@ -19,7 +19,8 @@
 - name: Check if apache2-graphite.conf is enabled
   ansible.builtin.stat: path=/etc/apache2/sites-enabled/apache2-graphite.conf
   register: apachegraphite
-- block:
+- name: Apache Graphite
+  block:
     - name: Restrict listening interface (graphite)
       ansible.builtin.replace:
         dest: /etc/apache2/sites-enabled/apache2-graphite.conf

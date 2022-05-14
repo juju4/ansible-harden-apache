@@ -40,7 +40,8 @@
     - restart apache - docker
   when: ansible_os_family == 'Debian'
 
-- block:
+- name: RedHat
+  block:
     - name: Redhat | check if ssl.conf exists
       ansible.builtin.stat: path={{ apachesslconf }}
       register: defssl
@@ -84,7 +85,8 @@
     - restart apache
     - restart apache - docker
   when: (ansible_os_family == 'Debian') and not hardenwebserver_enable_defaultssl
-- block:
+- name: RedHat ssl
+  block:
     - name: RedHat | check if backup default ssl apache site
       ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf.orig
       register: defsslorig
@@ -98,7 +100,8 @@
         mode: '0640'
       when: defsslorig.stat.exists and not defssl.stat.exists
   when: (ansible_os_family == 'RedHat') and hardenwebserver_enable_defaultssl
-- block:
+- name: RedHat no ssl
+  block:
     - name: RedHat | Ensure backup of default ssl apache site
       ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf.orig
       register: defsslorig
