@@ -81,12 +81,13 @@ hardenwebserver_cert_pinning: false
 ## https://github.com/mozilla/csp-logger
 # hardenwebserver_header_csp: "default-src self"
 ## this settings is necessary for default ubuntu or centos page
-hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'; upgrade-insecure-requests; report-uri /csp/report.php"
+hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'self'"
 # hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self';"
 # hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri https://xxxx.report-uri.io/r/default/csp/enforce"
 # hardenwebserver_header_csp: "default-src 'none'; script-src 'self www.google-analytics.com ajax.googleapis.com'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri-report-only https://xxxx.report-uri.io/r/default/csp/reportOnly"
 harden_apache_cspreport_template: csp-hotline.php.j2
-hardenwebserver_header_expectct: 'max-age=0, report-uri,report-uri=/csp/report.php'
+harden_apache_upgrade_insecure: true
+hardenwebserver_header_expectct: 'max-age=0'
 
 ## https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 harden_webserver_header_refpolicy: origin
@@ -115,6 +116,8 @@ harden_apache_systemd_files_acl: []
 #  - { p: "/etc/httpd/conf/httpd.conf", perm: r }
 #  - { p: "/etc/ssl/private/{{ ansible_fqdn }}.key", perm: r }
 #  - { p: "/etc/letsencrypt/archive/{{ ansible_fqdn }}/privkey1.pem", perm: r }
+# mod_wsgi socket requires false
+harden_apache_systemd_cap_chown: true
 
 ## review php settings?
 harden_apache_php_enable: true

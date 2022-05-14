@@ -78,7 +78,11 @@ CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
 CapabilityBoundingSet=~CAP_SYS_ADMIN
 # CapabilityBoundingSet=~CAP_SETUID CAP_SETGID
 CapabilityBoundingSet=~CAP_SETPCAP
+{% if harden_apache_systemd_cap_chown|bool %}
 CapabilityBoundingSet=~CAP_CHOWN
+{% else %}
+# CapabilityBoundingSet=~CAP_CHOWN
+{% endif %}
 CapabilityBoundingSet=~CAP_FSETID CAP_SETFCAP
 CapabilityBoundingSet=~CAP_NET_RAW
 CapabilityBoundingSet=~CAP_IPC_LOCK

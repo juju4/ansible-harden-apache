@@ -10,13 +10,17 @@ Header set X-Frame-Options "sameorigin"
 Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"
 #Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains; preload"
 ## https://www.w3.org/TR/upgrade-insecure-requests/
+{% if harden_apache_upgrade_insecure|bool %}
 Header set Upgrade-Insecure-Requests "1"
+{% else %}
+# Header set Upgrade-Insecure-Requests "1"
+{% endif %}
 {% if hardenwebserver_header_csp is defined and hardenwebserver_header_csp != '' %}
-Header set Content-Security-Policy "{{ hardenwebserver_header_csp }}"
+Header set Content-Security-Policy "{{ hardenwebserver_header_csp }}{% if harden_apache_upgrade_insecure|bool %}; upgrade-insecure-requests{% endif %}{% if harden_apache_cspreport_template|string and harden_apache_cspreport_uri|string %}; report-uri {{ harden_apache_cspreport_uri }}{% endif %}"
 {% endif %}
 Header set Referrer-Policy {{ harden_webserver_header_refpolicy }}
 {% if hardenwebserver_header_expectct is defined and hardenwebserver_header_expectct != '' %}
-Header set Expect-CT "{{ hardenwebserver_header_expectct }}"
+Header set Expect-CT "{{ hardenwebserver_header_expectct }}{% if harden_apache_cspreport_template|string and harden_apache_cspreport_uri|string %},report-uri={{ harden_apache_cspreport_uri }}{% endif %}"
 {% endif %}
 ## Note: might break some app... need Apache 2.2.4+
 ## https://scotthelme.co.uk/csrf-is-dead/
