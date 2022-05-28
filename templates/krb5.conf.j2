@@ -6,18 +6,18 @@
   dns_lookup_realm = true
   dns_lookup_kdc = false
   default_keytab_name = FILE:{{ harden_apache_ad_sso_keytab_dest }}
- 
+
 [realms]
   {{ harden_apache_ad_sso_domain | upper }} = {
     kdc = {{ krb5_kdc }}
     admin_server = {{ krb5_admin_server }}
     default_domain = {{ harden_apache_ad_sso_domain | lower }}
   }
- 
+
 [domain_realm]
   .{{ harden_apache_ad_sso_domain | lower }} = {{ harden_apache_ad_sso_domain | upper }}
   {{ harden_apache_ad_sso_domain | lower }} = {{ harden_apache_ad_sso_domain | upper }}
- 
+
 [appdefaults]
   pam = {
     debug = false

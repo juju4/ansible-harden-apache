@@ -10,7 +10,7 @@ SSLOpenSSLConfCmd DHParameters "{{ ssl_privatedir }}/dhparam.pem"
 
 {% endif %}
 # Requires Apache >= 2.4
-SSLCompression off 
+SSLCompression off
 ## needs to be created, not possible to test with self-signed certificate
 #SSLCACertificateFile /etc/ssl/ca-certs.pem
 {% if hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt' %}

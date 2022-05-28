@@ -24,4 +24,3 @@ end
 describe command('curl -kv https://localhost/doesnotexist') do
   its(:stdout) { should match /404 Not Found/ }
 end
-

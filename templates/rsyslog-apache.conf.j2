@@ -12,7 +12,7 @@ $ActionQueueTimeoutEnqueue  0       # Drop messages with no wait when they canâ€
 $ModLoad imfile
 #$ModLoad mmnormalize
 #$ModLoad omelasticsearch
-$InputFilePollInterval 10 
+$InputFilePollInterval 10
 $PrivDropToGroup adm
 $WorkDirectory {{ rsyslog_workdirectory }}
 
@@ -24,7 +24,7 @@ $InputFileSeverity info
 $InputFilePersistStateInterval 20000
 $InputRunFileMonitor
 
-#Apache Error file: 
+#Apache Error file:
 $InputFileName {{ apache_logdir }}/error*log
 $InputFileTag apache-error:
 $InputFileStateFile stat-apache-error

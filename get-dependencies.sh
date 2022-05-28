@@ -13,4 +13,3 @@ rolesdir=$(dirname $0)/..
 
 ## don't stop build on this script return code
 true
-
