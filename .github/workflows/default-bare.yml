@@ -57,6 +57,11 @@ jobs:
           set -x
           sudo apt-get install -y e2fsprogs || true
           sudo lsattr / -R -a 2> /dev/null | grep "\----i" > /tmp/lsattr-i-1 || true
+      - name: Clean conflicting packages and settings
+        run: |
+          set -x
+          ls /etc/apt/sources.list.d/
+          dpkg -l |grep php
       - name: run test
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden_apache && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS}
