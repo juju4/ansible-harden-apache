@@ -62,11 +62,15 @@ jobs:
           set -x
           ls /etc/apt/sources.list.d/
           grep -rin ondrej /etc/apt/sources.list* || true
+          grep -rin php /etc/apt/sources.list* || true
           dpkg -l |grep php
           sudo sudo add-apt-repository --remove ppa:ondrej/php || true
           sudo rm /etc/apt/sources.list.d/ondrej-ubuntu-php-bionic.list || true
-          sudo apt-get -y purge php7.2 php7.3 || true
-          sudo apt-get -y purge php7.4 php8.0 php8.1 || true
+          sudo apt-get -y purge php7.2 php7.2-common || true
+          sudo apt-get -y purge php7.3 php7.3-common || true
+          sudo apt-get -y purge php7.4 php7.4-common || true
+          sudo apt-get -y purge php8.0 php8.0-common || true
+          sudo apt-get -y purge php8.1 php8.1-common || true
           sudo apt-get -y autoremove || true
           grep -rin ondrej /etc/apt/sources.list* || true
       - name: run test
