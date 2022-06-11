@@ -61,7 +61,12 @@ jobs:
         run: |
           set -x
           ls /etc/apt/sources.list.d/
+          grep -rin ondrej /etc/apt/sources.list*
           dpkg -l |grep php
+          sudo sudo add-apt-repository --remove ppa:ondrej/php || true
+          sudo rm /etc/apt/sources.list.d/ondrej-ubuntu-php-bionic.list || true
+          sudo apt-get -y purge php7.2 php7.3 || true
+          sudo apt-get -y purge php7.4 php8.0 php8.1 || true
       - name: run test
         run: |
           cd $GITHUB_WORKSPACE/juju4.harden_apache && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml ${ANSIBLE_EXTRA_VARS}
