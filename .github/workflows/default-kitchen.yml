@@ -31,7 +31,7 @@ jobs:
             version: '22.04'
             version2: 2204
             suite: default
-            experimental: true
+            experimental: false
           - distribution: ubuntu
             version: '20.04'
             version2: 2004
