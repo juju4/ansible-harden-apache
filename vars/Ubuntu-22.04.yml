@@ -71,8 +71,7 @@ testing_h2load_deps:
   - libc-ares-dev
   - libjemalloc-dev
   - libsystemd-dev
-  - libspdylay-dev
-  - cython
+  - cython3
   - python3-dev
   - python-setuptools
 h2load_gitrev: HEAD
