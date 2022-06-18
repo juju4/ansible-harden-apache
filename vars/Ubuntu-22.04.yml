@@ -76,3 +76,5 @@ testing_h2load_deps:
   - python3-dev
   - python-setuptools
 h2load_gitrev: HEAD
+
+harden_php7_snuffleupagus: false
