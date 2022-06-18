@@ -75,7 +75,7 @@
     - restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Xenial | SecReadStateLimit is depricated, use SecConnReadStateLimit instead
+- name: Xenial | SecReadStateLimit is deprecated, use SecConnReadStateLimit instead
   ansible.builtin.replace:
     dest: "{{ item }}"
     regexp: SecReadStateLimit

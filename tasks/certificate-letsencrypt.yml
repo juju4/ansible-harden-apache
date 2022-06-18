@@ -61,7 +61,7 @@
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
   notify:
-    - add public file to www dir to fullfill letsencrypt challenge
+    - add public file to www dir to fulfill letsencrypt challenge
 
 # - debug: var=le_challenge
 - name: ensure letsencrypt directory exists

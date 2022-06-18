@@ -20,7 +20,7 @@
 - name: run ldconfig
   ansible.builtin.command: ldconfig
 
-- name: add public file to www dir to fullfill letsencrypt challenge
+- name: add public file to www dir to fulfill letsencrypt challenge
   ansible.builtin.copy:
     dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
     content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"
