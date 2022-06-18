@@ -1,0 +1,78 @@
+---
+
+hardenwebserver_nginx_stapling: true
+
+ssl_user: ssl-cert
+ssl_dir: /etc/ssl
+ssl_privatedir: /etc/ssl/private
+
+www_user: www-data
+apache_svc: apache2
+apacheetc: /etc/apache2
+apache_confdir: /etc/apache2/conf-available
+apache_sitedir: /etc/apache2/sites-available
+apache_logdir: /var/log/apache2
+apacheconf: /etc/apache2/sites-available/000-default.conf
+apachesslconf: /etc/apache2/sites-available/default-ssl.conf
+modsecurity_conf: /etc/modsecurity/modsecurity.conf
+modsecurity_active: /usr/share/modsecurity-crs/activated_rules
+hardenwebserver_apachesecurityconf: /etc/apache2/conf-available/security.conf
+_hardenwebserver_rootdir: "{{ hardenwebserver_rootdir | default('/var/www/html') }}"
+
+rsyslog_workdirectory: /var/spool/rsyslog
+
+hardenwebserver_packages:
+  - python3-passlib
+  - python3-pip
+  - apache2
+  ## for Docker & netstat call in serverspec
+  - net-tools
+  # serverspec testing
+  - iproute2
+
+harden_apache_php:
+  - libapache2-mod-php7.4
+php_confext: ini
+harden_apache_phpdir: /etc/php/7.4
+_harden_apache_php_variants: "{{ harden_apache_php_variants | default(['apache2', 'cli']) }}"
+snuffleupagus_pkgs:
+  - php7.4-dev
+  - libpcre3-dev
+
+harden_apache_modsecurity:
+  - libapache2-mod-security2
+  - modsecurity-crs
+
+harden_apache_ad_sso_pkg:
+  ## MIT or heimdal implementation?
+  - krb5-user
+  # - heimdal-clients
+  - krb5-config
+  - libkrb5-3
+  - libapache2-mod-auth-kerb
+harden_apache_ad_sso_keytab_dest: /etc/apache2/krb5.keytab
+
+testing_h2load_deps:
+  - g++
+  - make
+  - binutils
+  - autoconf
+  - automake
+  - autotools-dev
+  - libtool
+  - pkg-config
+  - zlib1g-dev
+  - libcunit1-dev
+  - libssl-dev
+  - libxml2-dev
+  - libev-dev
+  - libevent-dev
+  - libjansson-dev
+  - libc-ares-dev
+  - libjemalloc-dev
+  - libsystemd-dev
+  - libspdylay-dev
+  - cython
+  - python3-dev
+  - python-setuptools
+h2load_gitrev: HEAD
