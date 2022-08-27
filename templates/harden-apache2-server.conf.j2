@@ -28,13 +28,3 @@ Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure;SameSite
 # want to be indexed by search engine?
 Header set X-Robots-Tag none
 </IfModule>
-
-{# if not trusty, inside harden-apache-https/virtualhost section #}
-{% if ansible_distribution_release == 'trusty' %}
-<IfModule mod_ssl.c>
-SSLUseStapling on
-SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
-## needs to be created, not possible to test with self-signed certificate
-#SSLCACertificateFile /etc/ssl/ca-certs.pem
-</IfModule>
-{% endif %}
