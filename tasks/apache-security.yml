@@ -15,8 +15,8 @@
     # https://httpd.apache.org/docs/2.4/howto/http2.html
     # - http2
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_os_family == 'Debian'
 
 - name: Disable identified modules
@@ -25,18 +25,18 @@
     state: absent
   with_items: "{{ hardenwebserver_apache_mod_disable }}"
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_os_family == 'Debian'
 
-- name: restrict permissions on apache configuration dir
+- name: Restrict permissions on apache configuration dir
   ansible.builtin.file:
     dest: "{{ apacheetc }}"
     mode: '0750'
     state: directory
     owner: root
     group: "{{ www_user }}"
-- name: restrict permissions on few apache configuration files
+- name: Restrict permissions on few apache configuration files
   ansible.builtin.file:
     dest: "{{ item }}"
     mode: '0640'
@@ -51,23 +51,23 @@
     - "{{ apacheetc }}/ports.conf"
   when: ansible_os_family == 'Debian'
 
-- name: push harden configuration templates - apacheetc
+- name: Push harden configuration templates - apacheetc
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ apacheetc }}/{{ item }}"
     mode: '0640'
   with_items: "{{ harden_apache2_etc }}"
 
-- name: push harden configuration templates - apache conf dir
+- name: Push harden configuration templates - apache conf dir
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ apache_confdir }}/{{ item }}"
     mode: '0640'
   with_items: "{{ harden_apache2_confs }}"
   notify:
-    - restart apache
-    - restart apache - docker
-- name: enable harden configuration templates - apache conf dir
+    - Restart apache
+    - Restart apache - docker
+- name: Enable harden configuration templates - apache conf dir
   ansible.builtin.file:
     src: "{{ apache_confdir }}/{{ item }}"
     dest: "/etc/apache2/conf-enabled/{{ item }}"
@@ -75,11 +75,11 @@
     state: link
   with_items: "{{ harden_apache2_confs }}"
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: include security config in default http virtualhost
+- name: Include security config in default http virtualhost
   ansible.builtin.blockinfile:
     dest: "{{ apacheconf }}"
     block: |
@@ -88,11 +88,11 @@
     insertbefore: '^(\s*)</VirtualHost>'
     mode: '0640'
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: "'harden-apache2-http.conf' in harden_apache2_etc"
 
-- name: include security config in default https virtualhost
+- name: Include security config in default https virtualhost
   ansible.builtin.blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
@@ -101,11 +101,11 @@
     insertbefore: '^(\s*)</VirtualHost>'
     mode: '0640'
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: hardenwebserver_enable_defaultssl|bool and 'harden-apache2-https.conf' in harden_apache2_etc
 
-- name: include custom log config in default http virtualhost
+- name: Include custom log config in default http virtualhost
   ansible.builtin.blockinfile:
     dest: "{{ apacheconf }}"
     block: |
@@ -114,11 +114,11 @@
     insertbefore: '^(\s*)</VirtualHost>'
     mode: '0640'
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: not hardenwebserver_disable_http and 'harden-apache2-log.conf' in harden_apache2_confs
 
-- name: include custom log config in default https virtualhost
+- name: Include custom log config in default https virtualhost
   ansible.builtin.blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
@@ -126,8 +126,8 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache custom json log"
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: hardenwebserver_enable_defaultssl|bool and not hardenwebserver_https_noconfig and 'harden-apache2-log.conf' in harden_apache2_confs
 
 - name: Debian
@@ -144,8 +144,8 @@
         - { re: '^\tOptions FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
         - { re: '^\tOptions Indexes FollowSymLinks$', n: '\tOptions SymLinksIfOwnerMatch' }
       notify:
-        - restart apache
-        - restart apache - docker
+        - Restart apache
+        - Restart apache - docker
 
     ## Note: commented headers can break some apps like nagios
     ## Note: definition in security.conf are prime vs extra config. so this change is needed.
@@ -165,8 +165,8 @@
         # - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "sameorigin"' }
         #  - { re: '^#Header set X-Frame-Options: "sameorigin"', n: 'Header set X-Frame-Options: "deny"' }
         # notify:
-        #   - restart apache
-        #   - restart apache - docker
+        #   - Restart apache
+        #   - Restart apache - docker
 
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
@@ -193,7 +193,7 @@
         # - 'Header set X-XSS-Protection "1; mode=block"'
   when: ansible_os_family == "RedHat"
 
-- name: remove default index file - information disclosure
+- name: Remove default index file - information disclosure
   ansible.builtin.file: dest=/var/www/html/index.html state=absent
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 

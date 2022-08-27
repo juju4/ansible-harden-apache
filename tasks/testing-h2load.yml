@@ -1,14 +1,14 @@
 ---
 # https://nghttp2.org/documentation/h2load-howto.html
 
-- name: testing | git clone h2load repository
+- name: Testing | git clone h2load repository
   ansible.builtin.git:
     repo: https://github.com/nghttp2/nghttp2.git
     dest: /var/tmp/nghttp2
     version: "{{ h2load_gitrev | default(omit) }}"
     update: false
 
-- name: testing | ensure h2load dependencies are present
+- name: Testing | ensure h2load dependencies are present
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -16,7 +16,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: testing | build h2load
+- name: Testing | build h2load
   ansible.builtin.command: "{{ item }}"
   with_items:
     - git submodule update --init
@@ -31,9 +31,9 @@
     creates: /usr/local/bin/h2load
   environment: "{{ h2load_env | default(omit) }}"
   notify:
-    - run ldconfig
+    - Run ldconfig
 
-- name: testing | executing h2load
+- name: Testing | executing h2load
   ansible.builtin.shell: |
     set -o pipefail
     h2load -n100000 -c100 -m10 {{ testing_target }} | tee /tmp/h2load.log

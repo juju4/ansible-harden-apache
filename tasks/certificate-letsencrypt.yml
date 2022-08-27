@@ -1,35 +1,35 @@
 ---
 ## require ansible v2.2 for letsencrypt module
 
-- name: apt | certificate packages dependencies
+- name: Debian | certificate packages dependencies
   ansible.builtin.apt: name=ssl-cert state=present update_cache=yes cache_valid_time=3600
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   register: pkg_result
   until: pkg_result is success
-- name: install deps
+- name: Install deps
   ansible.builtin.package: name=openssl state=present
   register: pkg_result
   until: pkg_result is success
 
-- name: letsencrypt user key not provided
+- name: Letsencrypt user key not provided
   block:
-    - name: creating letsencrypt user key
+    - name: Creating letsencrypt user key
       ansible.builtin.shell: >
         openssl genrsa 4096 > {{ ssl_privatedir }}/user.key
             creates={{ ssl_privatedir }}/user.key
       register: userkey
     # - debug: var=userkey
-    - name: export public user key
+    - name: Export public user key
       ansible.builtin.shell: >
         openssl rsa -in {{ ssl_privatedir }}/user.key
             -pubout
             > {{ ssl_privatedir }}/user.pub
             creates={{ ssl_privatedir }}/user.pub
-    - name: ensure correct permissions of user key
+    - name: Ensure correct permissions of user key
       ansible.builtin.file: "dest={{ ssl_privatedir }}/user.key owner=root group={{ ssl_user }} mode=0440"
   when: hardenwebserver_letsencrypt_user_key is not defined or not hardenwebserver_letsencrypt_user_key
 
-- name: generate certificate csr to submit
+- name: Generate certificate csr to submit
   ansible.builtin.command: >
     openssl req -sha256 -nodes -newkey rsa:4096
         -keyout {{ ssl_privatedir }}/{{ ansible_fqdn }}.key
@@ -38,7 +38,7 @@
         creates={{ ssl_dir }}/{{ ansible_fqdn }}.csr
 
 ## https://letsencrypt.org/certificates/
-- name: create root chain file for ssl stapling
+- name: Create root chain file for ssl stapling
   ansible.builtin.shell: |
     set -o pipefail
     curl https://letsencrypt.org/certs/isrgrootx1.pem
@@ -47,24 +47,24 @@
   args:
     executable: /bin/bash
     creates: "{{ ssl_dir }}/ca-certs.pem"
-- name: ensure root chain file not empty
+- name: Ensure root chain file not empty
   ansible.builtin.stat: path={{ ssl_dir }}/ca-certs.pem
   register: rootchain
-- name: failure
+- name: Failure
   ansible.builtin.fail: msg="FATAL! root chain file generation fails."
   when: not rootchain.stat.exists or rootchain.stat.size == 0
 
-- name: register letsencrypt challenge
+- name: Register letsencrypt challenge
   acme_certificate:
     account_key: "{{ ssl_privatedir }}/user.key"
     csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
   notify:
-    - add public file to www dir to fulfill letsencrypt challenge
+    - Add public file to www dir to fulfill letsencrypt challenge
 
 # - debug: var=le_challenge
-- name: ensure letsencrypt directory exists
+- name: Ensure letsencrypt directory exists
   ansible.builtin.file:
     dest: "{{ hardenwebserver_rootdir }}/.well-known/acme-challenge"
     state: directory
@@ -74,7 +74,7 @@
   ansible.builtin.meta: flush_handlers
 
 ## Note: validation is over http... can't remove http before this task.
-- name: validate letsencrypt challenge
+- name: Validate letsencrypt challenge
   acme_certificate:
     account_key: "{{ ssl_privatedir }}/user.key"
     csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"

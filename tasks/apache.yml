@@ -1,6 +1,6 @@
 ---
 
-- name: apache-security packages install
+- name: Apache-security packages install
   ansible.builtin.package: name={{ hardenwebserver_packages }} state=present
   register: pkginstall
   until: pkginstall is success
@@ -49,6 +49,6 @@
 - import_tasks: systemd.yml
   when: harden_apache_systemd_hardening
 
-- name: ensure apache is enabled and started
+- name: Ensure apache is enabled and started
   ansible.builtin.service: name={{ apache_svc }} state=started enabled=yes
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")

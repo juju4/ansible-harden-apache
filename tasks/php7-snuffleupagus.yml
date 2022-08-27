@@ -1,7 +1,7 @@
 ---
 # https://snuffleupagus.readthedocs.io/installation.html
 
-- name: snuffleupagus | ensure dependencies are present
+- name: Snuffleupagus | ensure dependencies are present
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -9,20 +9,20 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: snuffleupagus | ensure archives folder exists
+- name: Snuffleupagus | ensure archives folder exists
   ansible.builtin.file:
     dest: "{{ install_archives }}"
     state: directory
     mode: '0755'
 
-- name: snuffleupagus | git clone
+- name: Snuffleupagus | git clone
   ansible.builtin.git:
     repo: https://github.com/nbs-system/snuffleupagus
     dest: "{{ install_archives }}/snuffleupagus"
     version: "{{ hardenapache2_snuffleupagus_version | default('c5d249119375c95fdcdf4124b330c918fb03f4b5') }}"
     update: false
 
-- name: snuffleupagus | build
+- name: Snuffleupagus | build
   ansible.builtin.command: "{{ item.c }}"
   with_items:
     - { c: phpize, t: Makefile }
@@ -32,7 +32,7 @@
     chdir: "{{ install_archives }}/snuffleupagus/src"
     creates: "{{ item.t }}"
 
-- name: snuffleupagus | install
+- name: Snuffleupagus | install
   ansible.builtin.command: "{{ item }}"
   with_items:
     - make install
@@ -40,7 +40,7 @@
     chdir: "{{ install_archives }}/snuffleupagus/src"
     creates: /usr/lib/php/20190902/snuffleupagus.so
 
-- name: snuffleupagus | configure php
+- name: Snuffleupagus | configure php
   ansible.builtin.template:
     src: php7-snuffleupagus.conf.j2
     dest: "{{ harden_apache_phpdir }}/{{ item }}/conf.d/php7-snuffleupagus.{{ php_confext }}"
@@ -48,14 +48,14 @@
   with_items:
     - "{{ _harden_apache_php_variants }}"
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
 
-- name: snuffleupagus | check if existing secret
+- name: Snuffleupagus | check if existing secret
   ansible.builtin.stat: path="/root/.php7_done"
   register: done
 
-- name: snuffleupagus | generate secret_key
+- name: Snuffleupagus | generate secret_key
   ansible.builtin.shell: |
     set -o pipefail
     head -c 256 /dev/urandom | tr -dc 'a-zA-Z0-9' | tee /root/.php7_done
@@ -65,17 +65,17 @@
   register: snuffleupagus_secret1
   when: not done.stat.exists or done.stat.size == 0
 
-- name: snuffleupagus | recover secret_key
+- name: Snuffleupagus | recover secret_key
   ansible.builtin.command: "cat /root/.php7_done"
   changed_when: false
   register: snuffleupagus_secret2
   when: done.stat.exists and done.stat.size != 0
 
-- name: snuffleupagus | configure rules
+- name: Snuffleupagus | configure rules
   ansible.builtin.template:
     src: "{{ harden_php7_snuffleupagus_rules_template }}"
     dest: "{{ harden_apache_phpdir }}/snuffleupagus-rules.ini"
     mode: '0644'
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker

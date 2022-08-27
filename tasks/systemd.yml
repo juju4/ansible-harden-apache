@@ -13,8 +13,8 @@
     dest: "/etc/systemd/system/{{ apache_svc }}.service.d/override.conf"
     mode: '0644'
   notify:
-    - reload systemd
-    - restart apache
+    - Reload systemd
+    - Restart apache
 
 - name: Ensure directories exists
   ansible.builtin.file:

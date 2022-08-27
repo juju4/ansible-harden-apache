@@ -32,7 +32,7 @@
       with_items: "{{ verify_pkgs }}"
       when: ansible_os_family == "Debian"
     - name: RedHat | Check if needed packages are installed
-      ansible.builtin.command: "rpm -qi {{ item }}"  # noqa 303
+      ansible.builtin.command: "rpm -qi {{ item }}"  # noqa command-instead-of-module
       changed_when: false
       with_items: "{{ verify_pkgs }}"
       when: ansible_os_family == "RedHat"

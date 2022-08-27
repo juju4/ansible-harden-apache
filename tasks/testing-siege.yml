@@ -4,7 +4,7 @@
 # https://blog.sucuri.net/2017/03/testing-the-impacts-of-website-caching-tools.html
 # http://blog.loadimpact.com/open-source-load-testing-tool-benchmarks
 
-- name: testing | Ensure packages are present
+- name: Testing | Ensure packages are present
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -14,7 +14,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: testing | check siege configuration
+- name: Testing | check siege configuration
   ansible.builtin.lineinfile:
     dest: /root/.siegerc
     line: "{{ item }}"
@@ -23,7 +23,7 @@
   with_items:
     - "logfile = /tmp/siege.log"
 
-- name: testing | launch siege with different concurrencies
+- name: Testing | launch siege with different concurrencies
   ansible.builtin.command: "{{ item }}"
   with_items:
     - "siege -c1 -t{{ testing_siege_duration }} {{ testing_siege_args | default('') }} {{ testing_target }}"

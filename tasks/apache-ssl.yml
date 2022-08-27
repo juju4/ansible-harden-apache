@@ -1,6 +1,6 @@
 ---
 
-- name: yum | apache-ssl packages install
+- name: Yum | apache-ssl packages install
   ansible.builtin.yum:
     name:
       - mod_ssl
@@ -11,13 +11,13 @@
   until: pkg_result is success
 
 ## size should be >= certificate key size
-- name: generate ssl dhparam key
+- name: Generate ssl dhparam key
   # command: "openssl dhparam -out {{ ssl_privatedir }}/dhparam4.pem 4096 creates=/etc/nginx/ssl/dhparam4.pem"
   ansible.builtin.command: >
     openssl dhparam -dsaparam -out {{ ssl_privatedir }}/dhparam.pem 4096
   args:
     creates: "{{ ssl_privatedir }}/dhparam.pem"
-- name: ensure good permissions for ssl dhparam key
+- name: Ensure good permissions for ssl dhparam key
   ansible.builtin.file: "dest={{ ssl_privatedir }}/dhparam.pem mode=0440 owner=root group={{ www_user }}"
 
 - import_tasks: certificate-selfsigned.yml
@@ -36,8 +36,8 @@
     - { regexp: '/etc/ssl/certs/ssl-cert-snakeoil.pem', replace: '{{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
     - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: '{{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_os_family == 'Debian'
 
 - name: RedHat
@@ -57,16 +57,16 @@
             replace: 'SSLCertificateKeyFile {{ ssl_privatedir }}/{{ ansible_fqdn }}.key'
         }
       notify:
-        - restart apache
-        - restart apache - docker
+        - Restart apache
+        - Restart apache - docker
       when: defssl.stat.exists
   when: ansible_os_family == 'RedHat'
 
 - name: Debian | enable ssl module
   apache2_module: name=ssl state=present
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_os_family == 'Debian'
 
 - name: Debian | enable default ssl apache site
@@ -76,14 +76,14 @@
     mode: '0640'
     state: link
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: (ansible_os_family == 'Debian') and hardenwebserver_enable_defaultssl
 - name: Debian | disable default ssl apache site
   ansible.builtin.file: dest=/etc/apache2/sites-enabled/default-ssl.conf state=absent
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: (ansible_os_family == 'Debian') and not hardenwebserver_enable_defaultssl
 - name: RedHat ssl
   block:
@@ -118,8 +118,8 @@
     - name: RedHat | disable default ssl apache site
       ansible.builtin.file: dest=/etc/httpd/conf.d/ssl.conf state=absent
       notify:
-        - restart apache
-        - restart apache - docker
+        - Restart apache
+        - Restart apache - docker
     - name: Ensure httpd is listening on extra ports
       ansible.builtin.lineinfile:
         dest: /etc/httpd/httpd.conf

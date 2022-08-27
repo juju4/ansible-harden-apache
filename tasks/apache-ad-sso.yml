@@ -49,8 +49,8 @@
     - auth_kerb
   when: ansible_os_family == 'Debian'
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
 
 - name: Ensure directory paths for AD SSO exist
   ansible.builtin.file:
@@ -61,27 +61,27 @@
 
 - name: AD SSO template
   block:
-    - name: push AD SSO configuration template
+    - name: Push AD SSO configuration template
       ansible.builtin.template:
         src: "{{ harden_apache_ad_sso_conf_template }}.j2"
         dest: "{{ apache_confdir }}/{{ harden_apache_ad_sso_conf_template }}"
         mode: 0644
       notify:
-        - restart apache
-        - restart apache - docker
-    - name: enable AD SSO configuration
+        - Restart apache
+        - Restart apache - docker
+    - name: Enable AD SSO configuration
       ansible.builtin.file:
         src: "{{ apache_confdir }}/{{ harden_apache_ad_sso_conf_template }}"
         dest: "/etc/apache2/conf-enabled/{{ harden_apache_ad_sso_conf_template }}"
         mode: '0644'
         state: link
       notify:
-        - restart apache
-        - restart apache - docker
+        - Restart apache
+        - Restart apache - docker
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   when: harden_apache_ad_sso_conf_template is defined and harden_apache_ad_sso_conf_template
 
-- name: htaccess
+- name: Htaccess
   block:
     - name: Add template SSO htaccess to listed path
       ansible.builtin.template:

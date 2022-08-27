@@ -5,15 +5,15 @@
 - name: Restrict listening interface - ports.conf
   ansible.builtin.template: src=ports.conf.j2 dest=/etc/apache2/ports.conf mode=0644 backup=yes
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
 
 # - name: Keep localhost as listening interface - ports.conf
 #    ansible.builtin.lineinfile: dest=/etc/apache2/ports.conf regexp="{{ item.r }}" line="{{ item.l }}" follow=yes
 #   with_items:
 #     - { r: '^(\s*)Listen 127.0.0.1:443$', l: '    Listen 127.0.0.1:443' }
 #   notify:
-#     - restart apache
+#     - Restart apache
 
 ## FIXME!
 - name: Check if apache2-graphite.conf is enabled
@@ -34,6 +34,6 @@
         - { re: '^(\s*)Listen \w+:(\d+)$', rep: '\1Listen {{ hardenwebserver_bind }}:\2' }
         - { re: '^(\s*)Listen (\d+)$', rep: '\1Listen {{ hardenwebserver_bind }}:\2' }
       notify:
-        - restart apache
-        - restart apache - docker
+        - Restart apache
+        - Restart apache - docker
   when: apachegraphite.stat.exists and hardenwebserver_bind is defined and hardenwebserver_bind

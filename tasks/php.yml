@@ -88,15 +88,15 @@
     (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16) and
     harden_php7_snuffleupagus
 
-- name: snuffleupagus | Ensure absent
+- name: Snuffleupagus | Ensure absent
   ansible.builtin.file:
     dest: "{{ harden_apache_phpdir }}/{{ item }}/conf.d/php7-snuffleupagus.{{ php_confext }}"
     state: absent
   with_items:
     - "{{ _harden_apache_php_variants }}"
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: >
     (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16) and
     not harden_php7_snuffleupagus

@@ -2,7 +2,7 @@
 ## https://www.digitalocean.com/community/tutorials/how-to-set-up-mod_security-with-apache-on-debian-ubuntu
 ## https://www.feistyduck.com/library/modsecurity-handbook-free/
 
-- name: modsecurity install
+- name: Modsecurity install
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
@@ -15,15 +15,15 @@
   register: confms
 - name: Debug | modsecurity.conf state
   ansible.builtin.debug: var=confms
-- name: copy default recommended modsecurity.conf
+- name: Copy default recommended modsecurity.conf
   ansible.builtin.copy:
     src: /etc/modsecurity/modsecurity.conf-recommended
     dest: "{{ modsecurity_conf }}"
     mode: '0644'
     remote_src: true
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: not confms.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
 - import_tasks: apache-modsecurity-crs2.yml
@@ -32,7 +32,7 @@
 - import_tasks: apache-modsecurity-crs3.yml
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 18)
 
-- name: review modsecurity.conf (1)
+- name: Review modsecurity.conf (1)
   ansible.builtin.replace:
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.regexp }}"
@@ -44,8 +44,8 @@
     - { regexp: 'SecResponseBodyAccess On', replace: 'SecResponseBodyAccess Off' }
     - { regexp: 'SecAuditLogParts ABIJDEFHZ', replace: 'SecAuditLogParts ABCIJDEFHZ' }
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
 
 - name: Configure Json log in modsecurity.conf - PR#914, 2.9.1+
   ansible.builtin.lineinfile:
@@ -57,6 +57,6 @@
   with_items:
     - { regexp: 'SecAuditLogFormat .*', replace: "SecAuditLogFormat JSON" }
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: harden_apache_modsecurity_jsonlog and not (ansible_os_family == "RedHat" and ansible_distribution_major_version|int <= 7)

@@ -29,4 +29,4 @@
     mode: '0644'
     validate: 'rsyslogd -N2 -f %s'
   notify:
-    - restart rsyslog
+    - Restart rsyslog

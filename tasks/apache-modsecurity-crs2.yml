@@ -1,7 +1,7 @@
 ---
 
 # FIXME!
-- name: active base rules
+- name: Active base rules
   ansible.builtin.file:
     src: "/usr/share/modsecurity-crs/base_rules/{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
@@ -32,7 +32,7 @@
     - modsecurity_crs_59_outbound_blocking.conf
     - modsecurity_crs_60_correlation.conf
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-- name: activate some optional rules
+- name: Activate some optional rules
   ansible.builtin.file:
     src: "/usr/share/modsecurity-crs/optional_rules/{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
@@ -56,10 +56,10 @@
     - modsecurity_crs_55_application_defects.conf
     - modsecurity_crs_55_marketing.conf
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-- name: activate some experimental rules
+- name: Activate some experimental rules
   ansible.builtin.file:
     src: "/usr/share/modsecurity-crs/experimental_rules/{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
@@ -71,8 +71,8 @@
     - modsecurity_crs_11_dos_protection.conf
     - modsecurity_crs_25_cc_track_pan.conf
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Xenial | SecReadStateLimit is deprecated, use SecConnReadStateLimit instead
@@ -91,12 +91,12 @@
 ## Note: enable this line if you want to get debug/software errors information
 # - file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_50_outbound.conf state=absent
 
-- name: ensure modsecurity_active dir has right permissions
+- name: Ensure modsecurity_active dir has right permissions
   ansible.builtin.file:
     dest: "{{ modsecurity_active }}"
     state: directory
     mode: '0755'
-- name: add additional rules - exceptions
+- name: Add additional rules - exceptions
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ modsecurity_active }}/{{ item }}"
@@ -104,17 +104,17 @@
   with_items:
     - modsecurity_crs_90_exceptions.conf
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
 
-- name: extra config against slow and low attacks
+- name: Extra config against slow and low attacks
   ansible.builtin.template: src=modsecurity_crs_80_slow.conf.j2 dest="{{ modsecurity_active }}/modsecurity_crs_80_slow.conf" mode=0644
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
 
 ## http://owasp-modsecurity-core-rule-set.owasp.narkive.com/EMuDdaw9/syntax-error-on-line-51-of-etc-modsecurity-activated-rules-modsecurity-crs-16-session-hijacking-conf
-- name: syntax error fix for modsecurity session hijacking
+- name: Syntax error fix for modsecurity session hijacking
   ansible.builtin.replace:
     dest: /usr/share/modsecurity-crs/activated_rules/modsecurity_crs_16_session_hijacking.conf
     regexp: '^        SecRule TX:1 ".*" "chain,t:sha1,t:hexEncode,setvar:session.ip_hash'
@@ -122,11 +122,11 @@
     mode: '0644'
     follow: true
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
 
-- name: review modsecurity.conf (2)
+- name: Review modsecurity.conf (2)
   ansible.builtin.lineinfile:
     dest: "{{ modsecurity_conf }}"
     regexp: "{{ item.re }}"
@@ -135,6 +135,6 @@
     backup: true
   with_items: "{{ harden_apache_modsecurity_lines }}"
   notify:
-    - restart apache
-    - restart apache - docker
+    - Restart apache
+    - Restart apache - docker
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

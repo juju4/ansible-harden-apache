@@ -1,27 +1,27 @@
 ---
 
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: yes
   when: >
     not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
 
-- name: restart apache
+- name: Restart apache
   ansible.builtin.service: name={{ apache_svc }} state=restarted
   when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: restart apache - docker
+- name: Restart apache - docker
   ansible.builtin.shell: "{% if ansible_os_family == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"
   when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
-- name: restart rsyslog
+- name: Restart rsyslog
   ansible.builtin.service: name=rsyslog state=restarted
 
-- name: run ldconfig
+- name: Run ldconfig
   ansible.builtin.command: ldconfig
 
-- name: add public file to www dir to fulfill letsencrypt challenge
+- name: Add public file to www dir to fulfill letsencrypt challenge
   ansible.builtin.copy:
-    dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource'] }}"
-    content: "{{ le_challenge['challenge_data'][ certificate_cn ]['http-01']['resource_value'] }}"
+    dest: "{{ hardenwebserver_rootdir }}/{{ le_challenge['challenge_data'][certificate_cn]['http-01']['resource'] }}"
+    content: "{{ le_challenge['challenge_data'][certificate_cn]['http-01']['resource_value'] }}"
     mode: '0644'
