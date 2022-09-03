@@ -103,7 +103,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: hardenwebserver_enable_defaultssl|bool and 'harden-apache2-https.conf' in harden_apache2_etc
+  when: hardenwebserver_enable_defaultssl | bool and 'harden-apache2-https.conf' in harden_apache2_etc
 
 - name: Include custom log config in default http virtualhost
   ansible.builtin.blockinfile:
@@ -128,7 +128,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: hardenwebserver_enable_defaultssl|bool and not hardenwebserver_https_noconfig and 'harden-apache2-log.conf' in harden_apache2_confs
+  when: hardenwebserver_enable_defaultssl | bool and not hardenwebserver_https_noconfig and 'harden-apache2-log.conf' in harden_apache2_confs
 
 - name: Debian
   block:
@@ -208,7 +208,7 @@
         state: present
       register: pkg_result
       until: pkg_result is success
-      when: ansible_distribution_major_version|int < 8
+      when: ansible_distribution_major_version | int < 8
 
     - name: RedHat8+ | Ensure selinux dependencies are present
       ansible.builtin.package:
@@ -219,7 +219,7 @@
         state: present
       register: pkg_result
       until: pkg_result is success
-      when: ansible_distribution_major_version|int >= 8
+      when: ansible_distribution_major_version | int >= 8
 
     - name: RedHat | Allow proxy to network connect in selinux
       seboolean:
