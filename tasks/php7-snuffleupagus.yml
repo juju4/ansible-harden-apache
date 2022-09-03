@@ -21,6 +21,8 @@
     dest: "{{ install_archives }}/snuffleupagus"
     version: "{{ hardenapache2_snuffleupagus_version | default('c5d249119375c95fdcdf4124b330c918fb03f4b5') }}"
     update: false
+  register: dl_result
+  until: dl_result is success
 
 - name: Snuffleupagus | build
   ansible.builtin.command: "{{ item.c }}"
