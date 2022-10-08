@@ -3,18 +3,20 @@
 - name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: yes
-  when: >
-    not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+  when:
+    - not is_container|bool
 
 - name: Restart apache
   ansible.builtin.service:
     name: "{{ apache_svc }}"
     state: "restarted"
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == " "docker")"
+  when:
+    - not is_container|bool
 
 - name: Restart apache - docker
   ansible.builtin.shell: "{% if ansible_os_family == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"  # noqa no-free-form
-  when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  when:
+    - is_container|bool
 
 - name: Restart rsyslog
   ansible.builtin.service:

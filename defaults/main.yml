@@ -165,3 +165,5 @@ testing_siege_duration: 5m
 harden_apache_testing_h2load: true
 
 install_archives: /var/_install
+
+is_container: false
