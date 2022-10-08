@@ -1,14 +1,17 @@
 ---
 
 - name: Disable default apache site
-  ansible.builtin.file: dest=/etc/apache2/sites-enabled/000-default.conf state=absent
+  ansible.builtin.file:
+    dest: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
   notify:
     - Restart apache
     - Restart apache - docker
   register: disdefault
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 - name: Debug | /etc/apache2/sites-enabled/000-default.conf state
-  ansible.builtin.debug: var=disdefault
+  ansible.builtin.debug:
+    var: disdefault
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Disable apache port 80

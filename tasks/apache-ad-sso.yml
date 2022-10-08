@@ -42,7 +42,7 @@
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
 
 - name: Debian | Ensure required apache modules are loaded
-  apache2_module:
+  community.general.apache2_module:
     state: present
     name: "{{ item }}"
   with_items:
@@ -60,6 +60,7 @@
   with_items: "{{ harden_apache_ad_sso_dir_path }}"
 
 - name: AD SSO template
+  when: harden_apache_ad_sso_conf_template is defined and harden_apache_ad_sso_conf_template
   block:
     - name: Push AD SSO configuration template
       ansible.builtin.template:
@@ -79,9 +80,9 @@
         - Restart apache
         - Restart apache - docker
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-  when: harden_apache_ad_sso_conf_template is defined and harden_apache_ad_sso_conf_template
 
 - name: Htaccess
+  when: harden_apache_ad_sso_htaccess_template is defined and harden_apache_ad_sso_htaccess_template
   block:
     - name: Add template SSO htaccess to listed path
       ansible.builtin.template:
@@ -90,7 +91,6 @@
         mode: '0644'
         backup: true
       with_items: "{{ harden_apache_ad_sso_dir_path }}"
-  when: harden_apache_ad_sso_htaccess_template is defined and harden_apache_ad_sso_htaccess_template
 
 # verify_krb5_conf is only available in heimdal-clients kerberos package
 #   and requires AD/kerberos server to be online

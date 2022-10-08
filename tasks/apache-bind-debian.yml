@@ -3,7 +3,11 @@
 ## https://httpd.apache.org/docs/2.4/en/bind.html
 
 - name: Restrict listening interface - ports.conf
-  ansible.builtin.template: src=ports.conf.j2 dest=/etc/apache2/ports.conf mode=0644 backup=yes
+  ansible.builtin.template:
+    src: ports.conf.j2
+    dest: /etc/apache2/ports.conf
+    mode: 0644
+    backup: yes
   notify:
     - Restart apache
     - Restart apache - docker
@@ -17,9 +21,11 @@
 
 ## FIXME!
 - name: Check if apache2-graphite.conf is enabled
-  ansible.builtin.stat: path=/etc/apache2/sites-enabled/apache2-graphite.conf
+  ansible.builtin.stat:
+    path: /etc/apache2/sites-enabled/apache2-graphite.conf
   register: apachegraphite
 - name: Apache Graphite
+  when: apachegraphite.stat.exists and hardenwebserver_bind is defined and hardenwebserver_bind
   block:
     - name: Restrict listening interface (graphite)
       ansible.builtin.replace:
@@ -36,4 +42,3 @@
       notify:
         - Restart apache
         - Restart apache - docker
-  when: apachegraphite.stat.exists and hardenwebserver_bind is defined and hardenwebserver_bind

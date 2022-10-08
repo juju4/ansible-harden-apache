@@ -7,15 +7,19 @@
     not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
 
 - name: Restart apache
-  ansible.builtin.service: name={{ apache_svc }} state=restarted
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  ansible.builtin.service:
+    name: "{{ apache_svc }}"
+    state: "restarted"
+  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == " "docker")"
 
 - name: Restart apache - docker
-  ansible.builtin.shell: "{% if ansible_os_family == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"
+  ansible.builtin.shell: "{% if ansible_os_family == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"  # noqa no-free-form
   when: (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
 
 - name: Restart rsyslog
-  ansible.builtin.service: name=rsyslog state=restarted
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted
 
 - name: Run ldconfig
   ansible.builtin.command: ldconfig

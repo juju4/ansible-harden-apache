@@ -18,12 +18,18 @@
   args:
     creates: "{{ ssl_privatedir }}/dhparam.pem"
 - name: Ensure good permissions for ssl dhparam key
-  ansible.builtin.file: "dest={{ ssl_privatedir }}/dhparam.pem mode=0440 owner=root group={{ www_user }}"
+  ansible.builtin.file:
+    dest: "{{ ssl_privatedir }}/dhparam.pem"
+    mode: "0440"
+    owner: "root"
+    group: "{{ www_user }}"
 
-- import_tasks: certificate-selfsigned.yml
+- name: Import certificate-selfsigned
+  ansible.builtin.import_tasks: certificate-selfsigned.yml
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'selfsigned'
 
-- import_tasks: certificate-letsencrypt.yml
+- name: Import certificate-letsencrypt
+  ansible.builtin.import_tasks: certificate-letsencrypt.yml
   when: hardenwebserver_cert is defined and hardenwebserver_cert == 'letsencrypt'
 
 - name: Debian | update certificate info in Apache configuration
@@ -41,9 +47,11 @@
   when: ansible_os_family == 'Debian'
 
 - name: RedHat
+  when: ansible_os_family == 'RedHat'
   block:
     - name: Redhat | check if ssl.conf exists
-      ansible.builtin.stat: path={{ apachesslconf }}
+      ansible.builtin.stat:
+        path: "{{ apachesslconf }}"
       register: defssl
     - name: RedHat | update certificate info in Apache configuration
       ansible.builtin.replace:
@@ -60,10 +68,11 @@
         - Restart apache
         - Restart apache - docker
       when: defssl.stat.exists
-  when: ansible_os_family == 'RedHat'
 
 - name: Debian | enable ssl module
-  apache2_module: name=ssl state=present
+  community.general.apache2_module:
+    name: ssl
+    state: present
   notify:
     - Restart apache
     - Restart apache - docker
@@ -80,18 +89,23 @@
     - Restart apache - docker
   when: (ansible_os_family == 'Debian') and hardenwebserver_enable_defaultssl
 - name: Debian | disable default ssl apache site
-  ansible.builtin.file: dest=/etc/apache2/sites-enabled/default-ssl.conf state=absent
+  ansible.builtin.file:
+    dest: /etc/apache2/sites-enabled/default-ssl.conf
+    state: absent
   notify:
     - Restart apache
     - Restart apache - docker
   when: (ansible_os_family == 'Debian') and not hardenwebserver_enable_defaultssl
 - name: RedHat ssl
+  when: (ansible_os_family == 'RedHat') and hardenwebserver_enable_defaultssl
   block:
     - name: RedHat | check if backup default ssl apache site
-      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf.orig
+      ansible.builtin.stat:
+        path: /etc/httpd/conf.d/ssl.conf.orig
       register: defsslorig
     - name: RedHat | check if default ssl apache site
-      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf
+      ansible.builtin.stat:
+        path: /etc/httpd/conf.d/ssl.conf
       register: defssl
     - name: RedHat | Copy default ssl apache site
       ansible.builtin.copy:
@@ -99,14 +113,16 @@
         dest: /etc/httpd/conf.d/ssl.conf
         mode: '0640'
       when: defsslorig.stat.exists and not defssl.stat.exists
-  when: (ansible_os_family == 'RedHat') and hardenwebserver_enable_defaultssl
 - name: RedHat no ssl
+  when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
   block:
     - name: RedHat | Ensure backup of default ssl apache site
-      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf.orig
+      ansible.builtin.stat:
+        path: /etc/httpd/conf.d/ssl.conf.orig
       register: defsslorig
     - name: RedHat | check if default ssl apache site
-      ansible.builtin.stat: path=/etc/httpd/conf.d/ssl.conf
+      ansible.builtin.stat:
+        path: /etc/httpd/conf.d/ssl.conf
       register: defssl
     - name: RedHat | Backup default ssl apache site
       ansible.builtin.copy:
@@ -116,7 +132,9 @@
         remote_src: true
       when: not defsslorig.stat.exists and defssl.stat.exists
     - name: RedHat | disable default ssl apache site
-      ansible.builtin.file: dest=/etc/httpd/conf.d/ssl.conf state=absent
+      ansible.builtin.file:
+        dest: /etc/httpd/conf.d/ssl.conf
+        state: absent
       notify:
         - Restart apache
         - Restart apache - docker
@@ -128,7 +146,6 @@
         mode: '0644'
         backup: true
       with_items: "{{ harden_apache_extra_ports }}"
-  when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
 
 - name: HTTP Public Key Pinning (HPKP) hash extraction
   ansible.builtin.shell: |

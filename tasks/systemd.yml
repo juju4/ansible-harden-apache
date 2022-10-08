@@ -24,7 +24,7 @@
   with_items: "{{ harden_apache_systemd_dir_acl }}"
 
 - name: Ensure directories are accessible to apache httpd
-  acl:
+  ansible.posix.acl:
     path: "{{ item.p }}"
     entity: "{{ www_user }}"
     etype: user
@@ -33,7 +33,7 @@
   with_items: "{{ harden_apache_systemd_dir_acl }}"
 
 - name: Ensure files are accessible to apache httpd
-  acl:
+  ansible.posix.acl:
     path: "{{ item.p }}"
     entity: "{{ www_user }}"
     etype: user

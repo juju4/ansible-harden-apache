@@ -1,11 +1,14 @@
 ---
 
 - name: Apache-security packages install
-  ansible.builtin.package: name={{ hardenwebserver_packages }} state=present
+  ansible.builtin.package:
+    name: "{{ hardenwebserver_packages }}"
+    state: "present"
   register: pkginstall
   until: pkginstall is success
 
 - name: RedHat
+  when: ansible_os_family == "RedHat"
   block:
     - name: RedHat7 | reload systemd
       ansible.builtin.systemd:
@@ -15,40 +18,52 @@
         ansible_distribution_version.split(".")[0] == '7' and
         pkginstall.changed and
         not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
-  when: ansible_os_family == "RedHat"
 
-- import_tasks: apache-ssl.yml
+- name: Import apache-ssl
+  ansible.builtin.import_tasks: apache-ssl.yml
 
-- import_tasks: apache-security.yml
+- name: Import apache-security
+  ansible.builtin.import_tasks: apache-security.yml
 
-- import_tasks: apache-modsecurity.yml
+- name: Import apache-modsecurity
+  ansible.builtin.import_tasks: apache-modsecurity.yml
 
-- import_tasks: apache-https-only.yml
+- name: Import apache-https-only
+  ansible.builtin.import_tasks: apache-https-only.yml
   when: hardenwebserver_disable_http is defined and hardenwebserver_disable_http|bool
 
-- import_tasks: apache-bind-debian.yml
+- name: Import apache-bind-debian
+  ansible.builtin.import_tasks: apache-bind-debian.yml
   when: >
     hardenwebserver_bind is defined and
     hardenwebserver_bind and
     (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
-- import_tasks: apache-bind-redhat.yml
+- name: Import apache-bind-redhat
+  ansible.builtin.import_tasks: apache-bind-redhat.yml
   when: >
     hardenwebserver_bind is defined and
     hardenwebserver_bind and
     ansible_os_family == "RedHat"
 
-- import_tasks: php.yml
+- name: Import php
+  ansible.builtin.import_tasks: php.yml
   when: harden_apache_php_enable is defined and harden_apache_php_enable|bool
 
-- import_tasks: csp-report.yml
+- name: Import csp-report
+  ansible.builtin.import_tasks: csp-report.yml
   when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template
 
-- import_tasks: apache-ad-sso.yml
+- name: Import apache-ad-sso
+  ansible.builtin.import_tasks: apache-ad-sso.yml
   when: harden_apache_ad_sso|bool
 
-- import_tasks: systemd.yml
+- name: Import systemd
+  ansible.builtin.import_tasks: systemd.yml
   when: harden_apache_systemd_hardening
 
 - name: Ensure apache is enabled and started
-  ansible.builtin.service: name={{ apache_svc }} state=started enabled=yes
-  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == "docker")
+  ansible.builtin.service:
+    name: "{{ apache_svc }}"
+    state: "started"
+    enabled: "yes"
+  when: not (ansible_virtualization_type is defined and ansible_virtualization_type == " "docker")"

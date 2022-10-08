@@ -35,12 +35,12 @@
   register: private_key
 
 - name: Generate an OpenSSL private key
-  openssl_privatekey:
+  community.crypto.openssl_privatekey:
     path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
   when: not private_key.stat.exists
 
 - name: Generate an OpenSSL Certificate Signing Request
-  openssl_csr:
+  community.crypto.openssl_csr:
     path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.csr"
     privatekey_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
     organization_name: "{{ cert_orgname | default('Ansible') }}"
@@ -49,7 +49,7 @@
     email_address: "{{ cert_email | default(omit) }}"
 
 - name: Generate SSL self-signed certificate
-  openssl_certificate:
+  community.crypto.x509_certificate:
     path: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
     privatekey_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
     csr_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.csr"

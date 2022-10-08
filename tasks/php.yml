@@ -83,7 +83,8 @@
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
-- import_tasks: php7-snuffleupagus.yml
+- name: Import php7-snuffleupagus
+  ansible.builtin.import_tasks: php7-snuffleupagus.yml
   when: >
     (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16) and
     harden_php7_snuffleupagus

@@ -54,7 +54,8 @@
     - Restart apache - docker
 
 - name: Snuffleupagus | check if existing secret
-  ansible.builtin.stat: path="/root/.php7_done"
+  ansible.builtin.stat:
+    path: "/root/.php7_done"
   register: done
 
 - name: Snuffleupagus | generate secret_key

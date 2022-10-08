@@ -7,18 +7,25 @@
   ansible.builtin.include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
   when: ansible_os_family == "RedHat"
 
-- import_tasks: local-etc-hosts-kitchen-lxd.yml
+- name: Import local-etc-hosts-kitchen-lxd
+  ansible.builtin.import_tasks: local-etc-hosts-kitchen-lxd.yml
 
-- import_tasks: travis.yml
+- name: Import travis
+  ansible.builtin.import_tasks: travis.yml
 
-- import_tasks: apache.yml
+- name: Import apache
+  ansible.builtin.import_tasks: apache.yml
 
-- import_tasks: slow.yml
+- name: Import slow
+  ansible.builtin.import_tasks: slow.yml
 
-- import_tasks: security-txt.yml
+- name: Import security-txt
+  ansible.builtin.import_tasks: security-txt.yml
 
-- import_tasks: syslog.yml
+- name: Import syslog
+  ansible.builtin.import_tasks: syslog.yml
   when: harden_apache_use_syslog|bool
 
-- import_tasks: testing.yml
+- name: Import testing
+  ansible.builtin.import_tasks: testing.yml
   when: harden_apache_testing|bool

@@ -11,10 +11,12 @@
   until: pkg_result is success
 
 - name: Check if modsecurity.conf exists
-  ansible.builtin.stat: path={{ modsecurity_conf }}
+  ansible.builtin.stat:
+    path: "{{ modsecurity_conf }}"
   register: confms
 - name: Debug | modsecurity.conf state
-  ansible.builtin.debug: var=confms
+  ansible.builtin.debug:
+    var: confms
 - name: Copy default recommended modsecurity.conf
   ansible.builtin.copy:
     src: /etc/modsecurity/modsecurity.conf-recommended
@@ -26,10 +28,12 @@
     - Restart apache - docker
   when: not confms.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 
-- import_tasks: apache-modsecurity-crs2.yml
+- name: Import apache-modsecurity-crs2
+  ansible.builtin.import_tasks: apache-modsecurity-crs2.yml
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 18)
 
-- import_tasks: apache-modsecurity-crs3.yml
+- name: Import apache-modsecurity-crs3
+  ansible.builtin.import_tasks: apache-modsecurity-crs3.yml
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 18)
 
 - name: Review modsecurity.conf (1)

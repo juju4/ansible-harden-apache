@@ -5,9 +5,11 @@
 ##  https://github.com/bradenwright/kitchen-lxd_cli/issues/15
 # - debug: var=inventory_hostname
 - name: Debug | ansible_fqdn
-  ansible.builtin.debug: var=ansible_fqdn
+  ansible.builtin.debug:
+    var: ansible_fqdn
 - name: Debug | ansible_hostname
-  ansible.builtin.debug: var=ansible_hostname
+  ansible.builtin.debug:
+    var: ansible_hostname
 
 - name: Add new hostname in /etc/hosts (local resolv)
   ansible.builtin.replace:

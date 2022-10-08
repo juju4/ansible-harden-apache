@@ -5,8 +5,10 @@
     name: curl
     state: present
 
-- import_tasks: testing-siege.yml
+- name: Import testing-siege
+  ansible.builtin.import_tasks: testing-siege.yml
   when: ansible_distribution_major_version|int < 8
 
-- import_tasks: testing-h2load.yml
+- name: Import testing-h2load
+  ansible.builtin.import_tasks: testing-h2load.yml
   when: harden_apache_testing_h2load

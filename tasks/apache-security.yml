@@ -3,7 +3,7 @@
 ## headers for security.conf, reqtimeout for modsecurity slow attacks
 # https://www.acunetix.com/blog/articles/slow-http-dos-attacks-mitigate-apache-http-server/
 - name: Enabled extra modules
-  apache2_module:
+  community.general.apache2_module:
     name: "{{ item }}"
     state: present
   with_items:
@@ -20,7 +20,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: Disable identified modules
-  apache2_module:
+  community.general.apache2_module:
     name: "{{ item }}"
     state: absent
   with_items: "{{ hardenwebserver_apache_mod_disable }}"
@@ -131,6 +131,7 @@
   when: hardenwebserver_enable_defaultssl | bool and not hardenwebserver_https_noconfig and 'harden-apache2-log.conf' in harden_apache2_confs
 
 - name: Debian
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   block:
     - name: Enabled extra security - apache2.conf
       ansible.builtin.replace:
@@ -168,11 +169,8 @@
         #   - Restart apache
         #   - Restart apache - docker
 
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-# - fail: msg=test
-
 - name: RedHat
+  when: ansible_os_family == "RedHat"
   block:
     - name: Enabled extra security headers
       ansible.builtin.lineinfile:
@@ -191,13 +189,15 @@
         ## FIXME! problem w escaping ;
         # - 'Header set Strict-Transport-Security "max-age=16070400; includeSubDomains"'
         # - 'Header set X-XSS-Protection "1; mode=block"'
-  when: ansible_os_family == "RedHat"
 
 - name: Remove default index file - information disclosure
-  ansible.builtin.file: dest=/var/www/html/index.html state=absent
+  ansible.builtin.file:
+    dest: /var/www/html/index.html
+    state: absent
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 
 - name: RedHat selinux facts
+  when: ansible_os_family == "RedHat" and ansible_selinux is defined and ansible_selinux.status != 'disabled'
   block:
     - name: RedHat7- | Ensure selinux dependencies are present
       ansible.builtin.package:
@@ -222,25 +222,24 @@
       when: ansible_distribution_major_version | int >= 8
 
     - name: RedHat | Allow proxy to network connect in selinux
-      seboolean:
+      ansible.posix.seboolean:
         name: httpd_can_network_connect
         state: true
         persistent: true
-  when: ansible_os_family == "RedHat" and ansible_selinux is defined and ansible_selinux.status != 'disabled'
 
 # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Managing_Confined_Services/sect-Managing_Confined_Services-Configuration_examples-Changing_port_numbers.html
 # https://wiki.centos.org/HowTos/SELinux#head-ad837f60830442ae77a81aedd10c20305a811388
 - name: RedHat selinux
-  block:
-    - name: RedHat | Allow httpd to listen to unusual ports
-      seport:
-        ports: "{{ item }}"
-        proto: tcp
-        setype: http_port_t
-        state: present
-      with_items: "{{ hardenwebserver_ports_redhat_selinux_allow }}"
   when: >
     ansible_os_family == "RedHat" and
     ansible_selinux and
     hardenwebserver_ports_redhat_selinux_allow is defined and
     hardenwebserver_ports_redhat_selinux_allow != []
+  block:
+    - name: RedHat | Allow httpd to listen to unusual ports
+      community.general.seport:
+        ports: "{{ item }}"
+        proto: tcp
+        setype: http_port_t
+        state: present
+      with_items: "{{ hardenwebserver_ports_redhat_selinux_allow }}"
