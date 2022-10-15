@@ -18,13 +18,13 @@ jobs:
       matrix:
         include:
           - distribution: centos
-            version: 8-Stream
-            version2: 8-Stream
+            version: 9-Stream
+            version2: 9-Stream
             suite: default
             experimental: true
           - distribution: centos
-            version: 7
-            version2: 7
+            version: 8-Stream
+            version2: 8-Stream
             suite: default
             experimental: false
           - distribution: ubuntu
@@ -35,11 +35,6 @@ jobs:
           - distribution: ubuntu
             version: '20.04'
             version2: 2004
-            suite: default
-            experimental: true
-          - distribution: ubuntu
-            version: '18.04'
-            version2: 1804
             suite: default
             experimental: false
     env:
