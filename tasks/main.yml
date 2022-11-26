@@ -18,6 +18,12 @@
       )
     )
 
+- name: Debian | refresh apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: "{{ harden_apache_apt_cache_valid_time | default(3600) }}"
+  when: ansible_os_family == "Debian"
+
 - name: Import local-etc-hosts-kitchen-lxd
   ansible.builtin.import_tasks: local-etc-hosts-kitchen-lxd.yml
 
