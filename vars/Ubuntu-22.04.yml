@@ -22,6 +22,7 @@ _hardenwebserver_rootdir: "{{ hardenwebserver_rootdir | default('/var/www/html')
 rsyslog_workdirectory: /var/spool/rsyslog
 
 hardenwebserver_packages:
+  - git
   - python3-passlib
   - python3-pip
   - apache2
