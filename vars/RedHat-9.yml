@@ -1,0 +1,78 @@
+---
+
+hardenwebserver_nginx_stapling: true
+
+ssl_user: root
+ssl_dir: /etc/pki/tls/certs
+ssl_privatedir: /etc/pki/tls/private
+
+www_user: apache
+apache_svc: httpd
+apacheetc: /etc/httpd
+apache_confdir: /etc/httpd/conf.d
+apache_sitedir: /etc/httpd/conf.d
+apache_logdir: /var/log/httpd
+apacheconf: /etc/httpd/conf/httpd.conf
+apachesslconf: /etc/httpd/conf.d/ssl.conf
+modsecurity_conf: /etc/httpd/conf.d/mod_security.conf
+modsecurity_active: /etc/httpd/modsecurity.d/activated_rules
+hardenwebserver_apachesecurityconf: /etc/httpd/conf.d/security.conf
+_hardenwebserver_rootdir: "{{ hardenwebserver_rootdir | default('/var/www/html') }}"
+
+rsyslog_workdirectory: /var/lib/rsyslog
+
+## passlib requires EPEL
+hardenwebserver_packages:
+  - git
+  # - python-passlib
+  - python3-dnf
+  - httpd
+
+python_pip: python3-pip
+openssl_pkgs:
+  - openssl
+  - python3-pip
+  - python3-setuptools
+  - python3-pyOpenSSL
+
+harden_apache_php:
+  - php
+php_confext: ini
+harden_apache_phpdir: /etc/php
+harden_apache_phpini: /etc/php.ini
+_harden_apache_php_variants: "{{ harden_apache_php_variants | default(['apache2', 'cli']) }}"
+
+harden_apache_modsecurity:
+  - mod_security
+  - mod_security_crs
+
+harden_apache_ad_sso_pkg:
+  - krb5-libs
+  - krb5-workstation
+  - mod_auth_kerb
+harden_apache_ad_sso_keytab_dest: /etc/httpd/krb5.keytab
+
+testing_h2load_deps:
+  - "@Development tools"
+  - libevent
+  - libevent-devel
+  - libev
+  - libev-devel
+  - zlib-devel
+  - libxml2
+  - libxml2-devel
+  - libevent
+  - libevent-devel
+  - jansson-devel
+  - jemalloc-devel
+  - autoconf
+  - automake
+  - libtool
+  - openssl-devel
+  - c-ares-devel
+  - python36-devel
+  - python3-setuptools
+
+h2load_env:
+  CXX_FLAGS: "-std=c++11 -O3"
+h2load_gitrev: v1.34.0
