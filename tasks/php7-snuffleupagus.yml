@@ -17,9 +17,9 @@
 
 - name: Snuffleupagus | git clone
   ansible.builtin.git:
-    repo: https://github.com/nbs-system/snuffleupagus
+    repo: "{{ hardenapache2_snuffleupagus_repo }}"
     dest: "{{ install_archives }}/snuffleupagus"
-    version: "{{ hardenapache2_snuffleupagus_version | default('c5d249119375c95fdcdf4124b330c918fb03f4b5') }}"
+    version: "{{ hardenapache2_snuffleupagus_version }}"
     update: false
   register: dl_result
   until: dl_result is success
