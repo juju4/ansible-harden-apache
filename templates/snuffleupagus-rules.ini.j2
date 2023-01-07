@@ -35,7 +35,7 @@ sp.readonly_exec.enable();
 # Prevent sloppy comparisons.
 sp.sloppy_comparison.enable();
 
-sp.disable_xxe.enable();
+sp.xxe_protection.enable();
 sp.eval_blacklist.list("system,exec,shell_exec");
 sp.eval_whitelist.list("strlen,strcmp").simulation();
 
