@@ -129,6 +129,7 @@ harden_php_disable_functions: 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,p
 harden_php_memory_limit: 128M
 harden_php_include_path: '/usr/share/php'
 harden_php_session_use_strict_mode: 1
+harden_php_session_sid_length: 40
 harden_php_session_cookie_secure: true
 harden_php_session_cookie_httponly: true
 harden_php7_snuffleupagus: true

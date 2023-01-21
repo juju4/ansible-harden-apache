@@ -67,6 +67,14 @@
     mode: '0644'
   with_items: "{{ _harden_apache_php_variants }}"
 
+- name: PHP | session.sid_length
+  ansible.builtin.lineinfile:
+    dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
+    regexp: '^session.sid_length = .*'
+    line: "session.sid_length = {{ harden_php_session_sid_length }}"
+    mode: '0644'
+  with_items: "{{ _harden_apache_php_variants }}"
+
 - name: PHP | session.cookie_secure
   ansible.builtin.lineinfile:
     dest: "{{ harden_apache_phpini | default(harden_apache_phpdir + '/' + item + '/php.ini') }}"
