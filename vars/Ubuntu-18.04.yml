@@ -3,7 +3,7 @@
 hardenwebserver_nginx_stapling: true
 
 ssl_user: ssl-cert
-ssl_dir: /etc/ssl
+ssl_dir: /etc/ssl/certs
 ssl_privatedir: /etc/ssl/private
 
 www_user: www-data
