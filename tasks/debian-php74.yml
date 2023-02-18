@@ -41,3 +41,10 @@
   poll: 300
   register: pkg_result
   until: pkg_result is success
+
+- name: Debian PHP7.4 | Set fact
+  ansible.builtin.set_fact:
+    harden_apache_phpdir: /etc/php/7.4
+    snuffleupagus_pkgs:
+      - php7.4-dev
+      - libpcre3-dev
