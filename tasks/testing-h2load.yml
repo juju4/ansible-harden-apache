@@ -8,6 +8,13 @@
     version: "{{ h2load_gitrev | default(omit) }}"
     update: false
 
+- name: RedHat9 | Enable PowerTools repo
+  ansible.builtin.command: dnf config-manager --enable crb
+  become: yes
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int == 9
+
 - name: Testing | ensure h2load dependencies are present
   ansible.builtin.package:
     name: "{{ item }}"
