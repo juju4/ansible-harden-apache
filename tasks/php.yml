@@ -10,6 +10,11 @@
   with_items: "{{ harden_apache_php }}"
   register: pkg_result
   until: pkg_result is success
+  when: not harden_apache_php74_debian_enable | bool
+
+- name: Debian PHP7.4
+  ansible.builtin.import_tasks: debian-php74.yml
+  when: harden_apache_php74_debian_enable | bool
 
 - name: PHP | Configure default time
   ansible.builtin.lineinfile:

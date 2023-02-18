@@ -122,6 +122,7 @@ harden_apache_systemd_cap_chown: true
 
 ## review php settings?
 harden_apache_php_enable: true
+harden_apache_php74_debian_enable: false
 harden_php_date_timezone: UTC
 harden_php_expose_php: 'Off'
 harden_php_allow_url_fopen: 'Off'
