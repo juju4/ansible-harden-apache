@@ -10,14 +10,27 @@
   with_items: "{{ harden_apache_php }}"
   register: pkg_result
   until: pkg_result is success
-  when:
-    - not (harden_apache_php74_debian_enable | bool and ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22)
+  when: >
+    not (
+      harden_apache_php74_debian_enable | bool and (
+        (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22)
+      ) and
+    not (
+      harden_apache_php74_rhel9_enable | bool and (
+        (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int == 9)
+      )
 
 - name: Ubuntu 22.04 | PHP7.4
   ansible.builtin.import_tasks: php74-jammy.yml
   when:
     - harden_apache_php74_debian_enable | bool
     - ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22
+
+- name: RHEL 9 | PHP7.4
+  ansible.builtin.import_tasks: php74-rhe9.yml
+  when:
+    - harden_apache_php74_rhel9_enable | bool
+    - ansible_os_family == 'RedHat' and ansible_distribution_major_version | int == 9
 
 - name: PHP | Configure default time
   ansible.builtin.lineinfile:
