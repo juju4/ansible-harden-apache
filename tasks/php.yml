@@ -13,8 +13,8 @@
   when:
     - not (harden_apache_php74_debian_enable | bool and ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22)
 
-- name: Debian PHP7.4
-  ansible.builtin.import_tasks: debian-php74.yml
+- name: Ubuntu 22.04 | PHP7.4
+  ansible.builtin.import_tasks: php74-jammy.yml
   when:
     - harden_apache_php74_debian_enable | bool
     - ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22
