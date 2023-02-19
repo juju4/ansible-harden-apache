@@ -53,7 +53,7 @@
   ansible.builtin.package:
     name:
       - php
-      - php-dev
+      - php-devel
     state: present
   async: 3600
   poll: 300
