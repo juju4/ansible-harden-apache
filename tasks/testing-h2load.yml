@@ -7,6 +7,8 @@
     dest: /var/tmp/nghttp2
     version: "{{ h2load_gitrev | default(omit) }}"
     update: false
+  register: dl_result
+  until: dl_result is success
 
 - name: RedHat9 | Enable PowerTools repo
   ansible.builtin.command: dnf config-manager --enable crb
