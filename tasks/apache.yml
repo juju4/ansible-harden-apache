@@ -47,7 +47,9 @@
 
 - name: Import php
   ansible.builtin.import_tasks: php.yml
-  when: harden_apache_php_enable is defined and harden_apache_php_enable|bool
+  when: >
+    (harden_apache_php_enable is defined and harden_apache_php_enable|bool) or
+    '.php' in harden_apache_cspreport_uri
 
 - name: Import csp-report
   ansible.builtin.import_tasks: csp-report.yml
