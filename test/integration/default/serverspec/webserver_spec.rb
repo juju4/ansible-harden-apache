@@ -8,24 +8,35 @@ set welcome_code = 'HTTP\/.* 200'
 set options_title = '<title>403 Forbidden<\/title>'
 set conn = 'SSL connection using TLSv1.3'
 set public_key = 'Public-Key: \(4096 bit\)'
+set apache_bin = 'apachectl'
 if (os[:family] == 'ubuntu')
 elsif (os[:family] == 'redhat' && os[:release].scan(/^7\./) != [])
   set welcome = 'Apache HTTP Server Test Page powered by CentOS'
   set welcome_code = 'HTTP\/.* 403'
   set conn = 'SSL connection using TLS_ECDHE'
   set options_title = welcome
+  set apache_bin = 'httpd'
 elsif (os[:family] == 'redhat' && os[:release].scan(/^8/) != [])
   set welcome = 'HTTP Server Test Page powered by CentOS'
   set welcome_code = 'HTTP\/.* 403'
   set conn = 'SSL connection using TLSv1.3'
   set public_key = 'Public-Key: \(4096 bit\)'
   set options_title = welcome
+  set apache_bin = 'httpd'
+elsif (os[:family] == 'redhat' && os[:release].scan(/^9/) != [])
+  set welcome = 'HTTP Server Test Page powered by CentOS'
+  set welcome_code = 'HTTP\/.* 403'
+  set conn = 'SSL connection using TLSv1.3'
+  set public_key = 'Public-Key: \(4096 bit\)'
+  set options_title = welcome
+  set apache_bin = 'httpd'
 elsif (os[:family] == 'redhat')
   set welcome = 'CentOS .* Apache HTTP'
   set welcome_code = 'HTTP\/.* 403'
   set conn = 'SSL connection using TLSv1.3'
   set public_key = 'Public-Key: \(4096 bit\)'
   set options_title = welcome
+  set apache_bin = 'httpd'
 else
   set conn = 'SSL connection using TLSv1.2'
 end
@@ -60,7 +71,7 @@ describe port(443) do
   it { should be_listening }
 end
 
-describe command('apachectl -M') do
+describe command("#{apache_bin} -M") do
   its(:stdout) { should contain('headers_module') }
   its(:stdout) { should contain('rewrite_module') }
   its(:stdout) { should contain('ssl_module') }
