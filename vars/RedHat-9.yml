@@ -70,7 +70,7 @@ testing_h2load_deps:
   - libtool
   - openssl-devel
   - c-ares-devel
-  - python36-devel
+  - python3-devel
   - python3-setuptools
 
 h2load_env:
