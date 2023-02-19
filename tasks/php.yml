@@ -14,11 +14,13 @@
     not (
       harden_apache_php74_debian_enable | bool and (
         (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22)
-      ) and
+      )
+    ) and
     not (
       harden_apache_php74_rhel9_enable | bool and (
         (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int == 9)
       )
+    )
 
 - name: Ubuntu 22.04 | PHP7.4
   ansible.builtin.import_tasks: php74-jammy.yml
