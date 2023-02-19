@@ -74,6 +74,7 @@
     csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
+    acme_version: 2
   notify:
     - Add public file to www dir to fulfill letsencrypt challenge
 
@@ -95,3 +96,4 @@
     dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
     data: "{{ le_challenge }}"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
+    acme_version: 2

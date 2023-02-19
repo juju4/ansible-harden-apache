@@ -8,7 +8,6 @@
     regexp: "{{ item.re }}"
     replace: "{{ item.rep }}"
     mode: '0644'
-    follow: true
     validate: '/usr/sbin/apache2ctl -f %s -t'
   with_items:
     - { re: '^(\s.*)Listen [0-9\.]+:(\d+)$', rep: '\\1Listen {{ hardenwebserver_bind }}:\\2' }
@@ -23,7 +22,6 @@
     regexp: "{{ item.r }}"
     line: "{{ item.l }}"
     mode: '0644'
-    follow: true
   with_items:
     - { r: '^(\s*)Listen 127.0.0.1:443$', l: '\\1Listen 127.0.0.1:443' }
   notify:

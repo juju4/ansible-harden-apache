@@ -11,7 +11,7 @@
         verify_cfg_t: apache2ctl -t
         verify_ps: apache2
         title_root: '<title>Apache2 Ubuntu Default Page: It works</title>'
-        status_root: '200'
+        status_root: 200
         json_log: /var/log/apache2/access_json.log
       when: ansible_os_family == "Debian"
     - name: RedHat | set facts
@@ -22,7 +22,7 @@
         verify_cfg_t: httpd -t
         verify_ps: httpd
         title_root: '<title>Apache HTTP Server Test Page powered by CentOS</title>'
-        status_root: '403'
+        status_root: 403
         json_log: /var/log/httpd/access_json.log
       when: ansible_os_family == "RedHat"
   tasks:

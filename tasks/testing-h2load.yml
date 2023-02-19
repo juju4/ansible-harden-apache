@@ -11,7 +11,7 @@
   until: dl_result is success
 
 - name: RedHat9 | Enable PowerTools repo
-  ansible.builtin.command: dnf config-manager --enable crb
+  ansible.builtin.command: dnf config-manager --enable crb  # noqa no-changed-when
   become: yes
   when:
     - ansible_os_family == "RedHat"

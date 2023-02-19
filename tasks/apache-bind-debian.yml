@@ -33,7 +33,6 @@
         regexp: "{{ item.re }}"
         mode: '0644'
         replace: "{{ item.rep }}"
-        follow: true
       with_items:
         - { re: '^(\s*)<VirtualHost _default_:(\d+)>', rep: '\1<VirtualHost {{ hardenwebserver_bind }}:\2>' }
         - { re: '^(\s*)<VirtualHost \*:(\d+)>', rep: '\1<VirtualHost {{ hardenwebserver_bind }}:\2>' }

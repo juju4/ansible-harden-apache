@@ -1,10 +1,9 @@
 ---
 
-- hosts: all
+- name: AD SSO Test play
+  hosts: all
   vars:
-    - harden_apache_ad_sso: true
-  collections:
-    - community.crypto
+    harden_apache_ad_sso: true
   roles:
     - { role: juju4.redhat_epel, when: ansible_os_family == "RedHat" }
     - juju4.harden_apache

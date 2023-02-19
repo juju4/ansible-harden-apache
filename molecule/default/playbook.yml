@@ -1,7 +1,5 @@
 ---
 - name: Converge
   hosts: all
-  collections:
-    - community.crypto
   roles:
     - juju4.harden_apache

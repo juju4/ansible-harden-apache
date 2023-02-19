@@ -123,7 +123,6 @@
     regexp: '^        SecRule TX:1 ".*" "chain,t:sha1,t:hexEncode,setvar:session.ip_hash'
     replace: '        SecRule TX:1 ".*" "t:sha1,t:hexEncode,setvar:session.ip_hash'
     mode: '0644'
-    follow: true
   notify:
     - Restart apache
     - Restart apache - docker

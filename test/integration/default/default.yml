@@ -1,14 +1,13 @@
 ---
 
-- hosts: all
+- name: Test play
+  hosts: all
   environment:
     http_proxy: "{{ lookup('env', 'http_proxy') }}"
     https_proxy: "{{ lookup('env', 'https_proxy') }}"
     no_proxy: "{{ lookup('env', 'no_proxy') }}"
   vars:
-    - harden_apache_testing: true
-  collections:
-    - community.crypto
+    harden_apache_testing: true
   roles:
     - { role: juju4.redhat_epel, when: ansible_os_family == "RedHat" }
     - juju4.harden_apache
