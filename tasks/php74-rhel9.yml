@@ -1,7 +1,7 @@
 ---
 
 - name: RedHat | Set fact
-  ansible.builtin.set_facts:
+  ansible.builtin.set_fact:
     php_remi_version: 74
     harden_apache_phpdir: /etc/php
 
