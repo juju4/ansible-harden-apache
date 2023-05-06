@@ -14,7 +14,8 @@
     - not is_container|bool
 
 - name: Restart apache - docker
-  ansible.builtin.shell: "{% if ansible_os_family == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"  # noqa no-free-form
+  ansible.builtin.shell:  # noqa no-changed-when
+    cmd: "{% if ansible_os_family == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"
   when:
     - is_container|bool
 
@@ -23,8 +24,9 @@
     name: rsyslog
     state: restarted
 
-- name: Run ldconfig
-  ansible.builtin.command: ldconfig
+- name: Run ldconfig  # noqa no-changed-when
+  ansible.builtin.command:
+    cmd: ldconfig
 
 - name: Add public file to www dir to fulfill letsencrypt challenge
   ansible.builtin.copy:
