@@ -40,6 +40,11 @@ jobs:
             version2: 2004
             suite: default
             experimental: false
+          - distribution: debian
+            version: bullseye
+            version2: bullseye
+            suite: default
+            experimental: false
     env:
       ANSIBLE_CALLBACKS_ENABLED: profile_tasks
       ANSIBLE_EXTRA_VARS: "-e harden_apache_testing_h2load=false"
@@ -109,6 +114,7 @@ jobs:
           sudo lxc profile device add default root disk path=/ pool=pool1
           sudo lxc profile show default
           [ "X${{ matrix.distribution }}" == "Xcentos" ] && cd $GITHUB_WORKSPACE/juju4.harden_apache && sudo sh -x ./test/lxd/centos-ssh-image.sh ${{ matrix.version }} || true
+          [ "X${{ matrix.distribution }}" == "Xdebian" ] && cd $GITHUB_WORKSPACE/juju4.harden_apache && sudo sh -x ./test/lxd/debian-ssh-image.sh ${{ matrix.version }} || true
       - name: Install kitchen requirements
         run: |
           sudo gem install test-kitchen --version "=1.25.0"
