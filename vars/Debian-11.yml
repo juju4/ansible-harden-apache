@@ -78,3 +78,8 @@ testing_h2load_deps:
 h2load_gitrev: HEAD
 
 harden_php7_snuffleupagus: false
+
+openssl_pkgs:
+  - 'openssl'
+  - 'python3-pip'
+  - 'python3-setuptools'
