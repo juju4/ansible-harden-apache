@@ -12,6 +12,8 @@ elsif (os[:family] == 'redhat' && os[:release].scan(/^7\./) != [])
   set conn = 'SSL connection using TLS_ECDHE'
 elsif (os[:family] == 'redhat')
   set conn = 'SSL connection using TLSv1.3'
+elsif (os[:family] == 'debian')
+  set conn = 'SSL connection using TLSv1.3'
 else
   set conn = 'SSL connection using TLSv1.2'
 end
