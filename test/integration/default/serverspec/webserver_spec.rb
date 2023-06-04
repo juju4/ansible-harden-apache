@@ -11,6 +11,7 @@ set public_key = 'Public-Key: \(4096 bit\)'
 set apache_bin = 'apachectl'
 if (os[:family] == 'ubuntu')
 elsif (os[:family] == 'debian')
+  set welcome = 'Apache2 Debian Default Page: It works'
 elsif (os[:family] == 'redhat' && os[:release].scan(/^7\./) != [])
   set welcome = 'Apache HTTP Server Test Page powered by CentOS'
   set welcome_code = 'HTTP\/.* 403'
