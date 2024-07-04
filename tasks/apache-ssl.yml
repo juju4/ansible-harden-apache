@@ -1,7 +1,7 @@
 ---
 
 - name: Yum | apache-ssl packages install
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name:
       - mod_ssl
       - openssl

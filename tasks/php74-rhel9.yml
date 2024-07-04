@@ -14,7 +14,7 @@
   register: pkg_result
 
 - name: RedHat | Install Remi repo
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: "http://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
     state: present
   when: "'remi-release' not in ansible_facts.packages"
