@@ -167,7 +167,7 @@ harden_apache_testing: false
 testing_target: https://localhost
 testing_siege_duration: 5m
 # testing_siege_args: '-f urls.txt'
-harden_apache_testing_h2load: true
+harden_apache_testing_h2load: false
 
 install_archives: /var/_install
 
