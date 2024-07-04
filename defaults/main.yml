@@ -136,7 +136,7 @@ harden_php_session_cookie_secure: true
 harden_php_session_cookie_httponly: true
 harden_php7_snuffleupagus: true
 hardenapache2_snuffleupagus_repo: https://github.com/jvoisin/snuffleupagus
-hardenapache2_snuffleupagus_version: 7d006a4b971aec04c42c06c877c0e496f1f62bc0
+hardenapache2_snuffleupagus_version: cb3d7aed877ce2a0952c00f1950d57c72d664b49
 harden_php7_snuffleupagus_rules_template: "snuffleupagus-rules.ini.j2"
 
 # https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
