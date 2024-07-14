@@ -22,6 +22,7 @@
     name: cryptography
     state: present
     executable: "{{ hardenwebserver_apache_cryptography | default('pip3') }}"
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 24
 
 - name: Ensure target directory exists
   ansible.builtin.file:
