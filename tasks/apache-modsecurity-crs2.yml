@@ -111,7 +111,7 @@
   ansible.builtin.template:
     src: modsecurity_crs_80_slow.conf.j2
     dest: "{{ modsecurity_active }}/modsecurity_crs_80_slow.conf"
-    mode: 0644
+    mode: '0644'
   notify:
     - Restart apache
     - Restart apache - docker

@@ -22,7 +22,7 @@
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ apache_confdir }}/{{ item }}"
-    mode: 0644
+    mode: '0644'
   with_items:
     - csp-apache.conf
   notify:
