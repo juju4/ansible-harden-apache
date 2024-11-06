@@ -1,14 +1,23 @@
 ---
-## Travis workaround
 
 ## Travis error: "asn1 encoding routines:ASN1_mbstring_ncopy:string too longi:a_mbstr.c:154:maxsize=64"
-##    as cn=testing-gce-4d114f77-0ff1-41fb-bd33-22879d3249da.c.eco-emissary-99515.internal
+##      as cn=testing-gce-4d114f77-0ff1-41fb-bd33-22879d3249da.c.eco-emissary-99515.internal
+# fv-az1344-579.11nhhp5tf3ce1ixkodulnhsnqg.dx.internal.cloudapp.net
+# https://stackoverflow.com/questions/47175877/csr-with-common-name-longer-than-64-characters
 - name: Default | set certificate_cn
   ansible.builtin.set_fact:
     certificate_cn: "{{ ansible_fqdn }}"
 
-- name: Travis | set certificate_cn to shorter name to avoid openssl bug
+- name: Over RFC3280 | Truncate fqdn for certificate_cn
   ansible.builtin.set_fact:
-    certificate_cn: "testing-travis.internal"
-    travisci: true
-  when: ansible_env['TRAVIS'] is defined and ansible_env['TRAVIS'] == 'true'
+    certificate_cn: "{{ ansible_fqdn[:60] + '...' }}"
+    cert_use_cn_san: false
+  when:
+    - ansible_fqdn | length >= 64
+
+- name: Over RFC3280 | SAN to FQDN
+  ansible.builtin.set_fact:
+    cert_san: "DNS:{{ ansible_fqdn }}"
+  when:
+    - ansible_fqdn | length >= 64
+    - cert_san is not defined or (cert_san | length == 0)
