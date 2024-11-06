@@ -45,8 +45,9 @@
     path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.csr"
     privatekey_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
     organization_name: "{{ cert_orgname | default('Ansible') }}"
-    common_name: "{{ ansible_fqdn }}"
+    common_name: "{{ certificate_cn }}"
     subject_alt_name: "{{ cert_san | default(omit) }}"
+    use_common_name_for_san: "{{ cert_use_cn_san | default(omit) }}"
     email_address: "{{ cert_email | default(omit) }}"
 
 - name: Generate SSL self-signed certificate
