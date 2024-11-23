@@ -1,6 +1,5 @@
 ---
 galaxy_info:
-  standalone: true
   role_name: harden_apache
   author: juju4
   description: Apache2 Webserver Hardening role
