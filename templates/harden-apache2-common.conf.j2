@@ -138,6 +138,7 @@ SetEnvIf Request_URI "^/favicon.ico$" dontlog
 </Location>
 # https://httpd.apache.org/docs/2.4/mod/core.html#traceenable
 TraceEnable off
+{% if harden_apache_stapling_enable | bool %}
 
 # OCSP Stapling, httpd 2.3+
 ## Note: SSLStaplingCache cannot occur within <VirtualHost> section
@@ -145,3 +146,4 @@ SSLUseStapling on
 SSLStaplingResponderTimeout     5
 SSLStaplingReturnResponderErrors off
 SSLStaplingCache "shmcb:/var/run/ocsp-stapling-cache(150000)"
+{% endif %}

@@ -138,6 +138,7 @@ harden_php7_snuffleupagus: true
 hardenapache2_snuffleupagus_repo: https://github.com/jvoisin/snuffleupagus
 hardenapache2_snuffleupagus_version: cb3d7aed877ce2a0952c00f1950d57c72d664b49
 harden_php7_snuffleupagus_rules_template: "snuffleupagus-rules.ini.j2"
+harden_apache_stapling_enable: true
 
 # https://www.ietf.org/id/draft-foudil-securitytxt-00.txt
 harden_apache_securitytxt_template: security.txt.j2
