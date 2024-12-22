@@ -1,1 +1,14 @@
 ---
+
+- name: Review modsecurity.conf (2) - crs3
+  ansible.builtin.lineinfile:
+    dest: "{{ modsecurity_conf }}"
+    regexp: "{{ item.re }}"
+    line: "{{ item.l }}"
+    mode: '0644'
+    backup: true
+  with_items: "{{ harden_apache_modsecurity_lines }}"
+  notify:
+    - Restart apache
+    - Restart apache - docker
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
