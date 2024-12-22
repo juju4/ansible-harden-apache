@@ -100,6 +100,6 @@ SystemCallFilter=~@debug @mount @cpu-emulation @obsolete @resources @reboot @swa
 SystemCallErrorNumber=EPERM
 SystemCallArchitectures=native
 
-CPUShares={{ apache_cgroups_cpushares | default('1024') }}
+CPUWeight={{ apache_cgroups_cpushares | default('1024') }}
 CPUQuota={{ apache_cgroups_cpuquota | default('80%') }}
-MemoryLimit={{ apache_cgroups_memorylimit | default('4G') }}
+MemoryMax={{ apache_cgroups_memorylimit | default('4G') }}
