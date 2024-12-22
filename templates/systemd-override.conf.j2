@@ -31,7 +31,7 @@ DeviceAllow=
 UMask=077
 
 {% if (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int > 7) or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18) %}
-InaccessiblePaths=/proc
+InaccessiblePaths={{ harden_apache_systemd_inaccessiblepaths }}
 ProtectKernelTunables=true
 ProtectKernelModules=yes
 ProtectControlGroups=true

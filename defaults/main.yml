@@ -119,6 +119,8 @@ harden_apache_systemd_files_acl: []
 #  - { p: "/etc/letsencrypt/archive/{{ ansible_fqdn }}/privkey1.pem", perm: r }
 # mod_wsgi socket requires false
 harden_apache_systemd_cap_chown: true
+# if app is doing process listing, can't block /proc
+harden_apache_systemd_inaccessiblepaths: /proc
 
 ## review php settings?
 harden_apache_php_enable: true
