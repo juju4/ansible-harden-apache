@@ -17,12 +17,23 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: Ensure python cryptography is present
+- name: Ensure python cryptography is present - pip
   ansible.builtin.pip:
     name: cryptography
     state: present
     executable: "{{ hardenwebserver_apache_cryptography | default('pip3') }}"
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 24
+  when: >
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 24) or
+    (ansible_distribution == 'Debian' and ansible_distribution_major_version|int < 12)
+
+- name: Ensure python cryptography is present - system package
+  ansible.builtin.package:
+    name: python3-cryptography
+    state: present
+  when: >
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24) or
+    (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12) or
+    (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 9)
 
 - name: Ensure target directory exists
   ansible.builtin.file:
