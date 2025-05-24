@@ -44,7 +44,7 @@ _harden_apache_php_variants: "{{ harden_apache_php_variants | default(['apache2'
 
 harden_apache_modsecurity:
   - mod_security
-  - mod_security_crs
+  # - mod_security_crs  # nok RedHat/Almalinux 10
 
 harden_apache_ad_sso_pkg:
   - krb5-libs
