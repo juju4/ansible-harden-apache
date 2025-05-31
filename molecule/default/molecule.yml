@@ -8,10 +8,10 @@ platforms:
     image: ${MOLECULE_DISTRO:-ubuntu:20.04}
     groups:
       - hardenapache
-    env:
-      http_proxy: ${http_proxy}
-      https_proxy: ${https_proxy}
-      no_proxy: ${no_proxy}
+    # env:
+    #   http_proxy: ${http_proxy}
+    #   https_proxy: ${https_proxy}
+    #   no_proxy: ${no_proxy}
 provisioner:
   name: ansible
   config_options:
