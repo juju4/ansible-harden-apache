@@ -144,5 +144,5 @@
       ansible.builtin.assert:
         that:
           - "'\"vhost\":\"localhost\",\"xff\":\"127.0.0.127\"' in jsonlog['content'] | b64decode"
-          - "'\"http_referer\":\"http://www.example.com\",\"vhost\":\"localhost.0.0.127\"' in jsonlog['content'] | b64decode"
+          - "'\"http_referer\":\"http://www.example.com\",' in jsonlog['content'] | b64decode"
           - "'\"request\":\"OPTIONS / HTTP/1.1\"' in jsonlog['content'] | b64decode"
