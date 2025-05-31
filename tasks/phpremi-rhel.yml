@@ -38,6 +38,10 @@
     - ansible_distribution_major_version | int < 8
     - remistate.stdout is defined
     - not ('enabled=1' in remistate.stdout)
+  register: remirepo
+  changed_when:
+    - remirepo.rc != 0
+    - '"Nothing to do." not in remirepo.stdout'
 
 - name: RedHat | reset php stream to use remi latest
   ansible.builtin.command: "dnf module reset php -y"  # noqa no-changed-when
