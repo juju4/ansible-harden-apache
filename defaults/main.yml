@@ -6,6 +6,7 @@
 hardenwebserver_apache_mod_disable:
   - status
 
+hardenwebserver_modsecurity_enable: true
 hardenwebserver_apache_modsecurity_engine: 'DetectionOnly'
 # hardenwebserver_apache_modsecurity_engine: 'On'
 harden_apache_modsecurity_lines:

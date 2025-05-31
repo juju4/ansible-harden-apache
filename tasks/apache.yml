@@ -27,6 +27,7 @@
 
 - name: Import apache-modsecurity
   ansible.builtin.import_tasks: apache-modsecurity.yml
+  when: hardenwebserver_modsecurity_enable | bool
 
 - name: Import apache-https-only
   ansible.builtin.import_tasks: apache-https-only.yml
