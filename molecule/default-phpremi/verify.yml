@@ -127,6 +127,9 @@
       ansible.builtin.slurp:
         src: "{{ json_log }}"
       register: jsonlog
+    - name: Debug jsonlog
+      ansible.builtin.debug:
+        msg: "{{ jsonlog['content'] | b64decode }}"
     - name: Validate jsonlog
       ansible.builtin.assert:
         that: >
