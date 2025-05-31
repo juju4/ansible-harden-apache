@@ -64,8 +64,6 @@ jobs:
           pip install molecule molecule-plugins docker ansible-lint flake8 testinfra ansible
           mkdir -p $HOME/.ansible/roles && ln -s $GITHUB_WORKSPACE/$ANSIBLE_ROLE $HOME/.ansible/roles/ || true
           [ -f molecule/${ANSIBLE_SUITE}/requirements.yml ] && ansible-galaxy install -r molecule/${ANSIBLE_SUITE}/requirements.yml || true
-          # template search only in currently executed role root/tasks/templates folders and molecule scenario root/templates folders
-          cp $GITHUB_WORKSPACE/$ANSIBLE_ROLE/templates/misp-snuffleupagus-rules.ini.j2 $GITHUB_WORKSPACE/$ANSIBLE_ROLE/molecule/default/
       - name: Fetch central settings repository
         run: |
           export settings_repo="https://raw.githubusercontent.com/juju4/ansible-ci-settings/main"
