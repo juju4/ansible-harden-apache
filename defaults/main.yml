@@ -15,7 +15,7 @@ harden_apache_modsecurity_lines:
   ## https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual#sanitiseArg
   - { re: '^SecAction nolog,phase:2,id:131,', l: 'SecAction nolog,phase:2,id:131,sanitiseArg:password,sanitiseArg:newPassword,sanitiseArg:oldPassword' }
   # - { re: 'Include "/usr/share/modsecurity-crs/*.conf"', l: 'Include "/usr/share/modsecurity-crs/*.conf"' }
-  - { re: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"', l: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"' }
+  # - { re: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"', l: 'Include "/usr/share/modsecurity-crs/activated_rules/*.conf"' }
   - { re: '^SecTmpDir .*', l: 'SecTmpDir /tmp/modsectmp' }
   - { re: '^SecDataDir .*', l: 'SecDataDir /tmp/modsecdata' }
   # - { re: '', l: '' }
