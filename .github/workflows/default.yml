@@ -22,25 +22,25 @@ jobs:
       matrix:
         include:
           - molecule_distro: 'almalinux:10-kitten'
-            experimental: true
+            experimental: false
             suite: default
           - molecule_distro: 'rockylinux:9'
-            experimental: true
+            experimental: false
             suite: default
           - molecule_distro: 'ubuntu:24.04'
-            experimental: true
+            experimental: false
             suite: default
           - molecule_distro: 'ubuntu:22.04'
             experimental: false
             suite: default
           - molecule_distro: 'debian:trixie-slim'
-            experimental: true
+            experimental: false
             suite: default
           - molecule_distro: 'debian:bookworm'
             experimental: false
             suite: default
           - molecule_distro: 'rockylinux:9'
-            experimental: true
+            experimental: false
             suite: default-phpremi
     env:
       ANSIBLE_CALLBACKS_ENABLED: profile_tasks
