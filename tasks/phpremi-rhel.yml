@@ -2,7 +2,8 @@
 
 - name: RedHat | Set fact
   ansible.builtin.set_fact:
-    php_remi_version: 74
+    php_remi_version_short: "{{ harden_apache_phpremi_rhel_version | replace('.', '') }}"
+    php_remi_version: "{{ harden_apache_phpremi_rhel_version }}"
     harden_apache_phpdir: /etc/php
 
 - name: RedHat | Import Remi rpm repository keys
@@ -22,14 +23,14 @@
   until: pkg_result is success
 
 - name: RedHat | Check if remi-php repo is enabled
-  ansible.builtin.command: "grep '^enabled=' /etc/yum.repos.d/remi-php{{ php_remi_version }}.repo"
+  ansible.builtin.command: "grep '^enabled=' /etc/yum.repos.d/remi-php{{ php_remi_version_short }}.repo"
   register: remistate
   changed_when: false
   when: ansible_distribution_major_version | int < 8
 
 # https://github.com/ansible/ansible-modules-extras/issues/2384
 - name: RedHat | Enable remi repository for php
-  ansible.builtin.command: "yum-config-manager --enable remi-php{{ php_remi_version }}"  # noqa no-changed-when
+  ansible.builtin.command: "yum-config-manager --enable remi-php{{ php_remi_version_short }}"  # noqa no-changed-when
   # yum_repository:
   #   name: remi-php56
   #   enable: yes
@@ -43,13 +44,13 @@
   when:
     - ansible_distribution_major_version | int >= 8
     - ansible_facts.packages['php-fpm'] is defined
-    - ansible_facts.packages['php-fpm'][0]['version'] is version_compare('7.4', '<')
+    - ansible_facts.packages['php-fpm'][0]['version'] is version_compare(php_remi_version, '<')
 
 - name: RedHat | enable remi repository for php
-  ansible.builtin.command: "dnf module enable php:remi-7.4 -y"  # noqa no-changed-when
+  ansible.builtin.command: "dnf module enable php:remi-{{ php_remi_version }} -y"  # noqa no-changed-when
   when: ansible_distribution_major_version | int >= 8
 
-- name: RedHat | Ensure PHP7.4 is present
+- name: RedHat | Ensure PHP Remi is present
   ansible.builtin.package:
     name:
       - php

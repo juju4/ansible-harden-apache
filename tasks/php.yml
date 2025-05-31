@@ -28,11 +28,11 @@
     - harden_apache_php74_debian_enable | bool
     - ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22
 
-- name: RHEL 9 | PHP7.4
-  ansible.builtin.import_tasks: php74-rhel9.yml
+- name: RHEL | PHP Remi repo
+  ansible.builtin.import_tasks: phpremi-rhel.yml
   when:
-    - harden_apache_php74_rhel9_enable | bool
-    - ansible_os_family == 'RedHat' and ansible_distribution_major_version | int == 9
+    - harden_apache_phpremi_rhel_enable | bool
+    - ansible_os_family == 'RedHat'
 
 - name: PHP | Configure default time
   ansible.builtin.lineinfile:
