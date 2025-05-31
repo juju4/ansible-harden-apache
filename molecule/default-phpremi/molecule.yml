@@ -16,7 +16,7 @@ provisioner:
   name: ansible
   config_options:
     defaults:
-      verbosity: 0
+      verbosity: 2
 scenario:
   name: default-phpremi
 verifier:
