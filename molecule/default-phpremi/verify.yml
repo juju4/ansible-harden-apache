@@ -25,6 +25,16 @@
         status_root: 403
         json_log: /var/log/httpd/access_json.log
       when: ansible_os_family == "RedHat"
+    - name: Ensure procps package is present
+      ansible.builtin.package:
+        name: procps
+        state: present
+      when: ansible_os_family == "RedHat"
+    - name: Debian | Ensure ps/pgrep is present
+      ansible.builtin.package:
+        name: procps
+        state: present
+      when: ansible_os_family == "Debian"
   tasks:
     - name: Debian | Check if needed packages are installed
       ansible.builtin.command: "dpkg-query -l {{ item }}"
