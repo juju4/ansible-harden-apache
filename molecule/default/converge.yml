@@ -2,10 +2,10 @@
 
 - name: Converge
   hosts: all
-  environment:
-    http_proxy: "{{ lookup('env', 'http_proxy') }}"
-    https_proxy: "{{ lookup('env', 'https_proxy') }}"
-    no_proxy: "{{ lookup('env', 'no_proxy') }}"
+  # environment:
+  #   http_proxy: "{{ lookup('env', 'http_proxy') }}"
+  #   https_proxy: "{{ lookup('env', 'https_proxy') }}"
+  #   no_proxy: "{{ lookup('env', 'no_proxy') }}"
   remote_user: root
   pre_tasks:
     - name: Ubuntu | Install python3
