@@ -35,16 +35,16 @@
 
 - name: Import apache-bind-debian
   ansible.builtin.import_tasks: apache-bind-debian.yml
-  when: >
-    hardenwebserver_bind is defined and
-    hardenwebserver_bind and
-    (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+  when:
+    - hardenwebserver_bind is defined
+    - hardenwebserver_bind | length > 0
+    - (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
 - name: Import apache-bind-redhat
   ansible.builtin.import_tasks: apache-bind-redhat.yml
-  when: >
-    hardenwebserver_bind is defined and
-    hardenwebserver_bind and
-    ansible_os_family == "RedHat"
+  when:
+    - hardenwebserver_bind is defined
+    - hardenwebserver_bind | length > 0
+    - ansible_os_family == "RedHat"
 
 - name: Import php
   ansible.builtin.import_tasks: php.yml
@@ -62,7 +62,7 @@
 
 - name: Import systemd
   ansible.builtin.import_tasks: systemd.yml
-  when: harden_apache_systemd_hardening
+  when: harden_apache_systemd_hardening | bool
 
 - name: Ensure apache is enabled and started
   ansible.builtin.service:
