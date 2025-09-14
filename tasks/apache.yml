@@ -54,7 +54,9 @@
 
 - name: Import csp-report
   ansible.builtin.import_tasks: csp-report.yml
-  when: harden_apache_cspreport_template is defined and harden_apache_cspreport_template
+  when:
+    - harden_apache_cspreport_template is defined
+    - harden_apache_cspreport_template | length > 0
 
 - name: Import apache-ad-sso
   ansible.builtin.import_tasks: apache-ad-sso.yml
