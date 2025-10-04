@@ -60,7 +60,7 @@
       changed_when: false
     - name: Validate ps output
       ansible.builtin.assert:
-        that: ps.stdout
+        that: ps.stdout | length > 0
     - name: Ensure ports are listening
       ansible.builtin.wait_for:
         host: "{{ item.h }}"
