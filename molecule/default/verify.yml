@@ -76,8 +76,8 @@
       changed_when: false
     - name: Validate conf test output
       ansible.builtin.assert:
-        that: >
-          "'Syntax OK' in conftest.stderr"
+        that:
+          - "'Syntax OK' in conftest.stderr"
 
     - name: Fetch web1
       ansible.builtin.uri:
@@ -89,8 +89,8 @@
       register: web1
     - name: Validate web1
       ansible.builtin.assert:
-        that: >
-          "title_root in web1.content"
+        that:
+          - "title_root in web1.content"
     - name: Fetch web2
       ansible.builtin.uri:
         url: https://localhost/
@@ -109,8 +109,8 @@
       register: web3
     - name: Validate web3
       ansible.builtin.assert:
-        that: >
-          "'<title>403 Forbidden</title>' in web3.content"
+        that:
+          - "'<title>403 Forbidden</title>' in web3.content"
     - name: Fetch web4
       ansible.builtin.uri:
         url: https://localhost/nonexistent
@@ -121,8 +121,8 @@
       register: web4
     - name: Validate web4
       ansible.builtin.assert:
-        that: >
-          "'<title>404 Not Found</title>' in web4.content"
+        that:
+          - "'<title>404 Not Found</title>' in web4.content"
     - name: Fetch web5
       ansible.builtin.uri:
         url: https://localhost/?a=b&c=d
