@@ -17,6 +17,7 @@
         verify_cfg_t: apache2ctl -t
         verify_ps: apache2
         title_root: '<title>Apache2 Debian Default Page: It works</title>'
+        title_root3: '<title>403 Forbidden</title>'
         status_root: 200
         json_log: /var/log/apache2/access_json.log
       when: ansible_os_family == "Debian"
@@ -39,6 +40,7 @@
         verify_cfg_t: httpd -t
         verify_ps: httpd
         title_root: '<title>Apache HTTP Server Test Page powered by CentOS</title>'
+        title_root3: '<title>403 Forbidden</title>'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
       when: ansible_os_family == "RedHat"
@@ -50,6 +52,7 @@
         verify_cfg_t: httpd -t
         verify_ps: httpd
         title_root: '<title>Test Page for the HTTP Server on AlmaLinux</title>'
+        title_root3: '{{ title_root }}'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
       when: ansible_distribution == "AlmaLinux"
@@ -63,7 +66,7 @@
         title_root: '<title>HTTP Server Test Page powered by: Rocky Linux</title>'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
-      when: ansible_distribution == "RockyLinux"
+      when: ansible_distribution == "Rocky"
     - name: Ensure procps package is present
       ansible.builtin.package:
         name: procps
@@ -149,7 +152,7 @@
     - name: Validate web3
       ansible.builtin.assert:
         that:
-          - "'<title>403 Forbidden</title>' in web3.content"
+          - "title_root3 in web3.content"
     - name: Fetch web4
       ansible.builtin.uri:
         url: https://localhost/nonexistent
