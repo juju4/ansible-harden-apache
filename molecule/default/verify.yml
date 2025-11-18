@@ -3,7 +3,24 @@
 - name: Verify
   hosts: hardenapache
   pre_tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        var: "{{ item }}"
+      loop:
+        - ansible_os_family
+        - ansible_distribution
     - name: Debian | set facts
+      ansible.builtin.set_fact:
+        verify_pkgs:
+          - apache2
+        verify_cfg: /etc/apache2/apache2.conf
+        verify_cfg_t: apache2ctl -t
+        verify_ps: apache2
+        title_root: '<title>Apache2 Debian Default Page: It works</title>'
+        status_root: 200
+        json_log: /var/log/apache2/access_json.log
+      when: ansible_os_family == "Debian"
+    - name: Ubuntu | set facts
       ansible.builtin.set_fact:
         verify_pkgs:
           - apache2
@@ -13,7 +30,7 @@
         title_root: '<title>Apache2 Ubuntu Default Page: It works</title>'
         status_root: 200
         json_log: /var/log/apache2/access_json.log
-      when: ansible_os_family == "Debian"
+      when: ansible_distribution == "Ubuntu"
     - name: RedHat | set facts
       ansible.builtin.set_fact:
         verify_pkgs:
@@ -25,6 +42,28 @@
         status_root: 403
         json_log: /var/log/httpd/access_json.log
       when: ansible_os_family == "RedHat"
+    - name: AlmaLinux | set facts
+      ansible.builtin.set_fact:
+        verify_pkgs:
+          - httpd
+        verify_cfg: /etc/httpd/conf/httpd.conf
+        verify_cfg_t: httpd -t
+        verify_ps: httpd
+        title_root: '<title>Test Page for the HTTP Server on AlmaLinux</title>'
+        status_root: 403
+        json_log: /var/log/httpd/access_json.log
+      when: ansible_distribution == "AlmaLinux"
+    - name: RockyLinux | set facts
+      ansible.builtin.set_fact:
+        verify_pkgs:
+          - httpd
+        verify_cfg: /etc/httpd/conf/httpd.conf
+        verify_cfg_t: httpd -t
+        verify_ps: httpd
+        title_root: '<title>HTTP Server Test Page powered by: Rocky Linux</title>'
+        status_root: 403
+        json_log: /var/log/httpd/access_json.log
+      when: ansible_distribution == "RockyLinux"
     - name: Ensure procps package is present
       ansible.builtin.package:
         name: procps
