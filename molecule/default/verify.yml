@@ -52,7 +52,7 @@
         verify_cfg_t: httpd -t
         verify_ps: httpd
         title_root: '<title>Test Page for the HTTP Server on AlmaLinux</title>'
-        title_root3: '{{ title_root }}'
+        title_root3: '<title>Test Page for the HTTP Server on AlmaLinux</title>'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
       when: ansible_distribution == "AlmaLinux"
@@ -64,6 +64,7 @@
         verify_cfg_t: httpd -t
         verify_ps: httpd
         title_root: '<title>HTTP Server Test Page powered by: Rocky Linux</title>'
+        title_root3: '<title>HTTP Server Test Page powered by: Rocky Linux</title>'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
       when: ansible_distribution == "Rocky"
