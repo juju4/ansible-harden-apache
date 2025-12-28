@@ -8,16 +8,16 @@
   until: pkginstall is success
 
 - name: RedHat
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts['os_family'] == "RedHat"
   block:
     - name: RedHat7 | reload systemd
       ansible.builtin.systemd:
         daemon_reload: true
         name: httpd
       when: >
-        ansible_distribution_version.split(".")[0] == '7' and
+        ansible_facts['distribution_major_version'] == '7' and
         pkginstall.changed and
-        not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+        not (ansible_facts['virtualization_type'] is defined and (ansible_facts['virtualization_type'] == "docker"))
 
 - name: Import apache-ssl
   ansible.builtin.import_tasks: apache-ssl.yml
@@ -38,13 +38,13 @@
   when:
     - hardenwebserver_bind is defined
     - hardenwebserver_bind | length > 0
-    - (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+    - (ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu')
 - name: Import apache-bind-redhat
   ansible.builtin.import_tasks: apache-bind-redhat.yml
   when:
     - hardenwebserver_bind is defined
     - hardenwebserver_bind | length > 0
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name: Import php
   ansible.builtin.import_tasks: php.yml

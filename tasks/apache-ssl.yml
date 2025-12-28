@@ -6,7 +6,7 @@
       - mod_ssl
       - openssl
     state: present
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts['os_family'] == "RedHat"
   register: pkg_result
   until: pkg_result is success
 
@@ -39,15 +39,15 @@
     replace: "{{ item.replace }}"
     mode: '0640'
   with_items:
-    - { regexp: '/etc/ssl/certs/ssl-cert-snakeoil.pem', replace: '{{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
-    - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: '{{ ssl_privatedir }}/{{ ansible_fqdn }}.key' }
+    - { regexp: '/etc/ssl/certs/ssl-cert-snakeoil.pem', replace: "{{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.crt" }
+    - { regexp: '/etc/ssl/private/ssl-cert-snakeoil.key', replace: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key" }
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: RedHat
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts['os_family'] == 'RedHat'
   block:
     - name: Redhat | check if ssl.conf exists
       ansible.builtin.stat:
@@ -60,9 +60,9 @@
         replace: "{{ item.replace }}"
         mode: '0640'
       with_items:
-        - { regexp: '^SSLCertificateFile .*', replace: 'SSLCertificateFile {{ ssl_dir }}/{{ ansible_fqdn }}.crt' }
+        - { regexp: '^SSLCertificateFile .*', replace: "SSLCertificateFile {{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.crt" }
         - { regexp: '^SSLCertificateKeyFile .*',
-            replace: 'SSLCertificateKeyFile {{ ssl_privatedir }}/{{ ansible_fqdn }}.key'
+            replace: "SSLCertificateKeyFile {{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key"
         }
       notify:
         - Restart apache
@@ -76,7 +76,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Debian | enable default ssl apache site
   ansible.builtin.file:
@@ -87,7 +87,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: (ansible_os_family == 'Debian') and hardenwebserver_enable_defaultssl
+  when: (ansible_facts['os_family'] == 'Debian') and hardenwebserver_enable_defaultssl
 - name: Debian | disable default ssl apache site
   ansible.builtin.file:
     dest: /etc/apache2/sites-enabled/default-ssl.conf
@@ -95,9 +95,9 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: (ansible_os_family == 'Debian') and not hardenwebserver_enable_defaultssl
+  when: (ansible_facts['os_family'] == 'Debian') and not hardenwebserver_enable_defaultssl
 - name: RedHat ssl
-  when: (ansible_os_family == 'RedHat') and hardenwebserver_enable_defaultssl
+  when: (ansible_facts['os_family'] == 'RedHat') and hardenwebserver_enable_defaultssl
   block:
     - name: RedHat | check if backup default ssl apache site
       ansible.builtin.stat:
@@ -114,7 +114,7 @@
         mode: '0640'
       when: defsslorig.stat.exists and not defssl.stat.exists
 - name: RedHat no ssl
-  when: (ansible_os_family == 'RedHat') and not hardenwebserver_enable_defaultssl
+  when: (ansible_facts['os_family'] == 'RedHat') and not hardenwebserver_enable_defaultssl
   block:
     - name: RedHat | Ensure backup of default ssl apache site
       ansible.builtin.stat:
@@ -150,7 +150,7 @@
 - name: HTTP Public Key Pinning (HPKP) hash extraction
   ansible.builtin.shell: |
     set -o pipefail
-    openssl req -in {{ ssl_dir }}/{{ ansible_fqdn }}.csr -pubkey -noout |
+    openssl req -in {{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.csr -pubkey -noout |
         openssl rsa -pubin -outform der |
         openssl dgst -sha256 -binary |
         openssl enc -base64

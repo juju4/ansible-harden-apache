@@ -4,9 +4,9 @@
 ##      AH01564: unable to find IPv4 address of "default-ubuntu-1604-1472671788"'
 ##  https://github.com/bradenwright/kitchen-lxd_cli/issues/15
 # - debug: var=inventory_hostname
-- name: Debug | ansible_fqdn
+- name: Debug | ansible_facts['fqdn']
   ansible.builtin.debug:
-    var: ansible_fqdn
+    var: ansible_facts['fqdn']
 - name: Debug | ansible_hostname
   ansible.builtin.debug:
     var: ansible_hostname
@@ -18,5 +18,5 @@
     replace: 'localhost {{ ansible_hostname }}'
     mode: '0644'
   when: >
-    ansible_virtualization_type is defined and
-    (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "kvm")
+    ansible_facts['virtualization_type'] is defined and
+    (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "kvm")

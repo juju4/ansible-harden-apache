@@ -13,12 +13,12 @@
   when: >
     not (
       harden_apache_php74_debian_enable | bool and (
-        (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22)
+        (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int == 22)
       )
     ) and
     not (
       harden_apache_phpremi_rhel_enable | bool and (
-        (ansible_os_family == 'RedHat' and ansible_distribution_major_version | int == 9)
+        (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version'] | int == 9)
       )
     )
 
@@ -26,13 +26,13 @@
   ansible.builtin.import_tasks: php74-jammy.yml
   when:
     - harden_apache_php74_debian_enable | bool
-    - ansible_distribution == 'Ubuntu' and ansible_distribution_major_version | int == 22
+    - ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version'] | int == 22
 
 - name: RHEL | PHP Remi repo
   ansible.builtin.import_tasks: phpremi-rhel.yml
   when:
     - harden_apache_phpremi_rhel_enable | bool
-    - ansible_os_family == 'RedHat'
+    - ansible_facts['os_family'] == 'RedHat'
 
 - name: PHP | Configure default time
   ansible.builtin.lineinfile:
@@ -117,7 +117,7 @@
 - name: Import php7-snuffleupagus
   ansible.builtin.import_tasks: php7-snuffleupagus.yml
   when: >
-    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16) and
+    (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 16) and
     harden_php7_snuffleupagus
 
 - name: Snuffleupagus | Ensure absent
@@ -130,5 +130,5 @@
     - Restart apache
     - Restart apache - docker
   when: >
-    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16) and
+    (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 16) and
     not harden_php7_snuffleupagus

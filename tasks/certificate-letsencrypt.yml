@@ -6,7 +6,7 @@
     state: present
     update_cache: yes
     cache_valid_time: 3600
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   register: pkg_result
   until: pkg_result is success
 - name: Install deps
@@ -43,11 +43,11 @@
 - name: Generate certificate csr to submit  # noqa no-free-form
   ansible.builtin.command: >
     openssl req -sha256 -nodes -newkey rsa:4096
-        -keyout {{ ssl_privatedir }}/{{ ansible_fqdn }}.key
+        -keyout {{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key
         -subj "{{ hardenwebserver_certinfo }}/CN={{ certificate_cn }}"
-        -out {{ ssl_dir }}/{{ ansible_fqdn }}.csr
+        -out {{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.csr
   args:
-    creates: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
+    creates: "{{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.csr"
 
 ## https://letsencrypt.org/certificates/
 - name: Create root chain file for ssl stapling
@@ -71,8 +71,8 @@
 - name: Register letsencrypt challenge
   community.crypto.acme_certificate:
     account_key: "{{ ssl_privatedir }}/user.key"
-    csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
-    dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
+    csr: "{{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.csr"
+    dest: "{{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.crt"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
     acme_version: 2
   notify:
@@ -92,8 +92,8 @@
 - name: Validate letsencrypt challenge
   community.crypto.acme_certificate:
     account_key: "{{ ssl_privatedir }}/user.key"
-    csr: "{{ ssl_dir }}/{{ ansible_fqdn }}.csr"
-    dest: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
+    csr: "{{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.csr"
+    dest: "{{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.crt"
     data: "{{ le_challenge }}"
     acme_directory: "{{ hardenwebserver_letsencrypt_acme_dir }}"
     acme_version: 2

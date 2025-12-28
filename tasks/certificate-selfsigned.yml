@@ -13,7 +13,7 @@
     state: present
     update_cache: true
     cache_valid_time: 3600
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   register: pkg_result
   until: pkg_result is success
 
@@ -23,17 +23,17 @@
     state: present
     executable: "{{ hardenwebserver_apache_cryptography | default('pip3') }}"
   when: >
-    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 24) or
-    (ansible_distribution == 'Debian' and ansible_distribution_major_version|int < 12)
+    (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int < 24) or
+    (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version']|int < 12)
 
 - name: Ensure python cryptography is present - system package
   ansible.builtin.package:
     name: python3-cryptography
     state: present
   when: >
-    (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 24) or
-    (ansible_distribution == 'Debian' and ansible_distribution_major_version|int >= 12) or
-    (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 9)
+    (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 24) or
+    (ansible_facts['distribution'] == 'Debian' and ansible_facts['distribution_major_version']|int >= 12) or
+    (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int >= 9)
 
 - name: Ensure target directory exists
   ansible.builtin.file:
@@ -43,18 +43,18 @@
 
 - name: Check if OpenSSL private key exists
   ansible.builtin.stat:
-    path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
+    path: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key"
   register: private_key
 
 - name: Generate an OpenSSL private key
   community.crypto.openssl_privatekey:
-    path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
+    path: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key"
   when: not private_key.stat.exists
 
 - name: Generate an OpenSSL Certificate Signing Request
   community.crypto.openssl_csr:
-    path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.csr"
-    privatekey_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
+    path: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.csr"
+    privatekey_path: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key"
     organization_name: "{{ cert_orgname | default('Ansible') }}"
     common_name: "{{ certificate_cn }}"
     subject_alt_name: "{{ cert_san | default(omit) }}"
@@ -63,15 +63,15 @@
 
 - name: Generate SSL self-signed certificate
   community.crypto.x509_certificate:
-    path: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
-    privatekey_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
-    csr_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.csr"
+    path: "{{ ssl_dir }}/{{ ansible_facts['fqdn'] }}.crt"
+    privatekey_path: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key"
+    csr_path: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.csr"
     ownca_not_after: "{{ hardenwebserver_certduration | default('+90d') }}"
     provider: selfsigned
 
 - name: Validate private key file permissions
   ansible.builtin.file:
-    path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
+    path: "{{ ssl_privatedir }}/{{ ansible_facts['fqdn'] }}.key"
     owner: "root"
-    group: "{% if ansible_os_family == 'Debian' %}ssl-cert{% else %}root{% endif %}"
+    group: "{% if ansible_facts['os_family'] == 'Debian' %}ssl-cert{% else %}root{% endif %}"
     mode: '0440'

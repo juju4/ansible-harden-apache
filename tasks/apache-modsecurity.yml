@@ -26,15 +26,15 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: not confms.stat.exists and (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu')
+  when: not confms.stat.exists and (ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu')
 
 - name: Import apache-modsecurity-crs2
   ansible.builtin.import_tasks: apache-modsecurity-crs2.yml
-  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int < 18)
+  when: (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int < 18)
 
 - name: Import apache-modsecurity-crs3
   ansible.builtin.import_tasks: apache-modsecurity-crs3.yml
-  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 18)
+  when: (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 18)
 
 - name: Review modsecurity.conf (1)
   ansible.builtin.replace:
@@ -63,4 +63,4 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: harden_apache_modsecurity_jsonlog and not (ansible_os_family == "RedHat" and ansible_distribution_major_version | int <= 7)
+  when: harden_apache_modsecurity_jsonlog and not (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] | int <= 7)

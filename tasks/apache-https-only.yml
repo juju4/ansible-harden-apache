@@ -8,11 +8,11 @@
     - Restart apache
     - Restart apache - docker
   register: disdefault
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 - name: Debug | /etc/apache2/sites-enabled/000-default.conf state
   ansible.builtin.debug:
     var: disdefault
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Disable apache port 80
   ansible.builtin.replace:
@@ -26,7 +26,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Restrict listening interface
   ansible.builtin.replace:
@@ -40,4 +40,4 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts['os_family'] == "RedHat"

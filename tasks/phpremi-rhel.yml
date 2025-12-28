@@ -16,7 +16,7 @@
 
 - name: RedHat | Install Remi repo
   ansible.builtin.dnf:
-    name: "http://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+    name: "http://rpms.remirepo.net/enterprise/remi-release-{{ ansible_facts['distribution_major_version'] }}.rpm"
     state: present
   when: "'remi-release' not in ansible_facts.packages"
   register: pkg_result
@@ -26,7 +26,7 @@
   ansible.builtin.command: "grep '^enabled=' /etc/yum.repos.d/remi-php{{ php_remi_version_short }}.repo"
   register: remistate
   changed_when: false
-  when: ansible_distribution_major_version | int < 8
+  when: ansible_facts['distribution_major_version'] | int < 8
 
 # https://github.com/ansible/ansible-modules-extras/issues/2384
 - name: RedHat | Enable remi repository for php
@@ -35,20 +35,20 @@
   #   name: remi-php56
   #   enable: yes
   when:
-    - ansible_distribution_major_version | int < 8
+    - ansible_facts['distribution_major_version'] | int < 8
     - remistate.stdout is defined
     - not ('enabled=1' in remistate.stdout)
 
 - name: RedHat | reset php stream to use remi latest
   ansible.builtin.command: "dnf module reset php -y"  # noqa no-changed-when
   when:
-    - ansible_distribution_major_version | int >= 8
+    - ansible_facts['distribution_major_version'] | int >= 8
     - ansible_facts.packages['php-fpm'] is defined
     - ansible_facts.packages['php-fpm'][0]['version'] is version_compare(php_remi_version, '<')
 
 - name: RedHat | enable remi repository for php
   ansible.builtin.command: "dnf module enable php:remi-{{ php_remi_version }} -y"  # noqa no-changed-when
-  when: ansible_distribution_major_version | int >= 8
+  when: ansible_facts['distribution_major_version'] | int >= 8
   register: remirepo
   changed_when:
     - remirepo.rc != 0

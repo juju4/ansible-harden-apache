@@ -29,7 +29,7 @@
     backup: true
   with_items:
     - { re: '^search .*', l: "search {{ harden_apache_ad_sso_domain }}" }
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+  when: not (ansible_facts['virtualization_type'] is defined and (ansible_facts['virtualization_type'] == "docker"))
 
 - name: Ensure DNS resolution is using domain - nameservers
   ansible.builtin.lineinfile:
@@ -39,7 +39,7 @@
     mode: '0644'
     backup: true
   with_items: "{{ harden_apache_ad_sso_domain_dns }}"
-  when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+  when: not (ansible_facts['virtualization_type'] is defined and (ansible_facts['virtualization_type'] == "docker"))
 
 - name: Debian | Ensure required apache modules are loaded
   community.general.apache2_module:
@@ -47,7 +47,7 @@
     name: "{{ item }}"
   with_items:
     - auth_kerb
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
   notify:
     - Restart apache
     - Restart apache - docker
@@ -79,7 +79,7 @@
       notify:
         - Restart apache
         - Restart apache - docker
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Htaccess
   when: harden_apache_ad_sso_htaccess_template is defined and harden_apache_ad_sso_htaccess_template

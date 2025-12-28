@@ -31,7 +31,7 @@
     - modsecurity_crs_50_outbound.conf
     - modsecurity_crs_59_outbound_blocking.conf
     - modsecurity_crs_60_correlation.conf
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 - name: Activate some optional rules
   ansible.builtin.file:
     src: "/usr/share/modsecurity-crs/optional_rules/{{ item }}"
@@ -58,7 +58,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 - name: Activate some experimental rules
   ansible.builtin.file:
     src: "/usr/share/modsecurity-crs/experimental_rules/{{ item }}"
@@ -73,7 +73,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Xenial | SecReadStateLimit is deprecated, use SecConnReadStateLimit instead
   ansible.builtin.replace:
@@ -85,7 +85,7 @@
   with_items:
     - "{{ modsecurity_active }}/modsecurity_crs_49_header_tagging.conf"
     - "/usr/share/modsecurity-crs/experimental_rules/modsecurity_crs_11_slow_dos_protection.conf"
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+  when: ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_release'] == 'xenial'
 
 # - file: dest=/usr/share/modsecurity-crs/activated_rules/modsecurity_crs_21_protocol_anomalies.conf state=absent
 ## Note: enable this line if you want to get debug/software errors information
@@ -126,7 +126,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial'
+  when: ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_release'] == 'xenial'
 
 - name: Review modsecurity.conf (2)
   ansible.builtin.lineinfile:
@@ -139,4 +139,4 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'

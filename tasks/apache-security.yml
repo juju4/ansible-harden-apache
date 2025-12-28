@@ -17,7 +17,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Disable identified modules
   community.general.apache2_module:
@@ -27,7 +27,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Restrict permissions on apache configuration dir
   ansible.builtin.file:
@@ -49,7 +49,7 @@
     - "{{ apachesslconf }}"
     - "{{ apacheetc }}/apache2.conf"
     - "{{ apacheetc }}/ports.conf"
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Push harden configuration templates - apacheetc
   ansible.builtin.template:
@@ -77,7 +77,7 @@
   notify:
     - Restart apache
     - Restart apache - docker
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Include security config in default http virtualhost
   ansible.builtin.blockinfile:
@@ -109,7 +109,7 @@
   ansible.builtin.blockinfile:
     dest: "{{ apacheconf }}"
     block: |
-            CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
+            CustomLog {% if ansible_facts['os_family'] == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache custom json log"
     insertbefore: '^(\s*)</VirtualHost>'
     mode: '0640'
@@ -122,7 +122,7 @@
   ansible.builtin.blockinfile:
     dest: "{{ apachesslconf }}"
     block: |
-            CustomLog {% if ansible_os_family == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
+            CustomLog {% if ansible_facts['os_family'] == 'RedHat' %}logs{% else %}${APACHE_LOG_DIR}{% endif %}/access_json.log combined_json
     marker: "# {mark} ANSIBLE MANAGED BLOCK: apache custom json log"
     insertbefore: '^(\s*)</VirtualHost>'
   notify:
@@ -131,7 +131,7 @@
   when: hardenwebserver_enable_defaultssl | bool and not hardenwebserver_https_noconfig and 'harden-apache2-log.conf' in harden_apache2_confs
 
 - name: Debian
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
   block:
     - name: Enabled extra security - apache2.conf
       ansible.builtin.replace:
@@ -170,7 +170,7 @@
         #   - Restart apache - docker
 
 - name: RedHat
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts['os_family'] == "RedHat"
   block:
     - name: Enabled extra security headers
       ansible.builtin.lineinfile:
@@ -197,7 +197,7 @@
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 
 - name: RedHat selinux facts
-  when: ansible_os_family == "RedHat" and ansible_selinux is defined and ansible_selinux.status != 'disabled'
+  when: ansible_facts['os_family'] == "RedHat" and ansible_selinux is defined and ansible_selinux.status != 'disabled'
   block:
     - name: RedHat7- | Ensure selinux dependencies are present
       ansible.builtin.package:
@@ -208,7 +208,7 @@
         state: present
       register: pkg_result
       until: pkg_result is success
-      when: ansible_distribution_major_version | int < 8
+      when: ansible_facts['distribution_major_version'] | int < 8
 
     - name: RedHat8+ | Ensure selinux dependencies are present
       ansible.builtin.package:
@@ -219,7 +219,7 @@
         state: present
       register: pkg_result
       until: pkg_result is success
-      when: ansible_distribution_major_version | int >= 8
+      when: ansible_facts['distribution_major_version'] | int >= 8
 
     - name: RedHat | Allow proxy to network connect in selinux
       ansible.posix.seboolean:
@@ -231,7 +231,7 @@
 # https://wiki.centos.org/HowTos/SELinux#head-ad837f60830442ae77a81aedd10c20305a811388
 - name: RedHat selinux
   when: >
-    ansible_os_family == "RedHat" and
+    ansible_facts['os_family'] == "RedHat" and
     ansible_selinux and
     hardenwebserver_ports_redhat_selinux_allow is defined and
     hardenwebserver_ports_redhat_selinux_allow != []
