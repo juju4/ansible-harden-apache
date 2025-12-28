@@ -10,7 +10,7 @@
     Order allow,deny
     Deny from all
 </FilesMatch>
-{% if ansible_os_family == "RedHat" and ansible_distribution_major_version|int < 8 %}
+{% if ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version']|int < 8 %}
 <Directory /csp/log/>
      php_admin_value engine Off
 </Directory>

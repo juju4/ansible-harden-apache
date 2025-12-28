@@ -10,7 +10,7 @@
 # Group={{ www_user }}
 
 # Reduce Attack Surface
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 20 %}
+{% if ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 20 %}
 NoNewPrivileges=yes
 {% else %}
 # NoNewPrivileges=yes
@@ -19,7 +19,7 @@ PrivateTmp=true
 ProtectHome=yes
 ProtectSystem=full
 # ProtectSystem=strict
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 21 %}
+{% if ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int >= 21 %}
 ProtectProc=noaccess
 {% endif %}
 
@@ -30,7 +30,7 @@ DeviceAllow=
 
 UMask=077
 
-{% if (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int > 7) or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18) %}
+{% if (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 7) or (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version']|int >= 18) %}
 InaccessiblePaths={{ harden_apache_systemd_inaccessiblepaths }}
 ProtectKernelTunables=true
 ProtectKernelModules=yes
@@ -40,8 +40,8 @@ RestrictRealtime=true
 RestrictNamespaces=yes
 ProtectKernelLogs=yes
 {% endif %}
-{% if (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int > 20) or
-      (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int > 8 )
+{% if (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_major_version']|int > 20) or
+      (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int > 8 )
 %}
 RestrictNamespaces=~CLONE_NEWCGROUP CLONE_NEWIPC CLONE_NEWNET CLONE_NEWPID
 {% endif %}
@@ -87,11 +87,11 @@ CapabilityBoundingSet=~CAP_FSETID CAP_SETFCAP
 CapabilityBoundingSet=~CAP_NET_RAW
 CapabilityBoundingSet=~CAP_IPC_LOCK
 
-{% if not (ansible_virtualization_type is defined and
-          ansible_virtualization_type == "docker"
+{% if not (ansible_facts['virtualization_type'] is defined and
+          ansible_facts['virtualization_type'] == "docker"
         )
 %}
-{% if (ansible_os_family == 'RedHat' and ansible_distribution_major_version|int >= 8) or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int > 18) %}
+{% if (ansible_facts['os_family'] == 'RedHat' and ansible_facts['distribution_major_version']|int >= 8) or (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version']|int > 18) %}
 SystemCallFilter=@system-service @privileged
 {% endif %}
 SystemCallFilter=~@debug @mount @cpu-emulation @obsolete @resources @reboot @swap @raw-io @module

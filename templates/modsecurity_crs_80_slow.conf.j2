@@ -6,7 +6,7 @@ SecRule RESPONSE_STATUS "@streq 408" "phase:5,t:none,nolog,pass,setvar:ip.slow_d
 SecRule IP:SLOW_DOS_COUNTER "@gt 5" "phase:1,t:none,log,drop,msg:'Client Connection Dropped due to high number of slow DoS alerts', id:'1234123457'"
 
 ## https://www.trustwave.com/Resources/SpiderLabs-Blog/%28Updated%29-ModSecurity-Advanced-Topic-of-the-Week--Mitigating-Slow-HTTP-DoS-Attacks/
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial' %}
+{% if ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_release'] == 'xenial' %}
 SecConnReadStateLimit 5
 {% else %}
 SecReadStateLimit 5
