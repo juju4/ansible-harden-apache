@@ -19,7 +19,7 @@
           - { re: '^SecTmpDir .*', l: 'SecTmpDir /tmp/modsectmp' }
           - { re: '^SecDataDir .*', l: 'SecDataDir /tmp/modsecdata' }
       when:
-        - ansible_distribution == 'Ubuntu'
+        - ansible_facts['distribution'] == 'Ubuntu'
   roles:
     - { role: juju4.redhat_epel, when: ansible_os_family == "RedHat" }
     - juju4.harden_apache

@@ -15,7 +15,7 @@
 
 - name: Restart apache - docker
   ansible.builtin.shell:  # noqa no-changed-when
-    cmd: "{% if ansible_os_family == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"
+    cmd: "{% if ansible_facts['os_family'] == 'RedHat' %}pkill httpd; /usr/sbin/httpd{% else %}apache2ctl restart{% endif %}"
   when:
     - is_container|bool
 
