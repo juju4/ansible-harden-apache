@@ -7,9 +7,9 @@
 - name: Debug | ansible_facts['fqdn']
   ansible.builtin.debug:
     var: ansible_facts['fqdn']
-- name: Debug | ansible_hostname
+- name: Debug | ansible_facts['hostname']
   ansible.builtin.debug:
-    var: ansible_hostname
+    var: ansible_facts['hostname']
 
 - name: Add new hostname in /etc/hosts (local resolv)
   ansible.builtin.replace:

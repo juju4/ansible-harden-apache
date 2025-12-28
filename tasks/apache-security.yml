@@ -197,7 +197,10 @@
   when: hardenwebserver_remove_defaultindex is defined and hardenwebserver_remove_defaultindex
 
 - name: RedHat selinux facts
-  when: ansible_facts['os_family'] == "RedHat" and ansible_selinux is defined and ansible_selinux.status != 'disabled'
+  when:
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['selinux'] is defined
+    - ansible_facts['selinux'].status != 'disabled'
   block:
     - name: RedHat7- | Ensure selinux dependencies are present
       ansible.builtin.package:
@@ -232,7 +235,7 @@
 - name: RedHat selinux
   when: >
     ansible_facts['os_family'] == "RedHat" and
-    ansible_selinux and
+    ansible_facts['selinux'] and
     hardenwebserver_ports_redhat_selinux_allow is defined and
     hardenwebserver_ports_redhat_selinux_allow != []
   block:
