@@ -7,8 +7,8 @@
       ansible.builtin.debug:
         var: "{{ item }}"
       loop:
-        - ansible_os_family
-        - ansible_distribution
+        - ansible_facts['os_family']
+        - ansible_facts['distribution']
     - name: Debian | set facts
       ansible.builtin.set_fact:
         verify_pkgs:
@@ -20,7 +20,7 @@
         title_root3: '<title>403 Forbidden</title>'
         status_root: 200
         json_log: /var/log/apache2/access_json.log
-      when: ansible_os_family == "Debian"
+      when: ansible_facts['os_family'] == "Debian"
     - name: Ubuntu | set facts
       ansible.builtin.set_fact:
         verify_pkgs:
@@ -31,7 +31,7 @@
         title_root: '<title>Apache2 Ubuntu Default Page: It works</title>'
         status_root: 200
         json_log: /var/log/apache2/access_json.log
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
     - name: RedHat | set facts
       ansible.builtin.set_fact:
         verify_pkgs:
@@ -43,7 +43,7 @@
         title_root3: '<title>403 Forbidden</title>'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
-      when: ansible_os_family == "RedHat"
+      when: ansible_facts['os_family'] == "RedHat"
     - name: AlmaLinux | set facts
       ansible.builtin.set_fact:
         verify_pkgs:
@@ -55,7 +55,7 @@
         title_root3: '<title>Test Page for the HTTP Server on AlmaLinux</title>'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
-      when: ansible_distribution == "AlmaLinux"
+      when: ansible_facts['distribution'] == "AlmaLinux"
     - name: RockyLinux | set facts
       ansible.builtin.set_fact:
         verify_pkgs:
@@ -67,28 +67,28 @@
         title_root3: '<title>HTTP Server Test Page powered by: Rocky Linux</title>'
         status_root: 403
         json_log: /var/log/httpd/access_json.log
-      when: ansible_distribution == "Rocky"
+      when: ansible_facts['distribution'] == "Rocky"
     - name: Ensure procps package is present
       ansible.builtin.package:
         name: procps
         state: present
-      when: ansible_os_family == "RedHat"
+      when: ansible_facts['os_family'] == "RedHat"
     - name: Debian | Ensure ps/pgrep is present
       ansible.builtin.package:
         name: procps
         state: present
-      when: ansible_os_family == "Debian"
+      when: ansible_facts['os_family'] == "Debian"
   tasks:
     - name: Debian | Check if needed packages are installed
       ansible.builtin.command: "dpkg-query -l {{ item }}"
       changed_when: false
       with_items: "{{ verify_pkgs }}"
-      when: ansible_os_family == "Debian"
+      when: ansible_facts['os_family'] == "Debian"
     - name: RedHat | Check if needed packages are installed
       ansible.builtin.command: "rpm -qi {{ item }}"  # noqa command-instead-of-module
       changed_when: false
       with_items: "{{ verify_pkgs }}"
-      when: ansible_os_family == "RedHat"
+      when: ansible_facts['os_family'] == "RedHat"
     - name: Ensure config is present
       ansible.builtin.stat:
         path: "{{ verify_cfg }}"
