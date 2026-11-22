@@ -1,17 +1,37 @@
 ---
 
-- name: Debian PHP7.4 | Ensure gnupg is present
+- name: Debian PHP7.4 | Ensure gnupg, ca-certificates... are present
   ansible.builtin.apt:
-    name: gnupg
+    name:
+      - gnupg
+      - lsb-release
+      - ca-certificates
     state: present
     update_cache: yes
     cache_valid_time: 3600
   register: pkg_result
   until: pkg_result is success
 
-- name: Debian PHP7.4 | Add ondrej/php repository from PPA
-  ansible.builtin.apt_repository:
-    repo: ppa:ondrej/php
+- name: Download suryorg keyring
+  ansible.builtin.get_url:
+    url: https://packages.sury.org/debsuryorg-archive-keyring.deb
+    dest: "{{ install_archives }}/debsuryorg-archive-keyring.deb"
+    mode: '0644'
+  environment:
+    http_proxy: "{{ proxy_url | default(omit) }}"
+
+- name: Install suryorg keyring
+  ansible.builtin.apt:
+    deb: "{{ install_archives }}/debsuryorg-archive-keyring.deb"
+
+- name: Install suryorg apt source
+  ansible.builtin.deb822_repository:
+    name: php
+    types: deb
+    uris: "https://packages.sury.org/php/"
+    suites: "{{ ansible_facts.distribution_release }}"
+    components: main
+    signed_by: usr/share/keyrings/debsuryorg-archive-keyring.gpg
 
 - name: Debian PHP7.4 | Ensure php is present
   ansible.builtin.apt:
